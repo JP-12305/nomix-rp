@@ -28,7 +28,7 @@ import { formatDate, getStatusDetails } from "@/lib/utils";
 import ApplicationReviewModal from "@/components/admin/ApplicationReviewModal";
 
 export default function AdminDashboardPage() {
-  const { user, isStaff, isAdmin, switchDevRole, loginWithDiscord } = useAuth();
+  const { user, isStaff, isAdmin, loginWithDiscord } = useAuth();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeStatusFilter, setActiveStatusFilter] = useState<string>("ALL");
@@ -71,24 +71,13 @@ export default function AdminDashboardPage() {
         </p>
 
         {user ? (
-          <div className="glass-panel p-6 rounded-2xl border border-cyan-500/30 max-w-md mx-auto space-y-4">
+          <div className="glass-panel p-6 rounded-2xl border border-red-500/30 max-w-md mx-auto space-y-3">
             <span className="text-xs text-slate-300 block">
-              Currently signed in as: <strong className="text-white">{user.username}</strong> ({user.role})
+              Signed in as: <strong className="text-white">{user.username}</strong> (<span className="text-cyan-400 capitalize">{user.role}</span>)
             </span>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => switchDevRole("staff")}
-                className="px-4 py-2 rounded-xl bg-cyan-500 text-black font-heading font-bold text-xs"
-              >
-                Switch to Staff Role (Dev Mode)
-              </button>
-              <button
-                onClick={() => switchDevRole("admin")}
-                className="px-4 py-2 rounded-xl bg-red-500 text-white font-heading font-bold text-xs"
-              >
-                Switch to Admin Role
-              </button>
-            </div>
+            <p className="text-[11px] text-slate-400">
+              Your account currently has <strong className="text-slate-200">{user.role}</strong> permissions. Please ask a Server Director to assign the <code className="text-cyan-300 font-mono">staff</code> or <code className="text-red-400 font-mono">admin</code> role to your profile.
+            </p>
           </div>
         ) : (
           <button

@@ -34,7 +34,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user, loginWithDiscord, logout, switchDevRole, isStaff } = useAuth();
+  const { user, loginWithDiscord, logout, isStaff } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -199,29 +199,7 @@ export default function Navbar() {
                       </Link>
                     )}
 
-                    {/* Role Switcher for instant demo */}
-                    <div className="px-4 py-2 border-t border-slate-800 my-1">
-                      <span className="text-[10px] text-slate-500 font-semibold tracking-wider block mb-1">
-                        DEV ROLE SWITCHER:
-                      </span>
-                      <div className="grid grid-cols-3 gap-1">
-                        {(["applicant", "staff", "admin"] as const).map((r) => (
-                          <button
-                            key={r}
-                            onClick={() => switchDevRole(r)}
-                            className={`px-1.5 py-0.5 text-[10px] rounded uppercase font-bold transition-all ${
-                              user.role === r
-                                ? "bg-cyan-500 text-black shadow-[0_0_8px_rgba(0,240,255,0.6)]"
-                                : "bg-slate-800 text-slate-400 hover:text-white"
-                            }`}
-                          >
-                            {r}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="border-t border-slate-800 pt-1">
+                    <div className="border-t border-slate-800 pt-1 mt-1">
                       <button
                         onClick={logout}
                         className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors"

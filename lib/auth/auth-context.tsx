@@ -9,7 +9,6 @@ interface AuthContextType {
   isLoading: boolean;
   loginWithDiscord: () => Promise<void>;
   logout: () => Promise<void>;
-  switchDevRole: (role: UserRole) => void;
   isStaff: boolean;
   isAdmin: boolean;
 }
@@ -21,71 +20,84 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for saved local dev session first
-    const savedDevUser = typeof window !== "undefined" ? localStorage.getItem("nomix_session_user") : null;
-    if (savedDevUser) {
-      try {
-        setUser(JSON.parse(savedDevUser));
-        setIsLoading(false);
-        return;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    if (isSupabaseConfigured()) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          const profile: UserProfile = {
-            id: session.user.id,
-            discord_id: session.user.user_metadata?.provider_id || session.user.id,
-            username: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "User",
-            display_name: session.user.user_metadata?.custom_claims?.global_name || session.user.user_metadata?.full_name,
-            avatar_url: session.user.user_metadata?.avatar_url,
-            role: "applicant",
-            created_at: session.user.created_at,
-            updated_at: session.user.created_at,
-          };
-          setUser(profile);
-        }
-        setIsLoading(false);
-      });
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session?.user) {
-          const profile: UserProfile = {
-            id: session.user.id,
-            discord_id: session.user.user_metadata?.provider_id || session.user.id,
-            username: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "User",
-            display_name: session.user.user_metadata?.custom_claims?.global_name,
-            avatar_url: session.user.user_metadata?.avatar_url,
-            role: "applicant",
-            created_at: session.user.created_at,
-            updated_at: session.user.created_at,
-          };
-          setUser(profile);
-        } else {
-          setUser(null);
-        }
-        setIsLoading(false);
-      });
-
-      return () => subscription.unsubscribe();
-    } else {
-      // Default to guest or preloaded demo applicant for rich UX
-      const defaultUser: UserProfile = {
-        id: "usr-demo-applicant",
-        discord_id: "789123456789012345",
-        username: "SpectreRider",
-        display_name: "Spectre",
-        avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-        role: "applicant",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      setUser(defaultUser);
+    if (!isSupabaseConfigured()) {
       setIsLoading(false);
+      return;
     }
+
+    const loadProfile = async (sessionUser: any) => {
+      try {
+        const discordId = sessionUser.user_metadata?.provider_id || sessionUser.user_metadata?.sub || sessionUser.id;
+        const username = sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name || sessionUser.email?.split("@")[0] || "User";
+        const displayName = sessionUser.user_metadata?.custom_claims?.global_name || sessionUser.user_metadata?.full_name || username;
+        const avatarUrl = sessionUser.user_metadata?.avatar_url;
+
+        // Fetch existing profile to get their real role (staff/admin/applicant)
+        const { data: existingProfile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", sessionUser.id)
+          .single();
+
+        if (existingProfile) {
+          setUser({
+            id: existingProfile.id,
+            discord_id: existingProfile.discord_id || discordId,
+            username: existingProfile.username || username,
+            display_name: existingProfile.display_name || displayName,
+            avatar_url: existingProfile.avatar_url || avatarUrl,
+            role: existingProfile.role || "applicant",
+            created_at: existingProfile.created_at,
+            updated_at: existingProfile.updated_at,
+          });
+        } else {
+          // Upsert new profile record with default role 'applicant'
+          const newProfile: UserProfile = {
+            id: sessionUser.id,
+            discord_id: discordId,
+            username,
+            display_name: displayName,
+            avatar_url: avatarUrl,
+            role: "applicant",
+            created_at: sessionUser.created_at,
+            updated_at: sessionUser.created_at,
+          };
+          await supabase.from("profiles").upsert({
+            id: sessionUser.id,
+            discord_id: discordId,
+            username,
+            display_name: displayName,
+            avatar_url: avatarUrl,
+            role: "applicant",
+          });
+          setUser(newProfile);
+        }
+      } catch (err) {
+        console.error("Profile load error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        loadProfile(session.user);
+      } else {
+        setUser(null);
+        setIsLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        loadProfile(session.user);
+      } else {
+        setUser(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const loginWithDiscord = async () => {
@@ -94,23 +106,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         provider: "discord",
         options: {
           redirectTo: `${window.location.origin}/api/auth/callback`,
-          scopes: "identify email guilds",
+          scopes: "identify email",
         },
       });
     } else {
-      // Instant dev authentication with Discord mock
-      const devProfile: UserProfile = {
-        id: "00000000-0000-0000-0000-000000000001",
-        discord_id: "789123456789012345",
-        username: "SpectreRider",
-        display_name: "Spectre",
-        avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-        role: "applicant",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      setUser(devProfile);
-      localStorage.setItem("nomix_session_user", JSON.stringify(devProfile));
+      console.warn("Supabase is not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to environment variables.");
     }
   };
 
@@ -119,19 +119,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await supabase.auth.signOut();
     }
     setUser(null);
-    localStorage.removeItem("nomix_session_user");
-  };
-
-  const switchDevRole = (role: UserRole) => {
-    if (!user) return;
-    const updated: UserProfile = {
-      ...user,
-      role,
-      username: role === "admin" ? "NomixDirector" : role === "staff" ? "NomixStaff" : "SpectreRider",
-      display_name: role === "admin" ? "Server Director" : role === "staff" ? "Staff Reviewer" : "Spectre",
-    };
-    setUser(updated);
-    localStorage.setItem("nomix_session_user", JSON.stringify(updated));
   };
 
   return (
@@ -141,7 +128,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         loginWithDiscord,
         logout,
-        switchDevRole,
         isStaff: user?.role === "staff" || user?.role === "admin",
         isAdmin: user?.role === "admin",
       }}
