@@ -445,38 +445,52 @@ export default function ApplicationReviewModal({
           </div>
 
           <div className="flex items-center gap-3">
-            {app.status === "PENDING" && (
-              <button
-                type="button"
-                onClick={handleSetUnderReview}
-                disabled={processingAction}
-                className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-heading font-bold text-cyan-300 hover:border-cyan-500/50"
-              >
-                Mark Under Review
-              </button>
+            {app.status === "APPROVED" && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 font-mono text-xs">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Finalized: Approved & Citizen Role Assigned</span>
+              </div>
             )}
 
-            {app.status !== "REJECTED" && (
-              <button
-                type="button"
-                onClick={() => setShowRejectPrompt(true)}
-                disabled={processingAction}
-                className="px-5 py-2.5 rounded-xl bg-red-950/60 border border-red-500/40 text-red-400 hover:bg-red-900/60 font-heading font-bold text-xs flex items-center gap-1.5"
-              >
-                <XCircle className="w-4 h-4" /> Reject Visa
-              </button>
+            {app.status === "REJECTED" && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-950/60 border border-red-500/40 text-red-400 font-mono text-xs">
+                <XCircle className="w-4 h-4" />
+                <span>Finalized: Rejected (Feedback Dispatched)</span>
+              </div>
             )}
 
-            {app.status !== "APPROVED" && (
-              <button
-                type="button"
-                onClick={handleApprove}
-                disabled={processingAction}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] flex items-center gap-1.5 disabled:opacity-50"
-              >
-                {processingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                APPROVE VISA
-              </button>
+            {(app.status === "PENDING" || app.status === "UNDER_REVIEW") && (
+              <>
+                {app.status === "PENDING" && (
+                  <button
+                    type="button"
+                    onClick={handleSetUnderReview}
+                    disabled={processingAction}
+                    className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-heading font-bold text-cyan-300 hover:border-cyan-500/50 transition-all"
+                  >
+                    Mark Under Review
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setShowRejectPrompt(true)}
+                  disabled={processingAction}
+                  className="px-5 py-2.5 rounded-xl bg-red-950/60 border border-red-500/40 text-red-400 hover:bg-red-900/60 font-heading font-bold text-xs flex items-center gap-1.5 transition-all"
+                >
+                  <XCircle className="w-4 h-4" /> Reject Visa
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleApprove}
+                  disabled={processingAction}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] flex items-center gap-1.5 disabled:opacity-50 transition-all"
+                >
+                  {processingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                  APPROVE VISA
+                </button>
+              </>
             )}
           </div>
         </div>

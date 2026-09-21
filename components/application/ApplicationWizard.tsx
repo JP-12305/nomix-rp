@@ -147,8 +147,13 @@ export default function ApplicationWizard() {
       // Clear draft
       localStorage.removeItem("nomix_app_draft");
 
-      // Redirect to status page
-      router.push("/status?submitted=true");
+      // Redirect to status page with application id
+      const createdAppId = json.application?.id || json.application?.application_number;
+      if (createdAppId) {
+        router.push(`/status?id=${encodeURIComponent(createdAppId)}&submitted=true`);
+      } else {
+        router.push("/status?submitted=true");
+      }
     } catch (err: any) {
       setSubmitError(err.message || "An unexpected error occurred.");
       setIsSubmitting(false);

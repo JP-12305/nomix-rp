@@ -16,16 +16,18 @@ export async function GET(request: NextRequest) {
       const supabase = getAdminSupabase();
       let query = supabase.from("applications").select("*, answers:application_answers(*), events:application_events(*)");
 
+      const isUserIdUUID = userId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+
       if (appId) {
         query = query.or(`id.eq.${appId},application_number.eq.${appId}`);
-      } else if (discordId && userId && userId !== "undefined" && userId !== "null") {
+      } else if (discordId && isUserIdUUID) {
         query = query.or(`discord_id.eq.${discordId},user_id.eq.${userId}`).order("created_at", { ascending: false });
       } else if (discordId) {
         query = query.eq("discord_id", discordId).order("created_at", { ascending: false });
-      } else if (userId && userId !== "undefined" && userId !== "null") {
+      } else if (isUserIdUUID) {
         query = query.eq("user_id", userId).order("created_at", { ascending: false });
       } else {
-        return NextResponse.json({ error: "Missing identifier parameter" }, { status: 400 });
+        return NextResponse.json({ error: "Missing valid identifier parameter" }, { status: 400 });
       }
 
       const { data, error } = await query.limit(1);

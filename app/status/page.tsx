@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
 import { 
   CheckCircle2, 
@@ -23,18 +23,32 @@ import {
 import { Application } from "@/types";
 import { formatDate, getStatusDetails } from "@/lib/utils";
 
-export default function StatusPage() {
+function StatusPageContent() {
   const { user, loginWithDiscord } = useAuth();
+  const searchParams = useSearchParams();
+  const urlId = searchParams?.get("id") || searchParams?.get("appId");
+  const isSubmitted = searchParams?.get("submitted") === "true";
+
   const [app, setApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadStatus = async (isManual = false) => {
-    if (!user) return;
     if (isManual) setRefreshing(true);
 
     try {
-      const res = await fetch(`/api/applications/status?discord_id=${user.discord_id}&user_id=${user.id}`);
+      let endpoint = "";
+      if (urlId) {
+        endpoint = `/api/applications/status?id=${encodeURIComponent(urlId)}`;
+      } else if (user) {
+        endpoint = `/api/applications/status?discord_id=${encodeURIComponent(user.discord_id)}&user_id=${encodeURIComponent(user.id)}`;
+      } else {
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+
+      const res = await fetch(endpoint);
       if (res.ok) {
         const data = await res.json();
         if (data && data.application) {
@@ -52,22 +66,18 @@ export default function StatusPage() {
   };
 
   useEffect(() => {
-    if (user) {
-      loadStatus();
-      // Auto-poll status every 12 seconds if pending or under review
-      const interval = setInterval(() => {
-        if (document.visibilityState === "visible") {
-          loadStatus();
-        }
-      }, 12000);
+    loadStatus();
+    // Auto-poll status every 12 seconds if pending or under review
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        loadStatus();
+      }
+    }, 12000);
 
-      return () => clearInterval(interval);
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
+    return () => clearInterval(interval);
+  }, [user, urlId]);
 
-  if (!user) {
+  if (!user && !urlId && !loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 pt-36 pb-24 text-center space-y-6">
         <h1 className="font-heading font-black text-3xl text-white">
@@ -78,7 +88,7 @@ export default function StatusPage() {
         </p>
         <button
           onClick={loginWithDiscord}
-          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-bold text-xs tracking-wider transition-all"
+          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-bold text-xs tracking-wider transition-all shadow-lg hover:shadow-indigo-500/25"
         >
           <Users className="w-4 h-4" />
           LOGIN WITH DISCORD
@@ -106,18 +116,18 @@ export default function StatusPage() {
           No Application on Record
         </h1>
         <p className="text-xs text-slate-400 max-w-md mx-auto">
-          We couldn’t find an active visa application linked to your Discord account ({user.username}).
+          We couldn’t find an active visa application linked to your Discord account {user ? `(@${user.username})` : ""}.
         </p>
         <div className="flex items-center justify-center gap-4">
           <Link
             href="/apply"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider hover:shadow-neon-cyan"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider hover:shadow-neon-cyan transition-all"
           >
             START VISA APPLICATION <ArrowRight className="w-4 h-4" />
           </Link>
           <button
             onClick={() => loadStatus(true)}
-            className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:text-white"
+            className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:text-white transition-all"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
@@ -140,8 +150,21 @@ export default function StatusPage() {
   const isCooldownActive = isRejected && Date.now() < cooldownEndTime;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-10">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-8">
       
+      {/* Newly Submitted Banner */}
+      {isSubmitted && (
+        <div className="p-4 rounded-2xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 flex items-center justify-between gap-3 text-xs shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <div>
+              <strong className="block font-heading font-bold text-sm text-white">Visa Application Submitted Successfully!</strong>
+              <span>Your questionnaire has been recorded into the queue ({app.application_number}) and is awaiting staff evaluation.</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Top Banner Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400">
@@ -357,5 +380,20 @@ export default function StatusPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function StatusPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-4xl mx-auto px-4 pt-40 pb-24 text-center">
+          <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <span className="text-xs font-mono text-slate-400">Loading application portal...</span>
+        </div>
+      }
+    >
+      <StatusPageContent />
+    </Suspense>
   );
 }

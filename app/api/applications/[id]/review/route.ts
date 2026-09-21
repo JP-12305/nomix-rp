@@ -52,9 +52,9 @@ export async function POST(
         return NextResponse.json({ error: "Application not found." }, { status: 404 });
       }
 
-      if (app.status === "APPROVED" && status === "APPROVED") {
+      if (app.status === "APPROVED" || app.status === "REJECTED") {
         return NextResponse.json(
-          { error: "This application has already been approved." },
+          { error: `This application has already been finalized as ${app.status} and cannot be modified.` },
           { status: 400 }
         );
       }
