@@ -17,7 +17,8 @@ import {
   AlertTriangle,
   Play,
   RotateCcw,
-  Users
+  Users,
+  RefreshCw
 } from "lucide-react";
 import { Application } from "@/types";
 import { formatDate, getStatusDetails } from "@/lib/utils";
@@ -26,21 +27,41 @@ export default function StatusPage() {
   const { user, loginWithDiscord } = useAuth();
   const [app, setApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadStatus = async (isManual = false) => {
+    if (!user) return;
+    if (isManual) setRefreshing(true);
+
+    try {
+      const res = await fetch(`/api/applications/status?discord_id=${user.discord_id}&user_id=${user.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.application) {
+          setApp(data.application);
+        } else {
+          setApp(null);
+        }
+      }
+    } catch (e) {
+      console.error("Status fetch error:", e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     if (user) {
-      fetch(`/api/applications/status?discord_id=${user.discord_id}&user_id=${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.application) {
-            setApp(data.application);
-          }
-          setLoading(false);
-        })
-        .catch((e) => {
-          console.error(e);
-          setLoading(false);
-        });
+      loadStatus();
+      // Auto-poll status every 12 seconds if pending or under review
+      const interval = setInterval(() => {
+        if (document.visibilityState === "visible") {
+          loadStatus();
+        }
+      }, 12000);
+
+      return () => clearInterval(interval);
     } else {
       setLoading(false);
     }
@@ -87,12 +108,21 @@ export default function StatusPage() {
         <p className="text-xs text-slate-400 max-w-md mx-auto">
           We couldn’t find an active visa application linked to your Discord account ({user.username}).
         </p>
-        <Link
-          href="/apply"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider hover:shadow-neon-cyan"
-        >
-          START VISA APPLICATION <ArrowRight className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center justify-center gap-4">
+          <Link
+            href="/apply"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider hover:shadow-neon-cyan"
+          >
+            START VISA APPLICATION <ArrowRight className="w-4 h-4" />
+          </Link>
+          <button
+            onClick={() => loadStatus(true)}
+            className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:text-white"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
+        </div>
       </div>
     );
   }
@@ -102,6 +132,12 @@ export default function StatusPage() {
   const isRejected = app.status === "REJECTED";
   const isUnderReview = app.status === "UNDER_REVIEW";
   const isPending = app.status === "PENDING";
+
+  // Reapplication Cooldown Calculation
+  const cooldownDays = 3;
+  const reviewTime = app.reviewed_at ? new Date(app.reviewed_at).getTime() : Date.now();
+  const cooldownEndTime = reviewTime + cooldownDays * 24 * 60 * 60 * 1000;
+  const isCooldownActive = isRejected && Date.now() < cooldownEndTime;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-10">
@@ -115,9 +151,17 @@ export default function StatusPage() {
         <h1 className="font-heading font-black text-3xl sm:text-5xl text-metallic">
           APPLICATION STATUS
         </h1>
-        <p className="text-xs text-slate-400">
-          Application Reference: <strong className="text-white font-mono">{app.application_number}</strong>
-        </p>
+        <div className="flex items-center justify-center gap-3 text-xs text-slate-400">
+          <span>Application Reference: <strong className="text-white font-mono">{app.application_number}</strong></span>
+          <span>•</span>
+          <button
+            onClick={() => loadStatus(true)}
+            className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold"
+          >
+            <RefreshCw className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`} />
+            Refresh Status
+          </button>
+        </div>
       </div>
 
       {/* Main Status Showcase Card */}
@@ -170,7 +214,7 @@ export default function StatusPage() {
           </div>
 
           <div className="text-right font-mono text-xs text-slate-400 hidden sm:block">
-            <div>Submitted: <span className="text-white">{formatDate(app.submitted_at)}</span></div>
+            <div>Submitted: <span className="text-white">{formatDate(app.submitted_at || app.created_at)}</span></div>
             {app.reviewed_at && (
               <div>Reviewed: <span className="text-white">{formatDate(app.reviewed_at)}</span></div>
             )}
@@ -239,12 +283,12 @@ export default function StatusPage() {
               You are Ready to Fly into Los Santos!
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Your application has been verified by <strong>{app.reviewer_name || "Recruitment Management"}</strong>. Your Discord account has been granted the <strong>Citizen Role</strong>.
+              Your application has been approved. Your Discord account has been granted the <strong>Citizen Role</strong>.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
               <a
-                href="fivem://connect/play.nomixrp.com"
+                href={process.env.NEXT_PUBLIC_FIVEM_CONNECT_URL || "fivem://connect/play.nomixroleplay.xyz"}
                 className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
               >
                 <Play className="w-4 h-4 fill-black" /> CONNECT TO FIVEM SERVER
@@ -270,9 +314,23 @@ export default function StatusPage() {
               {app.rejection_reason || "Application did not meet minimum roleplay detail standards."}
             </div>
 
-            <p className="text-xs text-slate-400">
-              You may review server rules on our <Link href="/rules" className="text-cyan-400 underline">Rules Page</Link> and re-apply once your 3-day cooldown expires.
-            </p>
+            <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              <p className="text-slate-400">
+                You may review our server guidelines on our <Link href="/rules" className="text-cyan-400 underline">Rules Page</Link>.
+              </p>
+              {isCooldownActive ? (
+                <div className="px-3 py-1.5 rounded-lg bg-red-950/80 border border-red-500/30 text-red-300 text-xs font-mono">
+                  Cooldown ends: {new Date(cooldownEndTime).toLocaleDateString()} at {new Date(cooldownEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              ) : (
+                <Link
+                  href="/apply"
+                  className="px-4 py-2 rounded-lg bg-cyan-400 text-black font-bold text-xs tracking-wider hover:shadow-neon-cyan"
+                >
+                  RE-APPLY NOW
+                </Link>
+              )}
+            </div>
           </div>
         )}
 

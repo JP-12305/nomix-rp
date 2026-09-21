@@ -27,8 +27,14 @@ import { Application, ApplicationStatus } from "@/types";
 import { formatDate, getStatusDetails } from "@/lib/utils";
 import ApplicationReviewModal from "@/components/admin/ApplicationReviewModal";
 
-export default function AdminDashboardPage() {
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+function AdminDashboardContent() {
   const { user, isStaff, isAdmin, loginWithDiscord } = useAuth();
+  const searchParams = useSearchParams();
+  const urlAppId = searchParams?.get("appId");
+
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeStatusFilter, setActiveStatusFilter] = useState<string>("ALL");
@@ -55,6 +61,19 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     fetchApplications();
   }, [activeStatusFilter, searchQuery]);
+
+  useEffect(() => {
+    if (urlAppId && isStaff) {
+      fetch(`/api/applications/status?id=${urlAppId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.application) {
+            setSelectedApp(data.application);
+          }
+        })
+        .catch((e) => console.error(e));
+    }
+  }, [urlAppId, isStaff]);
 
   // If user is not logged in or not staff
   if (!user || !isStaff) {
@@ -458,5 +477,18 @@ export default function AdminDashboardPage() {
       )}
 
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-4xl mx-auto px-4 pt-40 pb-24 text-center">
+        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <span className="text-xs font-mono text-slate-400">Loading Staff Dashboard...</span>
+      </div>
+    }>
+      <AdminDashboardContent />
+    </Suspense>
   );
 }

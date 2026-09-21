@@ -13,7 +13,9 @@ import {
   AlertCircle, 
   ArrowRight, 
   CheckCircle2,
-  Lock
+  Lock,
+  Play,
+  AlertTriangle
 } from "lucide-react";
 import { Application } from "@/types";
 
@@ -25,7 +27,7 @@ export default function ApplyPage() {
   useEffect(() => {
     if (user) {
       // Check for user application
-      fetch(`/api/applications/status?discord_id=${user.discord_id}`)
+      fetch(`/api/applications/status?discord_id=${user.discord_id}&user_id=${user.id}`)
         .then((res) => {
           if (res.ok) return res.json();
           return null;
@@ -95,7 +97,47 @@ export default function ApplyPage() {
     );
   }
 
-  // 2. Active Application Already Exists
+  // 2. Application is Approved
+  if (existingApp && existingApp.status === "APPROVED") {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-24 space-y-8 text-center">
+        <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-emerald-500/40 space-y-6 shadow-2xl">
+          <div className="p-4 w-fit rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 mx-auto">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="text-xs font-mono font-bold uppercase text-emerald-400 tracking-wider">
+              Visa Granted ({existingApp.application_number})
+            </span>
+            <h1 className="font-heading font-black text-3xl text-white">
+              YOU ARE ALREADY AN APPROVED CITIZEN
+            </h1>
+            <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+              Your citizen application for character <strong>{existingApp.character_name}</strong> was approved. Your Discord account has the verified citizen role.
+            </p>
+          </div>
+
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href={process.env.NEXT_PUBLIC_FIVEM_CONNECT_URL || "fivem://connect/play.nomixroleplay.xyz"}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider hover:shadow-neon-cyan transition-all flex items-center justify-center gap-2"
+            >
+              <Play className="w-4 h-4 fill-black" /> CONNECT TO FIVEM SERVER
+            </a>
+            <Link
+              href="/status"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-xs tracking-wider"
+            >
+              VIEW VISA STATUS
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. Active Application Already Exists (Pending or Under Review)
   if (existingApp && (existingApp.status === "PENDING" || existingApp.status === "UNDER_REVIEW")) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-24 space-y-8 text-center">
@@ -129,7 +171,56 @@ export default function ApplyPage() {
     );
   }
 
-  // 3. User is authenticated and eligible to apply
+  // 4. Application was Rejected & Cooldown is active
+  if (existingApp && existingApp.status === "REJECTED") {
+    const cooldownDays = Number(process.env.REAPPLICATION_COOLDOWN_DAYS) || 3;
+    const reviewTime = existingApp.reviewed_at ? new Date(existingApp.reviewed_at).getTime() : Date.now();
+    const cooldownEndTime = reviewTime + cooldownDays * 24 * 60 * 60 * 1000;
+    const isCooldownActive = Date.now() < cooldownEndTime;
+
+    if (isCooldownActive) {
+      return (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-24 space-y-8 text-center">
+          <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-red-500/40 space-y-6 shadow-2xl">
+            <div className="p-4 w-fit rounded-2xl bg-red-950/40 border border-red-500/30 text-red-400 mx-auto">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-xs font-mono font-bold uppercase text-red-400 tracking-wider">
+                Reapplication Cooldown Active ({existingApp.application_number})
+              </span>
+              <h1 className="font-heading font-black text-3xl text-white">
+                REAPPLICATION COOLDOWN IN EFFECT
+              </h1>
+              <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+                Your previous application was rejected. Please review our server guidelines before applying again.
+              </p>
+            </div>
+
+            <div className="p-4 max-w-md mx-auto rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-mono text-slate-300 text-left">
+              <strong>Staff Reason:</strong> {existingApp.rejection_reason || "Did not meet requirements."}
+            </div>
+
+            <div className="text-xs text-red-400 font-mono">
+              You can re-apply after: {new Date(cooldownEndTime).toLocaleDateString()} at {new Date(cooldownEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </div>
+
+            <div className="pt-4 flex justify-center gap-4">
+              <Link
+                href="/status"
+                className="px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-xs tracking-wider"
+              >
+                VIEW DETAILS ON STATUS PAGE
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  // 5. User is authenticated and eligible to apply
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-8">
       <div className="text-center max-w-2xl mx-auto space-y-2">

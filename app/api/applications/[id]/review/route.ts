@@ -3,7 +3,11 @@ import { mockDb } from "@/lib/data/mock-db";
 import { getAdminSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { ApplicationStatus } from "@/types";
-import { assignDiscordCitizenRole } from "@/lib/discord/discord-notify";
+import { 
+  assignDiscordCitizenRole, 
+  sendDiscordApprovalEmbed, 
+  sendDiscordRejectionEmbed 
+} from "@/lib/discord/discord-notify";
 
 export const dynamic = "force-dynamic";
 
@@ -93,12 +97,26 @@ export async function POST(
         metadata: { status, rejection_reason },
       });
 
-      // If approved, trigger Discord citizen role assignment
-      if (status === "APPROVED" && app.discord_id) {
-        const guildId = process.env.DISCORD_GUILD_ID;
-        const roleId = process.env.DISCORD_VERIFIED_ROLE_ID;
-        if (guildId && roleId) {
-          await assignDiscordCitizenRole(guildId, app.discord_id, roleId);
+      // Automated Discord Actions (non-blocking)
+      if (status === "APPROVED") {
+        try {
+          if (app.discord_id) {
+            const guildId = process.env.DISCORD_GUILD_ID || "1459096221129113680";
+            const roleId = process.env.DISCORD_VERIFIED_ROLE_ID || "1550803618653937714";
+            if (guildId && roleId) {
+              await assignDiscordCitizenRole(guildId, app.discord_id, roleId);
+            }
+          }
+          await sendDiscordApprovalEmbed(updatedApp, reviewer.name);
+        } catch (discordErr) {
+          console.error("Discord approval dispatch error (non-fatal):", discordErr);
+        }
+      } else if (status === "REJECTED") {
+        try {
+          const cooldownDays = Number(process.env.REAPPLICATION_COOLDOWN_DAYS) || 3;
+          await sendDiscordRejectionEmbed(updatedApp, reviewer.name, rejection_reason || "Application did not meet standards.", cooldownDays);
+        } catch (discordErr) {
+          console.error("Discord rejection dispatch error (non-fatal):", discordErr);
         }
       }
 
