@@ -101,16 +101,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const loginWithDiscord = async () => {
-    if (isSupabaseConfigured()) {
-      await supabase.auth.signInWithOAuth({
+    try {
+      if (!isSupabaseConfigured()) {
+        console.error("Supabase is not configured.");
+        alert("Authentication configuration is missing. Please check your Supabase environment variables.");
+        return;
+      }
+
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+      console.log("Initiating Discord OAuth with redirect URL:", redirectUrl);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "discord",
         options: {
-          redirectTo: `${window.location.origin}/api/auth/callback`,
+          redirectTo: redirectUrl,
           scopes: "identify email",
         },
       });
-    } else {
-      console.warn("Supabase is not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to environment variables.");
+
+      if (error) {
+        console.error("Supabase Discord OAuth error:", error);
+        alert(`Discord Login Error: ${error.message}`);
+        return;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: any) {
+      console.error("Unexpected error during Discord login:", err);
+      alert(`Unexpected login error: ${err?.message || err}`);
     }
   };
 
