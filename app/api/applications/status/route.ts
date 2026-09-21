@@ -18,21 +18,25 @@ export async function GET(request: NextRequest) {
 
       if (appId) {
         query = query.or(`id.eq.${appId},application_number.eq.${appId}`);
+      } else if (discordId && userId && userId !== "undefined" && userId !== "null") {
+        query = query.or(`discord_id.eq.${discordId},user_id.eq.${userId}`).order("created_at", { ascending: false });
       } else if (discordId) {
         query = query.eq("discord_id", discordId).order("created_at", { ascending: false });
-      } else if (userId) {
+      } else if (userId && userId !== "undefined" && userId !== "null") {
         query = query.eq("user_id", userId).order("created_at", { ascending: false });
       } else {
         return NextResponse.json({ error: "Missing identifier parameter" }, { status: 400 });
       }
 
-      const { data, error } = await query.limit(1).single();
+      const { data, error } = await query.limit(1);
 
-      if (error || !data) {
-        return NextResponse.json({ application: null });
+      if (error) {
+        console.error("Status query error:", error);
+        return NextResponse.json({ application: null, error: error.message });
       }
 
-      return NextResponse.json({ application: data });
+      const application = data && data.length > 0 ? data[0] : null;
+      return NextResponse.json({ application });
     } else {
       // Mock Data Store
       let app = null;

@@ -32,48 +32,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const displayName = sessionUser.user_metadata?.custom_claims?.global_name || sessionUser.user_metadata?.full_name || username;
         const avatarUrl = sessionUser.user_metadata?.avatar_url;
 
-        // Fetch existing profile to get their real role (staff/admin/applicant)
-        const { data: existingProfile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", sessionUser.id)
-          .single();
+        // Fetch/Sync profile via server route to avoid client RLS 403 / single() 406
+        const res = await fetch("/api/auth/profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: sessionUser.id,
+            discord_id: discordId,
+            username,
+            display_name: displayName,
+            avatar_url: avatarUrl,
+          }),
+        });
 
-        if (existingProfile) {
-          setUser({
-            id: existingProfile.id,
-            discord_id: existingProfile.discord_id || discordId,
-            username: existingProfile.username || username,
-            display_name: existingProfile.display_name || displayName,
-            avatar_url: existingProfile.avatar_url || avatarUrl,
-            role: existingProfile.role || "applicant",
-            created_at: existingProfile.created_at,
-            updated_at: existingProfile.updated_at,
-          });
-        } else {
-          // Upsert new profile record with default role 'applicant'
-          const newProfile: UserProfile = {
-            id: sessionUser.id,
-            discord_id: discordId,
-            username,
-            display_name: displayName,
-            avatar_url: avatarUrl,
-            role: "applicant",
-            created_at: sessionUser.created_at,
-            updated_at: sessionUser.created_at,
-          };
-          await supabase.from("profiles").upsert({
-            id: sessionUser.id,
-            discord_id: discordId,
-            username,
-            display_name: displayName,
-            avatar_url: avatarUrl,
-            role: "applicant",
-          });
-          setUser(newProfile);
+        if (res.ok) {
+          const { profile } = await res.json();
+          if (profile) {
+            setUser({
+              id: profile.id || sessionUser.id,
+              discord_id: profile.discord_id || discordId,
+              username: profile.username || username,
+              display_name: profile.display_name || displayName,
+              avatar_url: profile.avatar_url || avatarUrl,
+              role: profile.role || "applicant",
+              created_at: profile.created_at || sessionUser.created_at,
+              updated_at: profile.updated_at || sessionUser.created_at,
+            });
+            return;
+          }
         }
+
+        // Fallback local state if API fails
+        setUser({
+          id: sessionUser.id,
+          discord_id: discordId,
+          username,
+          display_name: displayName,
+          avatar_url: avatarUrl,
+          role: "applicant",
+          created_at: sessionUser.created_at,
+          updated_at: sessionUser.created_at,
+        });
       } catch (err) {
         console.error("Profile load error:", err);
+        setUser({
+          id: sessionUser.id,
+          discord_id: sessionUser.id,
+          username: "Applicant",
+          display_name: "Applicant",
+          avatar_url: "",
+          role: "applicant",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
       } finally {
         setIsLoading(false);
       }

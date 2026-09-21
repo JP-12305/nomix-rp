@@ -144,8 +144,12 @@ export async function POST(request: NextRequest) {
         metadata: { app_number: appNumber },
       });
 
-      // Post notification embed to Discord staff channel
-      await sendDiscordApplicationEmbed(insertedApp);
+      // Post notification embed to Discord staff channel (non-blocking)
+      try {
+        await sendDiscordApplicationEmbed(insertedApp);
+      } catch (embedErr) {
+        console.error("Discord notification error during submit (non-fatal):", embedErr);
+      }
 
       return NextResponse.json({ success: true, application: insertedApp });
     } else {

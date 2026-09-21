@@ -7,15 +7,19 @@ export async function sendDiscordApplicationEmbed(app: {
   character_age: number;
   character_gender: string;
   status: string;
-  submitted_at: string;
+  submitted_at?: string;
+  created_at?: string;
 }) {
-  const token = process.env.DISCORD_BOT_TOKEN;
-  const channelId = process.env.DISCORD_APPLICATION_CHANNEL_ID;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
+  const channelId = process.env.DISCORD_APPLICATION_CHANNEL_ID || "1550802258646798417";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomix-rp.vercel.app";
 
   if (!token || !channelId || channelId.includes("your-")) return;
 
   try {
+    const rawDate = app.submitted_at || app.created_at || new Date().toISOString();
+    const parsedTime = Math.floor(new Date(rawDate).getTime() / 1000) || Math.floor(Date.now() / 1000);
+
     const embed = {
       title: "━━━━━━━━━━━━━━━━━━━━━━━━\nNOMIX ROLEPLAY — VISA APPLICATION\n━━━━━━━━━━━━━━━━━━━━━━━━",
       description: "A new citizen visa application has been submitted on the website and is awaiting staff evaluation.",
@@ -25,7 +29,7 @@ export async function sendDiscordApplicationEmbed(app: {
         { name: "🆔 Application ID", value: `\`${app.application_number}\``, inline: true },
         { name: "🎭 Character", value: `**${app.character_name}** (${app.character_age}, ${app.character_gender})`, inline: true },
         { name: "📊 Status", value: "🟡 **PENDING REVIEW**", inline: true },
-        { name: "📅 Submitted", value: `<t:${Math.floor(new Date(app.submitted_at).getTime() / 1000)}:R>`, inline: true },
+        { name: "📅 Submitted", value: `<t:${parsedTime}:R>`, inline: true },
       ],
       footer: { text: "NOMIX RP • Automated Visa System" },
       timestamp: new Date().toISOString(),
