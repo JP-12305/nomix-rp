@@ -27,7 +27,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loadProfile = async (sessionUser: any) => {
       try {
-        const discordId = sessionUser.user_metadata?.provider_id || sessionUser.user_metadata?.sub || sessionUser.id;
+        let discordId = sessionUser.user_metadata?.provider_id || sessionUser.identities?.[0]?.id;
+        if (!discordId && sessionUser.user_metadata?.avatar_url) {
+          const match = sessionUser.user_metadata.avatar_url.match(/avatars\/(\d+)\//);
+          if (match) discordId = match[1];
+        }
+        if (!discordId) {
+          discordId = sessionUser.user_metadata?.sub || sessionUser.id;
+        }
         const username = sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name || sessionUser.email?.split("@")[0] || "User";
         const displayName = sessionUser.user_metadata?.custom_claims?.global_name || sessionUser.user_metadata?.full_name || username;
         const avatarUrl = sessionUser.user_metadata?.avatar_url;
