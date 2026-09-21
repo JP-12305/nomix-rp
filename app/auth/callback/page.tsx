@@ -3,91 +3,113 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import { Loader2 } from "lucide-react";
+import { useAuth } from "@/lib/auth/auth-context";
+import { Loader2, AlertCircle } from "lucide-react";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
+  const { loginWithDiscord } = useAuth();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    const handleCallback = async () => {
+    const processAuth = async () => {
       try {
         if (typeof window === "undefined") return;
 
-        // 1. Check for OAuth Error params in URL
+        // 1. Parse Hash Fragment (Implicit OAuth flow: #access_token=...&refresh_token=...)
+        if (window.location.hash) {
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          const hashError = hashParams.get("error_description") || hashParams.get("error");
+          const accessToken = hashParams.get("access_token");
+          const refreshToken = hashParams.get("refresh_token");
+
+          if (hashError) {
+            console.error("[AUTH CALLBACK] Hash error:", hashError);
+            if (isMounted) setErrorMsg(decodeURIComponent(hashError));
+            return;
+          }
+
+          if (accessToken && refreshToken) {
+            console.log("[AUTH CALLBACK] Found tokens in hash fragment, setting session...");
+            const { data, error: setSessionErr } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+
+            if (!setSessionErr && data.session) {
+              console.log("[AUTH CALLBACK] ✅ Hash session established successfully!");
+              if (isMounted) router.replace("/apply");
+              return;
+            }
+          }
+        }
+
+        // 2. Parse Query Search Parameters (PKCE OAuth flow: ?code=... or ?error=...)
         const searchParams = new URLSearchParams(window.location.search);
         const urlError = searchParams.get("error");
         const urlErrorDesc = searchParams.get("error_description");
         const code = searchParams.get("code");
 
         if (urlError) {
-          console.error("[AUTH CALLBACK] OAuth Error from provider:", urlError, urlErrorDesc);
-          if (isMounted) setErrorMsg(urlErrorDesc || urlError || "Discord authentication was rejected.");
+          console.error("[AUTH CALLBACK] URL error parameter:", urlError, urlErrorDesc);
+          if (isMounted) setErrorMsg(urlErrorDesc || urlError || "Discord authorization was not completed.");
           return;
         }
 
-        // 2. If code is present in query params, explicitly exchange it for a session (PKCE)
         if (code) {
           console.log("[AUTH CALLBACK] Exchanging authorization code for session...");
-          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          if (exchangeError) {
-            console.warn("[AUTH CALLBACK] exchangeCodeForSession warning:", exchangeError.message);
-            // Check if session was already auto-established by detectSessionInUrl
-            const { data: currentSess } = await supabase.auth.getSession();
-            if (currentSess?.session) {
-              if (isMounted) router.replace("/apply");
-              return;
-            }
-          } else if (data?.session) {
-            console.log("[AUTH CALLBACK] ✅ Session successfully established from code!");
+          const { data, error: exchangeErr } = await supabase.auth.exchangeCodeForSession(code);
+          if (!exchangeErr && data?.session) {
+            console.log("[AUTH CALLBACK] ✅ Code exchanged for session successfully!");
             if (isMounted) router.replace("/apply");
             return;
+          } else if (exchangeErr) {
+            console.warn("[AUTH CALLBACK] Code exchange warning:", exchangeErr.message);
           }
         }
 
-        // 3. Check for existing active session in client storage
-        const { data: sessData, error: sessErr } = await supabase.auth.getSession();
-        if (sessData?.session) {
-          console.log("[AUTH CALLBACK] ✅ Existing session found, redirecting to /apply");
+        // 3. Check existing active session from client storage
+        const { data: currentSess } = await supabase.auth.getSession();
+        if (currentSess?.session) {
+          console.log("[AUTH CALLBACK] ✅ Active session verified, routing to /apply");
           if (isMounted) router.replace("/apply");
           return;
         }
 
-        // 4. Listen for auth state change (e.g. SIGNED_IN or INITIAL_SESSION)
+        // 4. Listen for auth state change
         const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-          console.log("[AUTH CALLBACK] Auth state change event:", event, Boolean(session));
+          console.log("[AUTH CALLBACK] Auth state changed:", event, Boolean(session));
           if (session && isMounted) {
             authListener.subscription.unsubscribe();
             router.replace("/apply");
           }
         });
 
-        // 5. Fallback safety timer (10 seconds) with explicit button instead of premature force-redirect
-        const timer = setTimeout(() => {
+        // 5. Safety fallback timer (10 seconds)
+        const timer = setTimeout(async () => {
           if (isMounted) {
-            supabase.auth.getSession().then(({ data: finalData }) => {
-              if (finalData?.session) {
-                router.replace("/apply");
-              } else {
-                setErrorMsg("Authentication session could not be confirmed. Please try logging in again.");
-              }
-            });
+            const { data: finalSess } = await supabase.auth.getSession();
+            if (finalSess?.session) {
+              router.replace("/apply");
+            } else {
+              setErrorMsg("Discord session could not be established. Please click the button below to sign in again.");
+            }
           }
-        }, 8000);
+        }, 10000);
 
         return () => {
           clearTimeout(timer);
           authListener?.subscription.unsubscribe();
         };
       } catch (err: any) {
-        console.error("[AUTH CALLBACK ERROR]", err);
-        if (isMounted) setErrorMsg(err?.message || "Authentication process failed.");
+        console.error("[AUTH CALLBACK EXCEPTION]", err);
+        if (isMounted) setErrorMsg(err?.message || "Unexpected authentication error occurred.");
       }
     };
 
-    handleCallback();
+    processAuth();
 
     return () => {
       isMounted = false;
@@ -96,23 +118,28 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#06080C] text-white px-4">
-      <div className="glass-panel p-8 rounded-2xl border border-cyan-500/30 max-w-md w-full text-center space-y-4 shadow-[0_0_50px_rgba(0,240,255,0.15)]">
+      <div className="glass-panel p-8 rounded-3xl border border-cyan-500/30 max-w-md w-full text-center space-y-5 shadow-[0_0_50px_rgba(0,240,255,0.15)]">
         {errorMsg ? (
-          <div className="space-y-3">
-            <div className="text-red-400 font-bold text-lg">Authentication Failed</div>
-            <p className="text-xs text-slate-400">{errorMsg}</p>
-            <div className="flex items-center justify-center gap-3 pt-2">
+          <div className="space-y-4">
+            <div className="p-3 w-fit rounded-2xl bg-red-950/60 border border-red-500/40 text-red-400 mx-auto">
+              <AlertCircle className="w-8 h-8" />
+            </div>
+            <h2 className="text-xl font-bold text-white font-heading tracking-wide">
+              Authentication Notice
+            </h2>
+            <p className="text-xs text-slate-400 leading-relaxed">{errorMsg}</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <button
                 onClick={() => router.replace("/")}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg transition-all"
+                className="w-full sm:w-auto px-4 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-xl transition-all"
               >
                 Back to Home
               </button>
               <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold rounded-lg transition-all"
+                onClick={() => loginWithDiscord()}
+                className="w-full sm:w-auto px-5 py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(88,101,242,0.4)]"
               >
-                Retry
+                Sign In with Discord
               </button>
             </div>
           </div>
