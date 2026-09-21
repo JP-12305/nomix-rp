@@ -60,6 +60,12 @@ function AdminDashboardContent() {
 
   useEffect(() => {
     fetchApplications();
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        fetchApplications();
+      }
+    }, 10000);
+    return () => clearInterval(interval);
   }, [activeStatusFilter, searchQuery]);
 
   useEffect(() => {
@@ -139,13 +145,14 @@ function AdminDashboardContent() {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchApplications}
-            className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-cyan-500/40 transition-all"
-            title="Refresh applications"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 hover:text-white hover:border-cyan-400 text-xs font-bold transition-all shadow-md"
+            title="Refresh applications queue"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-cyan-400" : ""}`} />
+            <span>Refresh Queue</span>
           </button>
-          <div className="px-3 py-1.5 rounded-lg bg-surface-card border border-slate-800 text-xs font-mono text-cyan-300">
-            SYNC: SUPABASE POSTGRESQL
+          <div className="px-3 py-1.5 rounded-lg bg-surface-card border border-slate-800 text-xs font-mono text-cyan-300 hidden sm:block">
+            LIVE SYNC
           </div>
         </div>
       </div>

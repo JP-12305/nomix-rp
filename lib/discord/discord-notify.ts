@@ -119,13 +119,13 @@ export async function sendDiscordApprovalEmbed(app: {
           {
             type: 2,
             style: 5,
-            label: "🚀 Connect to FiveM City",
-            url: connectUrl,
+            label: "🌐 View Citizen Visa Status",
+            url: `${siteUrl}/status`,
           },
           {
             type: 2,
             style: 5,
-            label: "🌐 Server Rules & Guidelines",
+            label: "📖 Server Rules & Guidelines",
             url: `${siteUrl}/rules`,
           },
         ],
@@ -252,7 +252,11 @@ export async function assignDiscordCitizenRole(guildId: string, discordUserId: s
       console.log(`[DISCORD ROLE] ✅ Assigned citizen role ${roleId} to user ${discordUserId}`);
     } else {
       const errText = await res.text();
-      console.warn(`[DISCORD ROLE] ⚠️ Role assign warning (${res.status}):`, errText);
+      if (res.status === 403) {
+        console.warn(`[DISCORD ROLE] ⚠️ 403 Missing Permissions: Please open Discord Server Settings -> Roles, and drag the "NOMIX RP" bot role ABOVE the Citizen role.`);
+      } else {
+        console.warn(`[DISCORD ROLE] ⚠️ Role assign warning (${res.status}):`, errText);
+      }
     }
   } catch (err) {
     console.error("[DISCORD ROLE ERROR]", err);
