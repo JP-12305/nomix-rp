@@ -10,7 +10,6 @@ import {
   Home, 
   Briefcase, 
   Phone, 
-  Sparkles, 
   ArrowRight,
   Layers,
   Cpu,
@@ -97,10 +96,6 @@ export default function FeaturesPage() {
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>SERVER SYSTEMS & CAPABILITIES</span>
-        </div>
         <h1 className="font-heading font-black text-4xl sm:text-5xl text-metallic">
           NEXT-GEN FIVEM FEATURES
         </h1>
@@ -110,12 +105,12 @@ export default function FeaturesPage() {
       </div>
 
       {/* Category Tabs */}
-      <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2.5">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wider transition-all ${
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold tracking-wider transition-all ${
               activeCategory === cat.id
                 ? "bg-cyan-500 text-black shadow-neon-cyan font-bold"
                 : "bg-surface-card border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700"
@@ -133,18 +128,18 @@ export default function FeaturesPage() {
           return (
             <div
               key={idx}
-              className="glass-panel p-7 rounded-2xl border border-white/5 hover:border-cyan-500/40 transition-all group flex flex-col justify-between"
+              className="glass-panel p-6 sm:p-7 rounded-2xl border border-white/10 hover:border-cyan-500/50 transition-all group flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 group-hover:border-cyan-500/60">
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex flex-wrap gap-1.5 justify-end">
                     {item.tags.map((t, i) => (
                       <span
                         key={i}
-                        className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-900 border border-slate-800 text-slate-400"
+                        className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-900 border border-slate-800 text-slate-400"
                       >
                         {t}
                       </span>
@@ -152,15 +147,15 @@ export default function FeaturesPage() {
                   </div>
                 </div>
 
-                <h3 className="font-heading font-bold text-lg text-white group-hover:text-cyan-300 transition-colors mb-2">
+                <h3 className="font-heading font-bold text-lg sm:text-xl text-white group-hover:text-cyan-300 transition-colors mb-2">
                   {item.title}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   {item.description}
                 </p>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-slate-800/60 text-[10px] text-cyan-400 font-mono flex items-center justify-between">
+              <div className="mt-5 pt-3 border-t border-slate-800/80 text-[11px] text-cyan-400 font-mono flex items-center justify-between">
                 <span>CUSTOM ENGINE</span>
                 <span>● FULLY INTEGRATED</span>
               </div>
@@ -173,7 +168,7 @@ export default function FeaturesPage() {
       <div className="text-center pt-8">
         <Link
           href="/apply"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all"
+          className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all"
         >
           EXPERIENCE THESE FEATURES IN-GAME <ArrowRight className="w-4 h-4" />
         </Link>

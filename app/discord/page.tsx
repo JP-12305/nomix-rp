@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Users, MessageSquare, Shield, Bell, ExternalLink, ShieldCheck, Activity } from "lucide-react";
+import { Users, Shield, Bell, ExternalLink, ShieldCheck, Activity } from "lucide-react";
 
 interface DiscordStats {
   total_members: number;
@@ -65,14 +65,10 @@ export default function DiscordPage() {
 
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5865F2]/20 border border-[#5865F2]/40 text-xs font-mono text-[#5865F2]">
-          <MessageSquare className="w-3.5 h-3.5" />
-          <span>OFFICIAL COMMUNITY DISCORD</span>
-        </div>
         <h1 className="font-heading font-black text-4xl sm:text-5xl text-metallic">
           JOIN THE NOMIX COMMUNITY
         </h1>
-        <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+        <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
           The NOMIX Discord server is the central hub for server announcements, department recruitment, ticket support, and automated visa approvals.
         </p>
       </div>
@@ -81,9 +77,9 @@ export default function DiscordPage() {
       <div className="glass-panel rounded-3xl p-8 sm:p-12 border border-[#5865F2]/30 bg-gradient-to-b from-[#5865F2]/10 to-transparent text-center space-y-8 shadow-2xl relative overflow-hidden">
         
         {/* Live Sync Badge */}
-        <div className="absolute top-6 right-6 text-[10px] font-mono px-3 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 flex items-center gap-1.5 shadow-md">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-emerald-400 font-semibold">LIVE DISCORD SYNC</span>
+        <div className="absolute top-6 right-6 text-xs font-mono px-3.5 py-1.5 rounded-full bg-slate-900/95 border border-slate-800 text-slate-200 flex items-center gap-2 shadow-md">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+          <span className="text-emerald-400 font-bold">LIVE DISCORD SYNC</span>
         </div>
 
         <div className="relative w-24 h-24 mx-auto">
@@ -95,11 +91,11 @@ export default function DiscordPage() {
           />
         </div>
 
-        <div className="space-y-2">
-          <h2 className="font-heading font-black text-3xl text-white">
+        <div className="space-y-3">
+          <h2 className="font-heading font-black text-3xl sm:text-4xl text-white">
             {stats.guild_name || "NOMIX Roleplay"}
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">
             Automated Visa Notifications • 24/7 Staff Support • Faction Hubs
           </p>
         </div>
@@ -107,80 +103,80 @@ export default function DiscordPage() {
         {/* Real-Time Discord Statistics */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto">
           {/* Total Members */}
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-center">
-            <div className="font-mono font-black text-3xl text-emerald-400">
+          <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col justify-center">
+            <div className="font-mono font-black text-2xl sm:text-3xl text-emerald-400">
               {stats.total_members.toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider mt-1">
+            <div className="text-xs text-slate-300 uppercase font-semibold tracking-wider mt-1.5">
               Total Members
             </div>
           </div>
 
           {/* Online Members */}
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-center">
-            <div className="font-mono font-black text-3xl text-[#5865F2] flex items-center justify-center gap-1.5">
+          <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col justify-center">
+            <div className="font-mono font-black text-2xl sm:text-3xl text-[#5865F2] flex items-center justify-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
               {stats.online_members.toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider mt-1">
+            <div className="text-xs text-slate-300 uppercase font-semibold tracking-wider mt-1.5">
               Online Now
             </div>
           </div>
 
           {/* Support */}
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-center">
-            <div className="font-mono font-black text-3xl text-cyan-400">
+          <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col justify-center">
+            <div className="font-mono font-black text-2xl sm:text-3xl text-cyan-400">
               &lt; 15m
             </div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider mt-1">
+            <div className="text-xs text-slate-300 uppercase font-semibold tracking-wider mt-1.5">
               Support Response
             </div>
           </div>
         </div>
 
         {/* Join CTA */}
-        <div className="pt-2">
+        <div className="pt-3">
           <a
             href={stats.invite_url || "https://discord.gg/zDZNZT2RKq"}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-black text-sm tracking-wider transition-all transform hover:-translate-y-1 shadow-[0_0_25px_rgba(88,101,242,0.4)]"
+            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-black text-sm tracking-wider transition-all transform hover:-translate-y-1 shadow-[0_0_25px_rgba(88,101,242,0.4)]"
           >
-            <Users className="w-4 h-4" />
+            <Users className="w-5 h-5" />
             CONNECT TO DISCORD GUILD
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-5 h-5" />
           </a>
         </div>
       </div>
 
       {/* Guidelines Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-          <div className="p-2.5 w-fit rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-cyan-400">
-            <Bell className="w-5 h-5" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div className="glass-panel p-7 sm:p-8 rounded-2xl border border-white/10 space-y-3">
+          <div className="p-3 w-fit rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400">
+            <Bell className="w-6 h-6" />
           </div>
-          <h3 className="font-heading font-bold text-lg text-white">Live Visa Alerts</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <h3 className="font-heading font-bold text-lg sm:text-xl text-white">Live Visa Alerts</h3>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             Receive automated real-time mentions when your application is approved or requires clarification.
           </p>
         </div>
 
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-          <div className="p-2.5 w-fit rounded-lg bg-red-950/40 border border-red-500/30 text-red-400">
-            <Shield className="w-5 h-5" />
+        <div className="glass-panel p-7 sm:p-8 rounded-2xl border border-white/10 space-y-3">
+          <div className="p-3 w-fit rounded-xl bg-red-950/40 border border-red-500/30 text-red-400">
+            <Shield className="w-6 h-6" />
           </div>
-          <h3 className="font-heading font-bold text-lg text-white">24/7 Player Tickets</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <h3 className="font-heading font-bold text-lg sm:text-xl text-white">24/7 Player Tickets</h3>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             Report rulebreaks, request player compensation, or seek technical assistance directly from staff.
           </p>
         </div>
 
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-          <div className="p-2.5 w-fit rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-400">
-            <Users className="w-5 h-5" />
+        <div className="glass-panel p-7 sm:p-8 rounded-2xl border border-white/10 space-y-3">
+          <div className="p-3 w-fit rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400">
+            <Users className="w-6 h-6" />
           </div>
-          <h3 className="font-heading font-bold text-lg text-white">Department Recruitment</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <h3 className="font-heading font-bold text-lg sm:text-xl text-white">Department Recruitment</h3>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             Apply for LSPD, SASP, San Andreas EMS, DOJ, and approved gang organization rosters.
           </p>
         </div>

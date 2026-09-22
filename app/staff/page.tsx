@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Shield, Sparkles, Crown, Terminal, MessageSquare } from "lucide-react";
+import { Shield, Terminal, MessageSquare } from "lucide-react";
 
 const STAFF_ROSTER = [
   {
@@ -40,40 +40,36 @@ export default function StaffPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400">
-          <Crown className="w-3.5 h-3.5" />
-          <span>MANAGEMENT & RECRUITMENT</span>
-        </div>
         <h1 className="font-heading font-black text-4xl sm:text-5xl text-metallic">
           NOMIX STAFF & LEADERSHIP
         </h1>
-        <p className="text-slate-300 text-sm sm:text-base">
+        <p className="text-slate-300 text-xs sm:text-sm">
           Our team is committed to fair enforcement, transparent recruitment, and providing a stable platform.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
         {STAFF_ROSTER.map((staff, i) => (
           <div
             key={i}
-            className="glass-panel rounded-2xl p-6 border border-white/5 hover:border-cyan-500/40 transition-all text-center flex flex-col items-center justify-between"
+            className="glass-panel rounded-2xl p-6 sm:p-7 border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col items-center justify-between"
           >
-            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-cyan-500/40 mb-4">
+            <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-cyan-500/40 mb-5 shadow-lg">
               <Image src={staff.avatar} alt={staff.name} fill className="object-cover" />
             </div>
 
             <div>
-              <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${staff.badgeColor} mb-2 inline-block`}>
+              <span className={`px-3 py-1 rounded text-xs font-mono font-bold uppercase border ${staff.badgeColor} mb-2.5 inline-block`}>
                 {staff.division}
               </span>
-              <h3 className="font-heading font-bold text-lg text-white mb-1">
+              <h3 className="font-heading font-bold text-lg sm:text-xl text-white mb-1.5">
                 {staff.name}
               </h3>
-              <p className="text-xs text-slate-400">{staff.role}</p>
+              <p className="text-xs sm:text-sm text-slate-300 leading-snug">{staff.role}</p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-900 w-full text-[11px] text-slate-500 flex items-center justify-center gap-1">
-              <Shield className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="mt-6 pt-4 border-t border-slate-800/80 w-full text-xs font-semibold text-slate-400 flex items-center justify-center gap-1.5">
+              <Shield className="w-4 h-4 text-cyan-400" />
               <span>Verified Staff</span>
             </div>
           </div>

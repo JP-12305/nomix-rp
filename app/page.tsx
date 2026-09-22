@@ -123,7 +123,7 @@ export default function HomePage() {
           </h1>
 
           {/* Subheading */}
-          <p className="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed mb-10">
+          <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed mb-10">
             Immerse yourself in a living, breathing cyber-urban metropolis. Build criminal empires, enforce the law, run player-driven businesses, and forge lasting stories in Los Santos.
           </p>
 
@@ -149,20 +149,20 @@ export default function HomePage() {
           {/* Key Stat Badges */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 pt-8 border-t border-slate-900 w-full max-w-4xl">
             <div className="text-center p-3">
-              <div className="font-mono font-black text-2xl text-cyan-400">200</div>
-              <div className="text-[11px] text-slate-400 font-semibold tracking-wider uppercase">Max Slots</div>
+              <div className="font-mono font-black text-2xl sm:text-3xl text-cyan-400">200</div>
+              <div className="text-xs sm:text-sm text-slate-300 font-semibold tracking-wider uppercase">Max Slots</div>
             </div>
             <div className="text-center p-3">
-              <div className="font-mono font-black text-2xl text-emerald-400">&lt; 35ms</div>
-              <div className="text-[11px] text-slate-400 font-semibold tracking-wider uppercase">Average Ping</div>
+              <div className="font-mono font-black text-2xl sm:text-3xl text-emerald-400">&lt; 35ms</div>
+              <div className="text-xs sm:text-sm text-slate-300 font-semibold tracking-wider uppercase">Average Ping</div>
             </div>
             <div className="text-center p-3">
-              <div className="font-mono font-black text-2xl text-white">100%</div>
-              <div className="text-[11px] text-slate-400 font-semibold tracking-wider uppercase">Custom Framework</div>
+              <div className="font-mono font-black text-2xl sm:text-3xl text-white">100%</div>
+              <div className="text-xs sm:text-sm text-slate-300 font-semibold tracking-wider uppercase">Custom Framework</div>
             </div>
             <div className="text-center p-3">
-              <div className="font-mono font-black text-2xl text-red-400">18+</div>
-              <div className="text-[11px] text-slate-400 font-semibold tracking-wider uppercase">Strict Whitelist</div>
+              <div className="font-mono font-black text-2xl sm:text-3xl text-red-400">18+</div>
+              <div className="text-xs sm:text-sm text-slate-300 font-semibold tracking-wider uppercase">Strict Whitelist</div>
             </div>
           </div>
 
@@ -174,7 +174,7 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section id="server-status" className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full scroll-mt-28">
         <div className="text-center mb-8">
-          <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 block mb-1">
+          <span className="text-xs sm:text-sm font-mono uppercase tracking-widest text-cyan-400 block mb-1">
             Real-Time Network Telemetry
           </span>
           <h2 className="font-heading font-black text-2xl sm:text-3xl text-white">
@@ -190,50 +190,50 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 block mb-2">
+          <span className="text-xs sm:text-sm font-mono uppercase tracking-widest text-cyan-400 block mb-2">
             The NOMIX Standard
           </span>
           <h2 className="font-heading font-black text-3xl sm:text-4xl text-metallic mb-4">
             WHY PLAY ON NOMIX ROLEPLAY?
           </h2>
-          <p className="text-slate-400 text-sm leading-relaxed">
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
             We prioritize deep character storytelling, balanced mechanics, and active community moderation over chaotic arcade gameplay.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="glass-panel p-8 rounded-2xl border border-white/5 space-y-4 hover:border-cyan-500/40 transition-all">
-            <div className="p-3 w-fit rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400">
-              <Shield className="w-6 h-6" />
+          <div className="glass-panel p-8 sm:p-9 rounded-2xl border border-white/5 space-y-4 hover:border-cyan-500/40 transition-all">
+            <div className="p-3.5 w-fit rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400">
+              <Shield className="w-7 h-7" />
             </div>
-            <h3 className="font-heading font-bold text-xl text-white">
+            <h3 className="font-heading font-bold text-xl sm:text-2xl text-white">
               Strict Quality & Anti-Toxicity
             </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Every applicant undergoes a thorough review. Rules like NVL, RDM, VDM, and metagaming are vigorously enforced by active administrators.
             </p>
           </div>
 
-          <div className="glass-panel p-8 rounded-2xl border border-white/5 space-y-4 hover:border-red-500/40 transition-all">
-            <div className="p-3 w-fit rounded-xl bg-red-950/40 border border-red-500/30 text-red-400">
-              <Zap className="w-6 h-6" />
+          <div className="glass-panel p-8 sm:p-9 rounded-2xl border border-white/5 space-y-4 hover:border-red-500/40 transition-all">
+            <div className="p-3.5 w-fit rounded-xl bg-red-950/40 border border-red-500/30 text-red-400">
+              <Zap className="w-7 h-7" />
             </div>
-            <h3 className="font-heading font-bold text-xl text-white">
+            <h3 className="font-heading font-bold text-xl sm:text-2xl text-white">
               Dynamic Real-Time Economy
             </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Clean and dirty money laundering, fluctuating market trade, player-owned storefronts, vehicle depreciation, and multi-tier heist payouts.
             </p>
           </div>
 
-          <div className="glass-panel p-8 rounded-2xl border border-white/5 space-y-4 hover:border-emerald-500/40 transition-all">
-            <div className="p-3 w-fit rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400">
-              <Users className="w-6 h-6" />
+          <div className="glass-panel p-8 sm:p-9 rounded-2xl border border-white/5 space-y-4 hover:border-emerald-500/40 transition-all">
+            <div className="p-3.5 w-fit rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400">
+              <Users className="w-7 h-7" />
             </div>
-            <h3 className="font-heading font-bold text-xl text-white">
+            <h3 className="font-heading font-bold text-xl sm:text-2xl text-white">
               Discord Bot Ecosystem
             </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Automated visa submission, interactive staff review buttons, instant Discord citizen role granting, and transparent status tracking.
             </p>
           </div>
@@ -318,13 +318,13 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 block mb-2">
+          <span className="text-xs sm:text-sm font-mono uppercase tracking-widest text-cyan-400 block mb-2">
             Whitelisted Factions
           </span>
           <h2 className="font-heading font-black text-3xl sm:text-4xl text-metallic mb-4">
             CHOOSE YOUR CAREER PATH
           </h2>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
             Whether you uphold justice, save lives on trauma helicopters, or rule the underground, your story shapes the city.
           </p>
         </div>
@@ -371,16 +371,16 @@ export default function HomePage() {
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 block mb-1">
+            <span className="text-xs sm:text-sm font-mono uppercase tracking-widest text-cyan-400 block mb-1">
               Transmissions & Changelogs
             </span>
-            <h2 className="font-heading font-black text-3xl text-white">
+            <h2 className="font-heading font-black text-3xl sm:text-4xl text-white">
               LATEST ANNOUNCEMENTS
             </h2>
           </div>
           <Link
             href="/news"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm sm:text-base font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
           >
             View All Updates <ArrowRight className="w-4 h-4" />
           </Link>
@@ -402,7 +402,7 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/40 to-transparent" />
                 <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-black/70 border border-white/10 text-cyan-400">
+                  <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-black/70 border border-white/10 text-cyan-400">
                     {article.category?.name || "Update"}
                   </span>
                 </div>
@@ -410,19 +410,19 @@ export default function HomePage() {
 
               <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-[10px] text-slate-500 mb-2">
-                    <Clock className="w-3 h-3 text-cyan-400" />
+                  <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                    <Clock className="w-3.5 h-3.5 text-cyan-400" />
                     <span>{formatDate(article.published_at)}</span>
                   </div>
-                  <h3 className="font-heading font-bold text-base text-white group-hover:text-cyan-300 transition-colors line-clamp-2 mb-2">
+                  <h3 className="font-heading font-bold text-lg text-white group-hover:text-cyan-300 transition-colors line-clamp-2 mb-2">
                     {article.title}
                   </h3>
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
                     {article.excerpt}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs text-cyan-400 font-semibold">
+                <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs sm:text-sm text-cyan-400 font-semibold">
                   <span>Read Article</span>
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -438,21 +438,21 @@ export default function HomePage() {
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="glass-panel rounded-2xl p-8 sm:p-10 border border-slate-800/80 bg-gradient-to-r from-slate-950 via-[#0B0F17] to-cyan-950/20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-3 max-w-2xl">
-            <span className="text-xs font-mono uppercase tracking-wider text-amber-400 flex items-center gap-1.5 font-bold">
+            <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-amber-400 flex items-center gap-1.5 font-bold">
               <Shield className="w-4 h-4 text-amber-400" />
               COMMUNITY DIRECTIVE
             </span>
             <h3 className="font-heading font-bold text-2xl sm:text-3xl text-white">
               Familiarize Yourself with City Laws
             </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               We require all applicants to review our rules on Value of Life, Random Deathmatch, and Metagaming prior to submitting a visa application.
             </p>
           </div>
 
           <Link
             href="/rules"
-            className="flex-shrink-0 px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-white font-heading font-bold text-xs tracking-wider transition-all flex items-center gap-2 group"
+            className="flex-shrink-0 px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-white font-heading font-bold text-sm tracking-wider transition-all flex items-center gap-2 group"
           >
             <span>VIEW COMPLETE RULEBOOK</span>
             <ArrowRight className="w-4 h-4 text-cyan-400 group-hover:translate-x-1 transition-transform" />

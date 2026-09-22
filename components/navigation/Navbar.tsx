@@ -9,13 +9,9 @@ import {
   Menu, 
   X, 
   ChevronDown, 
-  User, 
   FileText, 
   ShieldAlert, 
   LogOut, 
-  Radio, 
-  ExternalLink,
-  Sparkles,
   Users
 } from "lucide-react";
 import { ServerStatusData } from "@/types";
@@ -85,12 +81,12 @@ export default function Navbar() {
           : "bg-transparent border-b border-white/5"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 gap-4 w-full">
           
-          {/* Brand Logo & Name */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+          {/* Left Area: Brand Logo & Name */}
+          <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
               <Image
                 src="/logo/logo.png"
                 alt="NOMIX Roleplay Logo"
@@ -100,24 +96,24 @@ export default function Navbar() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-heading font-black text-xl tracking-wider text-metallic group-hover:text-cyan-400 transition-colors">
+              <span className="font-heading font-black text-lg sm:text-xl tracking-wider text-metallic group-hover:text-cyan-400 transition-colors leading-none">
                 NOMIX<span className="text-cyan-400">RP</span>
               </span>
-              <span className="text-[10px] tracking-[0.25em] text-slate-400 uppercase font-semibold">
+              <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-slate-400 uppercase font-semibold mt-0.5">
                 FiveM Community
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-1">
+          {/* Center Area: Desktop Navigation Links (Balanced Equal Spacing) */}
+          <nav className="hidden xl:flex items-center gap-1 2xl:gap-1.5 mx-auto flex-shrink-0">
             {NAV_LINKS.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-3 py-1.5 text-xs font-semibold tracking-wider transition-colors duration-150 rounded-lg relative group border outline-none focus:outline-none focus-visible:outline-none focus:ring-0 select-none ${
+                  className={`px-2.5 2xl:px-3 py-1.5 text-xs font-bold tracking-wider transition-colors duration-150 rounded-lg relative group border outline-none focus:outline-none focus-visible:outline-none focus:ring-0 select-none whitespace-nowrap ${
                     isActive
                       ? "text-cyan-300 bg-cyan-950/40 border-cyan-500/40 shadow-[0_0_12px_rgba(0,240,255,0.15)]"
                       : "text-slate-300 hover:text-white hover:bg-white/5 border-transparent hover:border-slate-800/80"
@@ -132,28 +128,28 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right Action Area */}
-          <div className="hidden lg:flex items-center gap-4">
+          {/* Right Area: Status, Profile & Action CTA */}
+          <div className="flex items-center justify-end gap-2.5 sm:gap-3 flex-shrink-0">
             {/* Live Server Status Pill */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/80 border border-slate-800 text-xs text-slate-300">
+            <div className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/80 border border-slate-800 text-xs text-slate-300 whitespace-nowrap flex-shrink-0">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
               </span>
-              <span className="font-mono text-emerald-400 font-semibold">
+              <span className="font-mono text-emerald-400 font-bold">
                 {serverStatus ? `${serverStatus.players}/${serverStatus.max_players}` : "142/200"}
               </span>
-              <span className="text-slate-500">PLAYERS</span>
+              <span className="text-slate-400 font-semibold text-[10px]">PLAYERS</span>
             </div>
 
             {/* User Profile / Discord Auth */}
             {user ? (
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2.5 p-1.5 pr-3 rounded-lg bg-surface-card border border-slate-800 hover:border-cyan-500/40 transition-all text-left"
+                  className="flex items-center gap-2 p-1.5 pr-2.5 rounded-xl bg-surface-card border border-slate-800 hover:border-cyan-500/40 transition-all text-left whitespace-nowrap"
                 >
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-cyan-500/50">
+                  <div className="relative w-7 h-7 rounded-full overflow-hidden border border-cyan-500/50 flex-shrink-0">
                     <Image
                       src={user.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"}
                       alt={user.username}
@@ -162,22 +158,22 @@ export default function Navbar() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-white truncate max-w-[100px]">
+                    <span className="text-xs font-semibold text-white truncate max-w-[95px] leading-tight">
                       {user.display_name || user.username}
                     </span>
-                    <span className={`text-[10px] uppercase font-bold tracking-wider ${
+                    <span className={`text-[9px] uppercase font-bold tracking-wider leading-none mt-0.5 ${
                       user.role === "admin" ? "text-red-400" : user.role === "staff" ? "text-cyan-400" : "text-slate-400"
                     }`}>
                       {user.role}
                     </span>
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
                 </button>
 
                 {/* Dropdown Menu */}
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 glass-panel rounded-xl py-2 shadow-2xl border border-cyan-500/30 z-50">
-                    <div className="px-4 py-2 border-b border-slate-800 text-xs text-slate-400">
+                    <div className="px-4 py-2 border-b border-slate-800 text-xs text-slate-300">
                       Signed in as <strong className="text-white block truncate">{user.username}</strong>
                     </div>
 
@@ -202,7 +198,7 @@ export default function Navbar() {
                     <div className="border-t border-slate-800 pt-1 mt-1">
                       <button
                         onClick={logout}
-                        className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="flex items-center gap-2.5 w-full text-left px-4 py-1.5 text-xs text-red-400 hover:bg-red-500/10 transition-colors font-medium"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out
@@ -214,38 +210,38 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={loginWithDiscord}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs font-bold tracking-wider transition-all shadow-[0_0_15px_rgba(88,101,242,0.3)]"
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs font-bold tracking-wider transition-all shadow-[0_0_12px_rgba(88,101,242,0.3)] whitespace-nowrap flex-shrink-0"
               >
-                <Users className="w-4 h-4" />
-                LOGIN WITH DISCORD
+                <Users className="w-3.5 h-3.5" />
+                <span>LOGIN WITH DISCORD</span>
               </button>
             )}
 
             {/* Fast Apply CTA Button */}
             <Link
               href="/apply"
-              className="relative group px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider transition-all hover:shadow-neon-cyan hover:scale-[1.02]"
+              className="hidden sm:flex relative group px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider transition-all hover:shadow-neon-cyan hover:scale-[1.02] whitespace-nowrap flex-shrink-0"
             >
               APPLY FOR VISA
             </Link>
-          </div>
 
-          {/* Mobile Hamburger Menu Toggle */}
-          <div className="flex lg:hidden items-center gap-3">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
-              aria-label="Toggle Navigation Menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {/* Mobile Hamburger Menu Toggle */}
+            <div className="flex xl:hidden items-center">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
+                aria-label="Toggle Navigation Menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Mobile Animated Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden glass-panel border-b border-cyan-500/30 px-4 pt-2 pb-6 space-y-3">
+        <div className="xl:hidden glass-panel border-b border-cyan-500/30 px-4 pt-2 pb-6 space-y-3">
           <nav className="grid grid-cols-2 gap-2">
             {NAV_LINKS.map((link) => (
               <Link
@@ -276,12 +272,12 @@ export default function Navbar() {
                   </div>
                   <div className="text-xs">
                     <div className="font-bold text-white">{user.username}</div>
-                    <div className="text-cyan-400 capitalize">{user.role}</div>
+                    <div className="text-cyan-400 capitalize text-[10px] font-semibold">{user.role}</div>
                   </div>
                 </div>
                 <button
                   onClick={logout}
-                  className="text-xs text-red-400 hover:underline flex items-center gap-1"
+                  className="text-xs text-red-400 hover:underline flex items-center gap-1 font-medium"
                 >
                   <LogOut className="w-3.5 h-3.5" /> Logout
                 </button>
@@ -289,7 +285,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={loginWithDiscord}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#5865F2] text-white text-xs font-bold"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#5865F2] text-white text-xs font-bold"
               >
                 LOGIN WITH DISCORD
               </button>
@@ -297,7 +293,7 @@ export default function Navbar() {
 
             <Link
               href="/apply"
-              className="w-full text-center py-2.5 rounded-lg bg-cyan-400 text-black font-heading font-black text-xs tracking-wider"
+              className="w-full text-center py-2.5 rounded-xl bg-cyan-400 text-black font-heading font-black text-xs tracking-wider"
             >
               APPLY FOR VISA
             </Link>

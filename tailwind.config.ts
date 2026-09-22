@@ -37,6 +37,20 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-rajdhani)", "var(--font-inter)", "sans-serif"],
         heading: ["var(--font-orbitron)", "var(--font-rajdhani)", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
+      },
+      fontSize: {
+        "2xs": ["0.6875rem", { lineHeight: "0.95rem" }],    // 11px
+        "xs": ["0.75rem", { lineHeight: "1.125rem" }],       // 12px
+        "sm": ["0.8125rem", { lineHeight: "1.25rem" }],      // 13px
+        "base": ["0.875rem", { lineHeight: "1.375rem" }],    // 14px
+        "lg": ["1rem", { lineHeight: "1.5rem" }],            // 16px
+        "xl": ["1.125rem", { lineHeight: "1.6rem" }],        // 18px
+        "2xl": ["1.375rem", { lineHeight: "1.85rem" }],      // 22px
+        "3xl": ["1.75rem", { lineHeight: "2.1rem" }],        // 28px
+        "4xl": ["2.125rem", { lineHeight: "2.4rem" }],       // 34px
+        "5xl": ["2.75rem", { lineHeight: "1.15" }],          // 44px
+        "6xl": ["3.5rem", { lineHeight: "1.1" }],            // 56px
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

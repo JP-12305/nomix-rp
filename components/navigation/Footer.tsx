@@ -27,27 +27,27 @@ export default function Footer() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-heading font-black text-2xl tracking-wider text-metallic">
+                <span className="font-heading font-black text-2xl sm:text-3xl tracking-wider text-metallic">
                   NOMIX<span className="text-cyan-400">RP</span>
                 </span>
-                <span className="text-[10px] tracking-[0.25em] text-slate-400 uppercase font-semibold">
+                <span className="text-xs tracking-[0.2em] text-slate-400 uppercase font-semibold">
                   FiveM Roleplay Ecosystem
                 </span>
               </div>
             </Link>
             
-            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm">
               YOUR CITY. YOUR STORY. YOUR LEGACY. A premier FiveM roleplay experience built on custom economy mechanics, law enforcement realism, high-tier criminal progression, and living stories.
             </p>
 
           </div>
 
           {/* Col 3: Quick Navigation */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-heading font-bold text-cyan-300 tracking-wider uppercase">
+          <div className="space-y-4">
+            <h3 className="text-sm font-heading font-bold text-cyan-300 tracking-wider uppercase">
               Navigation
             </h3>
-            <ul className="space-y-2 text-xs text-slate-400">
+            <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
                 <Link href="/" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
                   Home
@@ -77,11 +77,11 @@ export default function Footer() {
           </div>
 
           {/* Col 4: Visa & Guidelines */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-heading font-bold text-cyan-300 tracking-wider uppercase">
+          <div className="space-y-4">
+            <h3 className="text-sm font-heading font-bold text-cyan-300 tracking-wider uppercase">
               Visa & Rules
             </h3>
-            <ul className="space-y-2 text-xs text-slate-400">
+            <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
                 <Link href="/rules" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
                   Server Rules & Regulations
@@ -89,7 +89,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/apply" className="hover:text-cyan-400 transition-colors flex items-center gap-1 text-cyan-300 font-semibold">
-                  Apply for Citizen Visa <ArrowUpRight className="w-3 h-3" />
+                  Apply for Citizen Visa <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
               </li>
               <li>
@@ -106,11 +106,11 @@ export default function Footer() {
           </div>
 
           {/* Col 5: Departments & Staff */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-heading font-bold text-cyan-300 tracking-wider uppercase">
+          <div className="space-y-4">
+            <h3 className="text-sm font-heading font-bold text-cyan-300 tracking-wider uppercase">
               Departments & Staff
             </h3>
-            <ul className="space-y-2 text-xs text-slate-400">
+            <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
                 <Link href="/departments" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
                   LSPD & Emergency Services
@@ -122,8 +122,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-amber-400 transition-colors flex items-center gap-1 text-slate-400">
-                  <Shield className="w-3 h-3 text-amber-400" />
+                <Link href="/admin" className="hover:text-amber-400 transition-colors flex items-center gap-1 text-slate-300">
+                  <Shield className="w-4 h-4 text-amber-400" />
                   Staff Review Dashboard
                 </Link>
               </li>
@@ -133,11 +133,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar & Legal Notice */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-400">
           <p>
             &copy; 2026 NOMIX Roleplay. All rights reserved.
           </p>
-          <p className="text-[11px] text-slate-600 max-w-md text-center md:text-right">
+          <p className="text-xs text-slate-400 max-w-md text-center md:text-right">
             NOMIX Roleplay is not affiliated with, endorsed by, or connected to Rockstar Games, Take-Two Interactive, or Cfx.re / FiveM.
           </p>
         </div>

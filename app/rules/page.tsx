@@ -9,8 +9,6 @@ import {
   ChevronUp, 
   AlertTriangle, 
   Info, 
-  Sparkles,
-  BookOpen,
   ArrowRight,
   ShieldCheck,
   Heart
@@ -100,10 +98,6 @@ export default function RulesPage() {
       
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400">
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>NO MIX RP — OFFICIAL RULEBOOK</span>
-        </div>
         <h1 className="font-heading font-black text-4xl sm:text-5xl text-metallic">
           COMMUNITY RULES & REGULATIONS
         </h1>
@@ -112,17 +106,17 @@ export default function RulesPage() {
         </p>
 
         {/* Server Ethos Callout */}
-        <div className="glass-panel p-5 rounded-2xl border border-cyan-500/20 bg-gradient-to-r from-cyan-950/20 via-[#0B0F17] to-red-950/20 text-xs text-slate-300 max-w-2xl mx-auto space-y-1">
-          <span className="font-mono text-cyan-400 font-bold uppercase tracking-wider block mb-1">
+        <div className="glass-panel p-6 rounded-2xl border border-cyan-500/20 bg-gradient-to-r from-cyan-950/20 via-[#0B0F17] to-red-950/20 text-slate-200 max-w-2xl mx-auto space-y-2">
+          <span className="font-mono text-cyan-400 font-bold uppercase tracking-wider block text-xs sm:text-sm">
             ROLEPLAY WITH PURPOSE:
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-300 font-medium">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-200 font-medium">
             <div>• Every civilian has a story.</div>
             <div>• Every criminal has a reason.</div>
             <div>• Every officer has a responsibility.</div>
             <div>• Every medic has a purpose.</div>
           </div>
-          <p className="text-cyan-300 font-semibold pt-1 text-[11px]">
+          <p className="text-cyan-300 font-semibold pt-1 text-xs sm:text-sm">
             Every interaction creates RP. Respect the RP. Respect the community.
           </p>
         </div>
@@ -139,12 +133,12 @@ export default function RulesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search all 17 rule sections by keyword (e.g. 3.3, RDM, VDM, Fear RP, NLR, Cop Baiting, Exploits, 17)..."
-            className="w-full bg-surface-card border border-slate-800 rounded-xl py-3 pl-12 pr-20 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/60 transition-all"
+            className="w-full bg-surface-card border border-slate-800 rounded-xl py-3.5 pl-12 pr-20 text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/60 transition-all"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400 hover:text-white"
             >
               Clear
             </button>
@@ -153,11 +147,11 @@ export default function RulesPage() {
 
         {/* Category Filter Buttons */}
         <div className="pt-2 border-t border-slate-900 flex flex-col gap-3">
-          <div className="flex items-center justify-between text-xs text-slate-400">
-            <span className="font-mono uppercase font-bold text-[10px] text-cyan-400">
+          <div className="flex items-center justify-between text-sm text-slate-400">
+            <span className="font-mono uppercase font-bold text-xs text-cyan-400">
               Select Category Filter:
             </span>
-            <div className="flex items-center gap-3 text-[11px]">
+            <div className="flex items-center gap-3 text-xs sm:text-sm">
               <button onClick={expandAll} className="text-cyan-400 hover:underline">
                 Expand All
               </button>
@@ -168,13 +162,13 @@ export default function RulesPage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 max-h-40 overflow-y-auto pr-1">
+          <div className="flex flex-wrap items-center gap-2 max-h-48 overflow-y-auto pr-1">
             <button
               onClick={() => setSelectedCategory("all")}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold tracking-wider transition-all ${
+              className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold tracking-wider transition-all ${
                 selectedCategory === "all"
                   ? "bg-cyan-500 text-black font-bold shadow-neon-cyan-sm"
-                  : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
+                  : "bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
               }`}
             >
               All Categories ({categories.length})
@@ -183,10 +177,10 @@ export default function RulesPage() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold tracking-wider transition-all truncate max-w-xs ${
+                className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold tracking-wider transition-all truncate max-w-xs ${
                   selectedCategory === cat.id
                     ? "bg-cyan-500 text-black font-bold shadow-neon-cyan-sm"
-                    : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
+                    : "bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
                 }`}
               >
                 {cat.name}
@@ -200,13 +194,13 @@ export default function RulesPage() {
       {loading ? (
         <div className="text-center py-20">
           <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <span className="text-xs font-mono text-slate-400">Loading No Mix RP official rules from database...</span>
+          <span className="text-sm font-mono text-slate-400">Loading No Mix RP official rules from database...</span>
         </div>
       ) : filteredCategories.length === 0 ? (
         <div className="text-center py-16 glass-panel rounded-2xl border border-slate-800">
           <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto mb-3" />
-          <h3 className="font-heading font-bold text-lg text-white">No Matching Rules Found</h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <h3 className="font-heading font-bold text-xl text-white">No Matching Rules Found</h3>
+          <p className="text-sm text-slate-300 mt-1">
             Try adjusting your search query or clicking "All Categories".
           </p>
         </div>
@@ -218,14 +212,14 @@ export default function RulesPage() {
               {/* Category Heading */}
               <div className="border-b border-slate-800 pb-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                 <div>
-                  <h2 className="font-heading font-black text-2xl text-cyan-400 tracking-wide">
+                  <h2 className="font-heading font-black text-2xl sm:text-3xl text-cyan-400 tracking-wide">
                     {category.name}
                   </h2>
                   {category.description && (
-                    <p className="text-xs text-slate-400 mt-0.5">{category.description}</p>
+                    <p className="text-xs sm:text-sm text-slate-300 mt-1">{category.description}</p>
                   )}
                 </div>
-                <span className="text-[11px] font-mono text-slate-500">
+                <span className="text-xs sm:text-sm font-mono text-slate-400">
                   {category.rules?.length || 0} Sub-rules
                 </span>
               </div>
@@ -233,7 +227,7 @@ export default function RulesPage() {
               {/* Rules List */}
               <div className="space-y-3">
                 {category.rules?.map((rule) => {
-                  const isExpanded = !!expandedRules[rule.id];
+                  const isExpanded = !expandedRules[rule.id];
                   const badge = getSeverityBadge(rule.severity);
 
                   return (
@@ -248,28 +242,28 @@ export default function RulesPage() {
                       >
                         <div className="flex items-start sm:items-center gap-4">
                           {/* Rule Number Badge */}
-                          <div className="flex-shrink-0 w-12 h-10 rounded-lg bg-surface-card border border-cyan-500/30 flex items-center justify-center font-mono font-black text-xs text-cyan-400">
+                          <div className="flex-shrink-0 w-14 h-11 rounded-lg bg-surface-card border border-cyan-500/30 flex items-center justify-center font-mono font-black text-sm text-cyan-400">
                             {rule.rule_number}
                           </div>
 
                           <div>
                             <div className="flex flex-wrap items-center gap-2 mb-1">
-                              <h3 className="font-heading font-bold text-base text-white hover:text-cyan-300 transition-colors">
+                              <h3 className="font-heading font-bold text-lg sm:text-xl text-white hover:text-cyan-300 transition-colors">
                                 {rule.title}
                               </h3>
                               <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${badge.className}`}
+                                className={`px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase border ${badge.className}`}
                               >
                                 {badge.label}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-400">
+                            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                               {rule.description}
                             </p>
                           </div>
                         </div>
 
-                        <div className="p-1 rounded-md bg-slate-900 border border-slate-800 text-slate-400 flex-shrink-0">
+                        <div className="p-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 flex-shrink-0">
                           {isExpanded ? (
                             <ChevronUp className="w-4 h-4" />
                           ) : (
@@ -280,12 +274,12 @@ export default function RulesPage() {
 
                       {/* Rule Full Content (Expandable) */}
                       {isExpanded && rule.content && (
-                        <div className="px-5 pb-5 pt-1 text-xs text-slate-300 leading-relaxed border-t border-slate-900 bg-slate-950/40">
-                          <div className="p-4 rounded-lg bg-slate-900/60 border border-slate-800 space-y-2">
-                            <span className="text-[10px] font-mono uppercase font-bold text-slate-500 block">
+                        <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-200 leading-relaxed border-t border-slate-900 bg-slate-950/40">
+                          <div className="p-4 sm:p-5 rounded-lg bg-slate-900/60 border border-slate-800 space-y-2">
+                            <span className="text-xs font-mono uppercase font-bold text-cyan-400 block">
                               OFFICIAL RULE SPECIFICATION:
                             </span>
-                            <p className="whitespace-pre-line text-slate-200">
+                            <p className="whitespace-pre-line text-slate-100 text-xs sm:text-sm leading-relaxed">
                               {rule.content}
                             </p>
                           </div>
@@ -302,16 +296,16 @@ export default function RulesPage() {
       )}
 
       {/* Bottom Visa CTA */}
-      <div className="glass-panel p-8 rounded-2xl border border-cyan-500/20 text-center space-y-4">
-        <h3 className="font-heading font-bold text-xl text-white">
+      <div className="glass-panel p-8 sm:p-10 rounded-2xl border border-cyan-500/20 text-center space-y-4">
+        <h3 className="font-heading font-bold text-2xl text-white">
           Understood the Rules?
         </h3>
-        <p className="text-xs text-slate-400 max-w-md mx-auto">
+        <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
           Knowledge of these rules is tested during our 6-step visa questionnaire. Start your whitelist application today.
         </p>
         <Link
           href="/apply"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider hover:shadow-neon-cyan transition-all"
+          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-cyan-400 text-black font-heading font-bold text-sm tracking-wider hover:shadow-neon-cyan transition-all"
         >
           PROCEED TO APPLICATION <ArrowRight className="w-4 h-4" />
         </Link>

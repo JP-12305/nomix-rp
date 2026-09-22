@@ -2,21 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
-import { Shield, HeartPulse, Building2, Flame, Scale, ArrowRight, Sparkles } from "lucide-react";
+import { Shield, HeartPulse, Building2, Flame, Scale, ArrowRight } from "lucide-react";
 import DepartmentCard from "@/components/cards/DepartmentCard";
 
 export default function DepartmentsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>CITY FACTIONS & PUBLIC SERVICES</span>
-        </div>
         <h1 className="font-heading font-black text-4xl sm:text-5xl text-metallic">
           WHITELISTED DEPARTMENTS
         </h1>
-        <p className="text-slate-300 text-sm sm:text-base">
+        <p className="text-slate-300 text-xs sm:text-sm">
           Discover the premier government, emergency medical, legal, and criminal factions operating in NOMIX Roleplay.
         </p>
       </div>
@@ -56,16 +52,16 @@ export default function DepartmentsPage() {
         />
       </div>
 
-      <div className="glass-panel p-8 rounded-2xl border border-cyan-500/20 text-center space-y-4">
-        <h3 className="font-heading font-bold text-xl text-white">
+      <div className="glass-panel p-8 sm:p-10 rounded-2xl border border-cyan-500/20 text-center space-y-4">
+        <h3 className="font-heading font-bold text-2xl text-white">
           Interested in Department Leadership?
         </h3>
-        <p className="text-xs text-slate-400 max-w-md mx-auto">
-          Approved citizens can apply for open academy recruitments in our Discord community.
+        <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+          Approved citizens can apply for open academy recruitments and faction leadership in our Discord community.
         </p>
         <Link
           href="/apply"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs hover:shadow-neon-cyan"
+          className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-cyan-400 text-black font-heading font-bold text-sm hover:shadow-neon-cyan transition-all"
         >
           APPLY FOR CITIZEN VISA <ArrowRight className="w-4 h-4" />
         </Link>

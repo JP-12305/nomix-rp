@@ -36,7 +36,7 @@ export default function DepartmentCard({
         
         {/* Top Badge */}
         <div className="absolute top-3 left-3">
-          <span className="px-2.5 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-300">
+          <span className="px-2.5 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-xs font-mono font-bold uppercase tracking-wider text-cyan-300">
             {badge}
           </span>
         </div>
@@ -45,24 +45,24 @@ export default function DepartmentCard({
       {/* Content */}
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
-          <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 block mb-1">
+          <span className="text-xs font-mono uppercase tracking-widest text-slate-300 block mb-1">
             {category}
           </span>
-          <h3 className="font-heading font-bold text-xl text-white group-hover:text-cyan-300 transition-colors mb-2">
+          <h3 className="font-heading font-bold text-xl sm:text-2xl text-white group-hover:text-cyan-300 transition-colors mb-2">
             {title}
           </h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             {description}
           </p>
         </div>
 
         <div className="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-          <span className="text-[11px] text-slate-500 font-medium">Whitelisted Career</span>
+          <span className="text-xs text-slate-400 font-medium">Whitelisted Career</span>
           <Link
             href="/apply"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 group-hover:text-cyan-300 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 group-hover:text-cyan-300 transition-colors"
           >
-            Apply Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            Apply Now <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>

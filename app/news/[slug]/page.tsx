@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Clock, User, ArrowLeft, Tag, Share2, Sparkles } from "lucide-react";
+import { Clock, User, ArrowLeft, Tag, Share2 } from "lucide-react";
 import { NewsArticle } from "@/types";
 import { formatDate } from "@/lib/utils";
 
@@ -57,7 +57,7 @@ export default function SingleNewsPage() {
       {/* Back Link */}
       <Link
         href="/news"
-        className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-cyan-300 transition-colors"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-cyan-300 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" /> Back to News & Announcements
       </Link>
@@ -70,18 +70,18 @@ export default function SingleNewsPage() {
           </span>
         </div>
 
-        <h1 className="font-heading font-black text-3xl sm:text-5xl text-metallic leading-tight">
+        <h1 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl text-metallic leading-tight">
           {article.title}
         </h1>
 
-        <div className="flex items-center gap-4 text-xs text-slate-400 border-y border-slate-800/80 py-3">
+        <div className="flex items-center gap-4 text-xs sm:text-sm text-slate-300 border-y border-slate-800/80 py-3">
           <span className="flex items-center gap-1.5">
             <Clock className="w-4 h-4 text-cyan-400" />
             {formatDate(article.published_at)}
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5">
-            <User className="w-4 h-4 text-slate-400" />
+            <User className="w-4 h-4 text-slate-300" />
             {article.author_name}
           </span>
         </div>
@@ -101,12 +101,12 @@ export default function SingleNewsPage() {
       )}
 
       {/* Article Content */}
-      <div className="glass-panel p-8 sm:p-10 rounded-2xl border border-white/5 space-y-6 text-sm text-slate-200 leading-relaxed">
-        <p className="text-base text-cyan-200/90 font-medium leading-relaxed border-l-2 border-cyan-400 pl-4">
+      <div className="glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 space-y-5 text-sm sm:text-base text-slate-200 leading-relaxed">
+        <p className="text-base sm:text-lg text-cyan-200/95 font-medium leading-relaxed border-l-2 border-cyan-400 pl-4">
           {article.excerpt}
         </p>
 
-        <div className="whitespace-pre-line text-slate-300 space-y-4 pt-4 border-t border-slate-900">
+        <div className="whitespace-pre-line text-slate-300 space-y-4 pt-4 border-t border-slate-800/80 text-sm sm:text-base leading-relaxed">
           {article.content}
         </div>
       </div>
@@ -115,13 +115,13 @@ export default function SingleNewsPage() {
       <div className="pt-8 border-t border-slate-900 flex items-center justify-between">
         <Link
           href="/news"
-          className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-cyan-300"
+          className="inline-flex items-center gap-2 text-sm font-bold text-cyan-400 hover:text-cyan-300"
         >
           <ArrowLeft className="w-4 h-4" /> Return to News Feed
         </Link>
         <Link
           href="/apply"
-          className="px-5 py-2.5 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs hover:shadow-neon-cyan"
+          className="px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-sm hover:shadow-neon-cyan transition-all"
         >
           Apply for Visa
         </Link>

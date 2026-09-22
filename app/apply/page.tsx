@@ -75,29 +75,29 @@ export default function ApplyPage() {
         </div>
 
         <div className="space-y-3">
-          <h1 className="font-heading font-black text-3xl sm:text-4xl text-white">
+          <h1 className="font-heading font-black text-3xl sm:text-5xl text-white">
             CITIZEN VISA APPLICATION
           </h1>
-          <p className="text-slate-300 text-sm leading-relaxed">
+          <p className="text-slate-200 text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
             To prevent fraud and automatically sync your whitelisted Discord citizen role upon approval, you must authenticate with Discord before beginning.
           </p>
         </div>
 
-        <div className="glass-panel p-8 rounded-3xl border border-cyan-500/30 space-y-6 shadow-2xl">
-          <div className="flex items-center justify-center gap-2 text-cyan-400 text-xs font-mono font-bold">
+        <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-cyan-500/30 space-y-6 shadow-2xl">
+          <div className="flex items-center justify-center gap-2 text-cyan-400 text-sm font-mono font-bold">
             <Lock className="w-4 h-4" />
             <span>DISCORD OAUTH VERIFICATION REQUIRED</span>
           </div>
 
           <button
             onClick={loginWithDiscord}
-            className="w-full py-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-black text-sm tracking-wider transition-all transform hover:-translate-y-0.5 shadow-[0_0_20px_rgba(88,101,242,0.4)] flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-black text-base tracking-wider transition-all transform hover:-translate-y-0.5 shadow-[0_0_20px_rgba(88,101,242,0.4)] flex items-center justify-center gap-2"
           >
             <Users className="w-5 h-5" />
             CONTINUE WITH DISCORD
           </button>
 
-          <p className="text-[11px] text-slate-500 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             We will only access your public Discord identifier, username, and avatar. We never access private messages or tokens.
           </p>
         </div>
@@ -114,14 +114,14 @@ export default function ApplyPage() {
             <CheckCircle2 className="w-8 h-8" />
           </div>
 
-          <div className="space-y-2">
-            <span className="text-xs font-mono font-bold uppercase text-emerald-400 tracking-wider">
+          <div className="space-y-3">
+            <span className="text-xs sm:text-sm font-mono font-bold uppercase text-emerald-400 tracking-wider">
               Visa Granted ({existingApp.application_number})
             </span>
-            <h1 className="font-heading font-black text-3xl text-white">
+            <h1 className="font-heading font-black text-3xl sm:text-4xl text-white">
               YOU ARE ALREADY AN APPROVED CITIZEN
             </h1>
-            <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
               Your citizen application for character <strong>{existingApp.character_name}</strong> was approved. Your Discord account has the verified citizen role.
             </p>
           </div>
@@ -129,13 +129,13 @@ export default function ApplyPage() {
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href={process.env.NEXT_PUBLIC_FIVEM_CONNECT_URL || "fivem://connect/play.nomixroleplay.xyz"}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider hover:shadow-neon-cyan transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all flex items-center justify-center gap-2"
             >
               <Play className="w-4 h-4 fill-black" /> CONNECT TO FIVEM SERVER
             </a>
             <Link
               href="/status"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-xs tracking-wider"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-sm tracking-wider hover:bg-slate-800 transition-all"
             >
               VIEW VISA STATUS
             </Link>
@@ -154,14 +154,14 @@ export default function ApplyPage() {
             <Clock className="w-8 h-8 animate-pulse" />
           </div>
 
-          <div className="space-y-2">
-            <span className="text-xs font-mono font-bold uppercase text-amber-400 tracking-wider">
+          <div className="space-y-3">
+            <span className="text-xs sm:text-sm font-mono font-bold uppercase text-amber-400 tracking-wider">
               Application In Progress ({existingApp.application_number})
             </span>
-            <h1 className="font-heading font-black text-3xl text-white">
+            <h1 className="font-heading font-black text-3xl sm:text-4xl text-white">
               YOUR VISA APPLICATION IS PENDING
             </h1>
-            <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
               You already have an active visa application submitted for character <strong>{existingApp.character_name}</strong>. Our staff recruitment team is actively reviewing submissions.
             </p>
           </div>
@@ -169,7 +169,7 @@ export default function ApplyPage() {
           <div className="pt-4 flex justify-center gap-4">
             <Link
               href="/status"
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider hover:shadow-neon-cyan transition-all flex items-center gap-2"
+              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all flex items-center gap-2"
             >
               <FileText className="w-4 h-4" /> VIEW APPLICATION STATUS
             </Link>
@@ -188,32 +188,32 @@ export default function ApplyPage() {
             <AlertTriangle className="w-8 h-8" />
           </div>
 
-          <div className="space-y-2">
-            <span className="text-xs font-mono font-bold uppercase text-amber-400 tracking-wider">
+          <div className="space-y-3">
+            <span className="text-xs sm:text-sm font-mono font-bold uppercase text-amber-400 tracking-wider">
               Citizen Visa Revoked ({existingApp.application_number})
             </span>
-            <h1 className="font-heading font-black text-3xl text-white">
+            <h1 className="font-heading font-black text-3xl sm:text-4xl text-white">
               CITIZEN VISA REVOKED
             </h1>
-            <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
               Your citizen visa for character <strong>{existingApp.character_name}</strong> was revoked by server administration.
             </p>
           </div>
 
-          <div className="p-4 max-w-md mx-auto rounded-xl bg-slate-950/80 border border-amber-500/30 text-xs font-mono text-amber-200 text-left whitespace-pre-line">
+          <div className="p-4 sm:p-5 max-w-lg mx-auto rounded-xl bg-slate-950/80 border border-amber-500/30 text-xs sm:text-sm font-mono text-amber-200 text-left whitespace-pre-line leading-relaxed">
             <strong>Administrative Reason:</strong> {existingApp.rejection_reason.replace("[REVOKED BY ADMIN]", "").trim()}
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/status"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs tracking-wider"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-sm tracking-wider"
             >
               VIEW STATUS & DETAILS
             </Link>
             <Link
               href="/discord"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-xs tracking-wider"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-sm tracking-wider hover:bg-slate-800 transition-all"
             >
               OPEN DISCORD SUPPORT
             </Link>
@@ -238,30 +238,30 @@ export default function ApplyPage() {
               <AlertTriangle className="w-8 h-8" />
             </div>
 
-            <div className="space-y-2">
-              <span className="text-xs font-mono font-bold uppercase text-red-400 tracking-wider">
+            <div className="space-y-3">
+              <span className="text-xs sm:text-sm font-mono font-bold uppercase text-red-400 tracking-wider">
                 Reapplication Cooldown Active ({existingApp.application_number})
               </span>
-              <h1 className="font-heading font-black text-3xl text-white">
+              <h1 className="font-heading font-black text-3xl sm:text-4xl text-white">
                 REAPPLICATION COOLDOWN IN EFFECT
               </h1>
-              <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
                 Your previous application was rejected. Please review our server guidelines before applying again.
               </p>
             </div>
 
-            <div className="p-4 max-w-md mx-auto rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-mono text-slate-300 text-left">
+            <div className="p-4 sm:p-5 max-w-lg mx-auto rounded-xl bg-slate-950/80 border border-slate-800 text-xs sm:text-sm font-mono text-slate-200 text-left leading-relaxed">
               <strong>Staff Reason:</strong> {existingApp.rejection_reason || "Did not meet requirements."}
             </div>
 
-            <div className="text-xs text-red-400 font-mono">
+            <div className="text-xs sm:text-sm text-red-300 font-mono">
               You can re-apply after: {new Date(cooldownEndTime).toLocaleDateString()} at {new Date(cooldownEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </div>
 
             <div className="pt-4 flex justify-center gap-4">
               <Link
                 href="/status"
-                className="px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-xs tracking-wider"
+                className="px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-sm tracking-wider hover:bg-slate-800 transition-all"
               >
                 VIEW DETAILS ON STATUS PAGE
               </Link>
@@ -275,11 +275,11 @@ export default function ApplyPage() {
   // 5. User is authenticated and eligible to apply
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-8">
-      <div className="text-center max-w-2xl mx-auto space-y-2">
-        <h1 className="font-heading font-black text-3xl sm:text-4xl text-metallic">
+      <div className="text-center max-w-2xl mx-auto space-y-3">
+        <h1 className="font-heading font-black text-3xl sm:text-5xl text-metallic">
           APPLY FOR CITIZEN VISA
         </h1>
-        <p className="text-slate-400 text-xs sm:text-sm">
+        <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
           Please complete all 6 sections with high-effort answers. Applications with low-effort definitions or poor character backstories will be rejected.
         </p>
       </div>

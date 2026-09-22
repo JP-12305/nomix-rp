@@ -198,12 +198,12 @@ export default function ApplicationWizard() {
                   </div>
 
                   <div className="hidden sm:block">
-                    <div className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">
+                    <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">
                       Step 0{s.step}
                     </div>
                     <div
-                      className={`text-xs font-heading font-bold ${
-                        isCurrent ? "text-cyan-300" : isCompleted ? "text-white" : "text-slate-500"
+                      className={`text-sm font-heading font-bold ${
+                        isCurrent ? "text-cyan-300" : isCompleted ? "text-white" : "text-slate-400"
                       }`}
                     >
                       {s.title}
@@ -227,15 +227,15 @@ export default function ApplicationWizard() {
 
       {/* Main Form Box */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <div className="glass-panel p-6 sm:p-10 rounded-3xl border border-white/5 relative">
+        <div className="glass-panel p-6 sm:p-10 rounded-3xl border border-white/10 relative">
           
           {/* Step Header */}
           <div className="border-b border-slate-800 pb-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest font-bold">
+              <span className="text-xs sm:text-sm font-mono text-cyan-400 uppercase tracking-widest font-bold">
                 Step {currentStep} of 6 — {STEPS[currentStep - 1].desc}
               </span>
-              <h2 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1">
+              <h2 className="font-heading font-black text-2xl sm:text-4xl text-white mt-1.5">
                 {STEPS[currentStep - 1].title}
               </h2>
             </div>
@@ -243,9 +243,9 @@ export default function ApplicationWizard() {
             <button
               type="button"
               onClick={saveDraft}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white transition-all self-start sm:self-auto"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition-all self-start sm:self-auto"
             >
-              <Save className="w-3.5 h-3.5 text-cyan-400" />
+              <Save className="w-4 h-4 text-cyan-400" />
               <span>{draftSaved ? "Draft Saved!" : "Save Draft"}</span>
             </button>
           </div>
@@ -258,86 +258,86 @@ export default function ApplicationWizard() {
               
               {/* Prepopulated Discord ID */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Discord Identity (Auto-Linked)
                 </label>
-                <div className="px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-cyan-300 flex items-center justify-between">
+                <div className="px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-800 text-sm font-mono text-cyan-300 flex items-center justify-between">
                   <span>@{user?.username || "SpectreRider"} ({user?.discord_id || "789123456789012345"})</span>
-                  <span className="text-emerald-400 text-[10px] font-bold">✓ VERIFIED</span>
+                  <span className="text-emerald-400 text-xs font-bold">✓ VERIFIED</span>
                 </div>
               </div>
 
               {/* Real Age */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Applicant Real Age <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="number"
                   {...register("age")}
                   placeholder="18"
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                 />
                 {errors.age && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.age.message}
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.age.message}
                   </p>
                 )}
               </div>
 
               {/* Country */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Country / Region <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   {...register("country")}
                   placeholder="e.g. United States, United Kingdom, Canada, India"
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                 />
                 {errors.country && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.country.message}
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.country.message}
                   </p>
                 )}
               </div>
 
               {/* Timezone */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Timezone <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   {...register("timezone")}
                   placeholder="e.g. EST (UTC-5), PST (UTC-8), GMT, IST (UTC+5:30)"
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                 />
                 {errors.timezone && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.timezone.message}
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.timezone.message}
                   </p>
                 )}
               </div>
 
               {/* FiveM Identifier */}
               <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   FiveM / Steam / Rockstar Identifier <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   {...register("fivem_id")}
                   placeholder="e.g. steam:1100001xxxxxxxx or FiveM username"
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                 />
-                <span className="text-[11px] text-slate-500">
+                <span className="text-xs sm:text-sm text-slate-400 block mt-1">
                   Used by our server bridge to whitelist your connection slot.
                 </span>
                 {errors.fivem_id && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.fivem_id.message}
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.fivem_id.message}
                   </p>
                 )}
               </div>
@@ -350,12 +350,12 @@ export default function ApplicationWizard() {
           {currentStep === 2 && (
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Have you played FiveM roleplay before? <span className="text-red-400">*</span>
                 </label>
                 <select
                   {...register("played_before")}
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                 >
                   <option value="yes_experienced">Yes, I have extensive roleplay experience (500+ hours)</option>
                   <option value="yes_moderate">Yes, moderate experience (100 - 500 hours)</option>
@@ -365,31 +365,31 @@ export default function ApplicationWizard() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Previous Servers & Communities <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={4}
                   {...register("previous_servers")}
                   placeholder="Detail servers you have played on, character archetypes you played, and hours spent..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.previous_servers && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.previous_servers.message}
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.previous_servers.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Whitelisted Department Experience (Optional)
                 </label>
                 <textarea
                   rows={3}
                   {...register("whitelist_experience")}
                   placeholder="List any past positions held in Police, EMS, DOJ, or approved syndicate leadership..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
               </div>
             </div>
@@ -402,46 +402,46 @@ export default function ApplicationWizard() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                     Character Full Name <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="text"
                     {...register("char_name")}
                     placeholder="e.g. Marcus Vance"
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                   />
                   {errors.char_name && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {errors.char_name.message}
+                    <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-4 h-4" /> {errors.char_name.message}
                     </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                     Character Age <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="number"
                     {...register("char_age")}
                     placeholder="28"
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                   />
                   {errors.char_age && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {errors.char_age.message}
+                    <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-4 h-4" /> {errors.char_age.message}
                     </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                     Gender <span className="text-red-400">*</span>
                   </label>
                   <select
                     {...register("char_gender")}
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -451,53 +451,53 @@ export default function ApplicationWizard() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Character Backstory & Origins (Min 60 chars) <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={5}
                   {...register("char_background")}
                   placeholder="Where was your character born? What formative events defined their youth, and what circumstances led them to move to Los Santos?"
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.char_background && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.char_background.message}
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.char_background.message}
                   </p>
                 )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                     Personality Traits & Human Flaws <span className="text-red-400">*</span>
                   </label>
                   <textarea
                     rows={3}
                     {...register("char_personality")}
                     placeholder="Describe their mannerisms, psychological weaknesses, or vices (e.g. quick-tempered, overly trusting, claustrophobic)..."
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                   />
                   {errors.char_personality && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {errors.char_personality.message}
+                    <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-4 h-4" /> {errors.char_personality.message}
                     </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                     Short & Long Term Goals <span className="text-red-400">*</span>
                   </label>
                   <textarea
                     rows={3}
                     {...register("char_goals")}
                     placeholder="What does your character hope to accomplish in the next few weeks and over the next year in the city?"
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                   />
                   {errors.char_goals && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {errors.char_goals.message}
+                    <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-4 h-4" /> {errors.char_goals.message}
                     </p>
                   )}
                 </div>
@@ -511,86 +511,86 @@ export default function ApplicationWizard() {
           {currentStep === 4 && (
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   1. Define RDM (Random Deathmatch) & Give an Example <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={2}
                   {...register("def_rdm")}
                   placeholder="Explain RDM in your own words with an example..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.def_rdm && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.def_rdm.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.def_rdm.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   2. Define VDM (Vehicle Deathmatch) <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={2}
                   {...register("def_vdm")}
                   placeholder="Explain VDM and accidental collisions vs deliberate ramming..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.def_vdm && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.def_vdm.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.def_vdm.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   3. Define Metagaming & Stream Sniping <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={2}
                   {...register("def_meta")}
                   placeholder="Explain how external Discord DMs or Twitch streams must never be used in character..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.def_meta && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.def_meta.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.def_meta.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   4. Define Powergaming <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={2}
                   {...register("def_power")}
                   placeholder="Explain powergaming and forcing actions on other players..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.def_power && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.def_power.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.def_power.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   5. Define Fail RP & Breaking Character <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={2}
                   {...register("def_failrp")}
                   placeholder="What should you do if an immersion glitch or rule violation happens during a live scene?"
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.def_failrp && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.def_failrp.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.def_failrp.message}
                   </p>
                 )}
               </div>
@@ -603,61 +603,61 @@ export default function ApplicationWizard() {
           {currentStep === 5 && (
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   Scenario 1: High-Stakes Police Traffic Stop <span className="text-red-400">*</span>
                 </label>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   You are pulled over for speeding while carrying unlicensed firearms and $40,000 in dirty money in your trunk. How do you handle the police interaction from start to finish?
                 </p>
                 <textarea
                   rows={4}
                   {...register("scenario_police_stop")}
                   placeholder="Detail your voice dialogue, actions, nervousness cues, and escalation choices..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.scenario_police_stop && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.scenario_police_stop.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.scenario_police_stop.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   Scenario 2: Taken Hostage at Gunpoint <span className="text-red-400">*</span>
                 </label>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   You are cornered in an alleyway by two masked criminals holding firearms to your head demanding you act as their hostage during a bank heist. How does your character react?
                 </p>
                 <textarea
                   rows={4}
                   {...register("scenario_hostage")}
                   placeholder="Detail how you value your character life (NVL) and roleplay the hostage scenario..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.scenario_hostage && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.scenario_hostage.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.scenario_hostage.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-sm sm:text-base font-heading font-bold text-white block">
                   Scenario 3: Narrative Loss & Defeat <span className="text-red-400">*</span>
                 </label>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   Your character is ambushed in a major heist, arrested, and loses all assets and vehicle impounded. How do you roleplay this loss?
                 </p>
                 <textarea
                   rows={3}
                   {...register("scenario_loss")}
                   placeholder="Explain how you turn loss into character development rather than venting out of character..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
                 {errors.scenario_loss && (
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.scenario_loss.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.scenario_loss.message}
                   </p>
                 )}
               </div>
@@ -669,70 +669,70 @@ export default function ApplicationWizard() {
           {/* ================================================================= */}
           {currentStep === 6 && (
             <div className="space-y-6">
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                <h4 className="font-heading font-bold text-sm text-white">
+              <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                <h4 className="font-heading font-bold text-sm sm:text-base text-white">
                   NOMIX Community Oath
                 </h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   By submitting this visa application, you acknowledge that roleplay immersion, respect for fellow players, and upholding staff directives are mandatory conditions of remaining whitelisted on NOMIX.
                 </p>
               </div>
 
               <div className="space-y-4">
-                <label className="flex items-start gap-3 p-4 rounded-xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
+                <label className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
                   <input
                     type="checkbox"
                     {...register("agree_rules")}
                     className="mt-1 w-4 h-4 rounded bg-slate-900 border-slate-700 text-cyan-400 focus:ring-cyan-400"
                   />
-                  <div className="text-xs text-slate-300">
+                  <div className="text-xs sm:text-sm text-slate-200">
                     <strong className="text-white block mb-0.5">I have read and agree to all server rules and regulations.</strong>
-                    <span>I understand that claiming ignorance of rules is not an acceptable defense for violations.</span>
+                    <span className="text-xs text-slate-400">I understand that claiming ignorance of rules is not an acceptable defense for violations.</span>
                   </div>
                 </label>
                 {errors.agree_rules && (
                   <p className="text-xs text-red-400 flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.agree_rules.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.agree_rules.message}
                   </p>
                 )}
 
-                <label className="flex items-start gap-3 p-4 rounded-xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
+                <label className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
                   <input
                     type="checkbox"
                     {...register("agree_nvl")}
                     className="mt-1 w-4 h-4 rounded bg-slate-900 border-slate-700 text-cyan-400 focus:ring-cyan-400"
                   />
-                  <div className="text-xs text-slate-300">
+                  <div className="text-xs sm:text-sm text-slate-200">
                     <strong className="text-white block mb-0.5">I agree to strictly value my character life (NVL).</strong>
-                    <span>I will not act recklessly or fail to fear weapons during hostile roleplay encounters.</span>
+                    <span className="text-xs text-slate-400">I will not act recklessly or fail to fear weapons during hostile roleplay encounters.</span>
                   </div>
                 </label>
                 {errors.agree_nvl && (
                   <p className="text-xs text-red-400 flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.agree_nvl.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.agree_nvl.message}
                   </p>
                 )}
 
-                <label className="flex items-start gap-3 p-4 rounded-xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
+                <label className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
                   <input
                     type="checkbox"
                     {...register("agree_microphone")}
                     className="mt-1 w-4 h-4 rounded bg-slate-900 border-slate-700 text-cyan-400 focus:ring-cyan-400"
                   />
-                  <div className="text-xs text-slate-300">
+                  <div className="text-xs sm:text-sm text-slate-200">
                     <strong className="text-white block mb-0.5">I possess a working, clear microphone with zero static.</strong>
-                    <span>I will stay in-character in voice at all times while connected to the server.</span>
+                    <span className="text-xs text-slate-400">I will stay in-character in voice at all times while connected to the server.</span>
                   </div>
                 </label>
                 {errors.agree_microphone && (
                   <p className="text-xs text-red-400 flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {errors.agree_microphone.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.agree_microphone.message}
                   </p>
                 )}
               </div>
 
               {submitError && (
-                <div className="p-4 rounded-xl bg-red-950/60 border border-red-500/50 text-xs text-red-300 flex items-center gap-2">
+                <div className="p-4 rounded-xl bg-red-950/60 border border-red-500/50 text-sm text-red-300 flex items-center gap-2">
                   <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
                   <span>{submitError}</span>
                 </div>
@@ -746,7 +746,7 @@ export default function ApplicationWizard() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-5 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs font-heading font-bold text-slate-300 hover:text-white transition-all flex items-center gap-2"
+                className="px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-heading font-bold text-slate-200 hover:text-white transition-all flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" /> PREVIOUS STEP
               </button>
@@ -758,7 +758,7 @@ export default function ApplicationWizard() {
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-7 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider hover:shadow-neon-cyan transition-all flex items-center gap-2"
+                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all flex items-center gap-2"
               >
                 NEXT STEP <ChevronRight className="w-4 h-4" />
               </button>
@@ -766,15 +766,15 @@ export default function ApplicationWizard() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all flex items-center gap-2 disabled:opacity-50"
+                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-base tracking-wider hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all flex items-center gap-2 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> SUBMITTING APPLICATION...
+                    <Loader2 className="w-5 h-5 animate-spin" /> SUBMITTING APPLICATION...
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" /> SUBMIT VISA APPLICATION
+                    <Send className="w-5 h-5" /> SUBMIT VISA APPLICATION
                   </>
                 )}
               </button>

@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Shield, Sparkles, Target, Compass, Users, CheckCircle2, ArrowRight } from "lucide-react";
+import { Shield, Target, Compass, Users, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -11,10 +11,6 @@ export default function AboutPage() {
       
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>ABOUT NOMIX ROLEPLAY</span>
-        </div>
         <h1 className="font-heading font-black text-4xl sm:text-5xl text-metallic">
           CRAFTING STORIES WITHOUT LIMITS
         </h1>
@@ -25,22 +21,22 @@ export default function AboutPage() {
 
       {/* Core Mission & Vision */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="glass-panel p-8 rounded-2xl border border-white/5 space-y-4">
-          <div className="p-3 w-fit rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400">
-            <Target className="w-6 h-6" />
+        <div className="glass-panel p-8 sm:p-9 rounded-2xl border border-white/5 space-y-4">
+          <div className="p-3.5 w-fit rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400">
+            <Target className="w-7 h-7" />
           </div>
           <h2 className="font-heading font-bold text-2xl text-white">Our Mission</h2>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             To provide an unparalleled FiveM roleplay experience where players are empowered to create meaningful storylines, build legitimate or underground dynasties, and forge memories with a welcoming and mature community.
           </p>
         </div>
 
-        <div className="glass-panel p-8 rounded-2xl border border-white/5 space-y-4">
-          <div className="p-3 w-fit rounded-xl bg-red-950/40 border border-red-500/30 text-red-400">
-            <Compass className="w-6 h-6" />
+        <div className="glass-panel p-8 sm:p-9 rounded-2xl border border-white/5 space-y-4">
+          <div className="p-3.5 w-fit rounded-xl bg-red-950/40 border border-red-500/30 text-red-400">
+            <Compass className="w-7 h-7" />
           </div>
           <h2 className="font-heading font-bold text-2xl text-white">Our Standards</h2>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             We hold strict standards against “win-mentality” and toxic gaming culture. Loss in roleplay is viewed as narrative progress. Value of Life, character realism, and mutual respect form the pillar of every scenario in NOMIX.
           </p>
         </div>
@@ -50,9 +46,9 @@ export default function AboutPage() {
       <div className="glass-panel rounded-3xl p-8 sm:p-12 border border-cyan-500/20 bg-gradient-to-r from-[#0B0F17] via-[#0B0F17] to-cyan-950/20 space-y-6">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-cyan-500/20 text-cyan-400">
-            <Shield className="w-5 h-5" />
+            <Shield className="w-6 h-6" />
           </div>
-          <h2 className="font-heading font-bold text-2xl text-white">
+          <h2 className="font-heading font-bold text-2xl sm:text-3xl text-white">
             The City of Los Santos: A New Dawn
           </h2>
         </div>
@@ -66,13 +62,13 @@ export default function AboutPage() {
 
       {/* CTA Box */}
       <div className="text-center space-y-6 pt-6">
-        <h3 className="font-heading font-bold text-2xl text-white">
+        <h3 className="font-heading font-bold text-2xl sm:text-3xl text-white">
           Begin Your Journey on NOMIX RP
         </h3>
         <div className="flex justify-center gap-4">
           <Link
             href="/apply"
-            className="px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider hover:shadow-neon-cyan transition-all flex items-center gap-2"
+            className="px-8 py-3.5 rounded-xl bg-cyan-400 text-black font-heading font-bold text-sm tracking-wider hover:shadow-neon-cyan transition-all flex items-center gap-2"
           >
             APPLY FOR CITIZEN VISA <ArrowRight className="w-4 h-4" />
           </Link>

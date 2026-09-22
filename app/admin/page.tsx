@@ -20,7 +20,6 @@ import {
   Users, 
   ExternalLink,
   ChevronRight,
-  ShieldCheck,
   RefreshCw
 } from "lucide-react";
 import { Application, ApplicationStatus } from "@/types";
@@ -136,10 +135,6 @@ function AdminDashboardContent() {
       {/* Dashboard Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400 mb-2">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>AUTHENTICATED STAFF PORTAL</span>
-          </div>
           <h1 className="font-heading font-black text-3xl sm:text-4xl text-white">
             STAFF MANAGEMENT CONSOLE
           </h1>

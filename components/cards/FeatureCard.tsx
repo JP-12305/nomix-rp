@@ -50,7 +50,7 @@ export default function FeatureCard({
         </div>
 
         {tag && (
-          <span className="text-[10px] font-mono uppercase font-bold tracking-wider px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400 group-hover:text-cyan-300 transition-colors">
+          <span className="text-xs font-mono uppercase font-bold tracking-wider px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 group-hover:text-cyan-300 transition-colors">
             {tag}
           </span>
         )}
@@ -58,23 +58,23 @@ export default function FeatureCard({
 
       {/* Title & Subtitle */}
       <div className="space-y-1 mb-3">
-        <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest block">
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest block">
           {subtitle}
         </span>
-        <h3 className="font-heading font-bold text-lg text-white group-hover:text-cyan-300 transition-colors">
+        <h3 className="font-heading font-bold text-xl text-white group-hover:text-cyan-300 transition-colors">
           {title}
         </h3>
       </div>
 
       {/* Description */}
-      <p className="text-xs text-slate-400 leading-relaxed">
+      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
         {description}
       </p>
 
       {/* Bottom subtle accent streak */}
-      <div className="mt-5 pt-4 border-t border-slate-900/60 flex items-center justify-between text-[11px] text-slate-500 group-hover:text-slate-400">
+      <div className="mt-5 pt-4 border-t border-slate-900/60 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
         <span>NOMIX Custom Engine</span>
-        <span className="text-cyan-400 font-mono text-[10px]">● LIVE</span>
+        <span className="text-cyan-400 font-mono text-xs font-semibold">● LIVE</span>
       </div>
     </div>
   );
