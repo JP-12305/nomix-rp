@@ -1200,19 +1200,94 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
   public updateApplicationStatus(
     id: string,
     status: ApplicationStatus,
-    reviewer: { id: string; name: string },
-    rejection_reason?: string
+    reviewer: { id: string; name: string; role?: string },
+    rejection_reason?: string,
+    isAdmin: boolean = false
   ): { success: boolean; application?: Application; message?: string } {
     const app = this.applications.find((a) => a.id === id || a.application_number === id);
     if (!app) {
       return { success: false, message: "Application not found." };
     }
 
-    if (app.status === "APPROVED" && status === "APPROVED") {
-      return { success: false, message: "This application is already approved." };
+    const now = new Date().toISOString();
+
+    // 1. If application was already APPROVED
+    if (app.status === "APPROVED") {
+      if (status === "APPROVED") {
+        return { success: false, message: "This application is already approved." };
+      }
+      if (status === "REJECTED") {
+        if (!isAdmin) {
+          return { success: false, message: "Permission Denied: Only Administrators can revoke an approved citizen visa." };
+        }
+        if (!rejection_reason || rejection_reason.trim().length < 5) {
+          return { success: false, message: "An administrative reason is mandatory when revoking an approved visa." };
+        }
+
+        const rawReason = rejection_reason.trim();
+        const finalReason = rawReason.startsWith("[REVOKED BY ADMIN]") ? rawReason : `[REVOKED BY ADMIN] ${rawReason}`;
+
+        app.status = "REJECTED";
+        app.rejection_reason = finalReason;
+        app.reviewer_id = reviewer.id;
+        app.reviewer_name = reviewer.name;
+        app.reviewed_at = now;
+        app.updated_at = now;
+
+        if (!app.events) app.events = [];
+        app.events.push({
+          id: `evt-${Date.now()}`,
+          application_id: app.id,
+          actor_id: reviewer.id,
+          actor_name: reviewer.name,
+          event_type: "VISA_REVOKED_BY_ADMIN",
+          metadata: { previous_status: "APPROVED", status: "REJECTED", reason: rawReason },
+          created_at: now,
+        });
+
+        return { success: true, application: app };
+      }
+      if (!isAdmin) {
+        return { success: false, message: "Only Administrators can modify an approved application." };
+      }
     }
 
-    const now = new Date().toISOString();
+    // 2. If application was already REJECTED
+    if (app.status === "REJECTED") {
+      if (status === "REJECTED") {
+        return { success: false, message: "This application has already been rejected." };
+      }
+      if (status === "APPROVED") {
+        if (!isAdmin) {
+          return { success: false, message: "Permission Denied: Only Administrators can overrule a rejected application." };
+        }
+
+        app.status = "APPROVED";
+        app.rejection_reason = undefined;
+        app.reviewer_id = reviewer.id;
+        app.reviewer_name = reviewer.name;
+        app.reviewed_at = now;
+        app.updated_at = now;
+
+        if (!app.events) app.events = [];
+        app.events.push({
+          id: `evt-${Date.now()}`,
+          application_id: app.id,
+          actor_id: reviewer.id,
+          actor_name: reviewer.name,
+          event_type: "VISA_OVERRULED_BY_ADMIN",
+          metadata: { previous_status: "REJECTED", status: "APPROVED", reason: "Overruled by administrator" },
+          created_at: now,
+        });
+
+        return { success: true, application: app };
+      }
+      if (!isAdmin) {
+        return { success: false, message: "Only Administrators can modify a finalized rejected application." };
+      }
+    }
+
+    // 3. Initial Review (PENDING or UNDER_REVIEW)
     app.status = status;
     app.reviewer_id = reviewer.id;
     app.reviewer_name = reviewer.name;
@@ -1225,7 +1300,11 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
       app.rejection_reason = undefined;
     }
 
-    const eventType = status === "APPROVED" ? "APPLICATION_APPROVED" : status === "REJECTED" ? "APPLICATION_REJECTED" : "APPLICATION_REVIEW_STARTED";
+    const eventType = status === "APPROVED" 
+      ? "APPLICATION_APPROVED" 
+      : status === "REJECTED" 
+      ? "APPLICATION_REJECTED" 
+      : "APPLICATION_REVIEW_STARTED";
 
     if (!app.events) app.events = [];
     app.events.push({

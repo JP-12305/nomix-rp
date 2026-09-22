@@ -138,9 +138,13 @@ function StatusPageContent() {
     );
   }
 
-  const details = getStatusDetails(app.status);
+  const isRevoked = app.status === "REJECTED" && (
+    app.rejection_reason?.includes("[REVOKED BY ADMIN]") || 
+    app.events?.some(e => e.event_type === "VISA_REVOKED_BY_ADMIN")
+  );
+  const details = getStatusDetails(app.status, app.rejection_reason);
   const isApproved = app.status === "APPROVED";
-  const isRejected = app.status === "REJECTED";
+  const isRejected = app.status === "REJECTED" && !isRevoked;
   const isUnderReview = app.status === "UNDER_REVIEW";
   const isPending = app.status === "PENDING";
 
@@ -193,6 +197,8 @@ function StatusPageContent() {
         className={`glass-panel rounded-3xl p-8 sm:p-10 border transition-all duration-500 shadow-2xl relative overflow-hidden ${
           isApproved
             ? "border-emerald-500/50 bg-gradient-to-b from-emerald-950/20 to-[#0B0F17] shadow-[0_0_40px_rgba(16,185,129,0.15)]"
+            : isRevoked
+            ? "border-amber-500/50 bg-gradient-to-b from-amber-950/25 to-[#0B0F17] shadow-[0_0_40px_rgba(245,158,11,0.2)]"
             : isRejected
             ? "border-red-500/50 bg-gradient-to-b from-red-950/20 to-[#0B0F17] shadow-[0_0_40px_rgba(239,68,68,0.15)]"
             : "border-cyan-500/30 bg-gradient-to-b from-cyan-950/20 to-[#0B0F17]"
@@ -206,6 +212,8 @@ function StatusPageContent() {
               className={`p-4 rounded-2xl border ${
                 isApproved
                   ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-400"
+                  : isRevoked
+                  ? "bg-amber-950/60 border-amber-500/40 text-amber-400"
                   : isRejected
                   ? "bg-red-950/60 border-red-500/40 text-red-400"
                   : "bg-cyan-950/60 border-cyan-500/40 text-cyan-400"
@@ -213,6 +221,8 @@ function StatusPageContent() {
             >
               {isApproved ? (
                 <CheckCircle2 className="w-8 h-8" />
+              ) : isRevoked ? (
+                <AlertTriangle className="w-8 h-8" />
               ) : isRejected ? (
                 <XCircle className="w-8 h-8" />
               ) : (
@@ -227,13 +237,19 @@ function StatusPageContent() {
               <h2 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1">
                 {isApproved
                   ? "VISA APPROVED — WELCOME CITIZEN"
+                  : isRevoked
+                  ? "CITIZEN VISA REVOKED BY ADMINISTRATION"
                   : isRejected
                   ? "APPLICATION REJECTED"
                   : isUnderReview
                   ? "UNDER ACTIVE RECRUITMENT REVIEW"
                   : "APPLICATION QUEUED"}
               </h2>
-              <p className="text-xs text-slate-400 mt-1">{details.description}</p>
+              <p className="text-xs text-slate-400 mt-1">
+                {isRevoked
+                  ? "Your citizen visa was revoked by server administration. Citizen Discord role and in-game privileges have been removed."
+                  : details.description}
+              </p>
             </div>
           </div>
 
@@ -261,12 +277,12 @@ function StatusPageContent() {
             <div className="text-center space-y-2">
               <div
                 className={`w-10 h-10 rounded-full font-bold flex items-center justify-center mx-auto text-xs ${
-                  isApproved || isRejected || isUnderReview
+                  isApproved || isRejected || isRevoked || isUnderReview
                     ? "bg-cyan-400 text-black shadow-neon-cyan"
                     : "bg-slate-900 border border-slate-800 text-slate-500"
                 }`}
               >
-                {isApproved || isRejected ? "✓" : "2"}
+                {isApproved || isRejected || isRevoked ? "✓" : "2"}
               </div>
               <div className={`text-xs font-heading font-bold ${isUnderReview ? "text-cyan-300" : "text-slate-300"}`}>
                 2. Staff Review
@@ -282,18 +298,20 @@ function StatusPageContent() {
                 className={`w-10 h-10 rounded-full font-bold flex items-center justify-center mx-auto text-xs ${
                   isApproved
                     ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.6)]"
+                    : isRevoked
+                    ? "bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.6)]"
                     : isRejected
                     ? "bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.6)]"
                     : "bg-slate-900 border border-slate-800 text-slate-500"
                 }`}
               >
-                {isApproved ? "✓" : isRejected ? "✕" : "3"}
+                {isApproved ? "✓" : isRevoked ? "⚠️" : isRejected ? "✕" : "3"}
               </div>
-              <div className={`text-xs font-heading font-bold ${isApproved ? "text-emerald-400" : isRejected ? "text-red-400" : "text-slate-500"}`}>
-                3. Final Decision
+              <div className={`text-xs font-heading font-bold ${isApproved ? "text-emerald-400" : isRevoked ? "text-amber-400" : isRejected ? "text-red-400" : "text-slate-500"}`}>
+                {isRevoked ? "3. Visa Revoked" : "3. Final Decision"}
               </div>
               <div className="text-[10px] text-slate-500 font-mono">
-                {isApproved ? "Citizen Role Granted" : isRejected ? "Feedback Issued" : "Pending decision"}
+                {isApproved ? "Citizen Role Granted" : isRevoked ? "Role Removed by Admin" : isRejected ? "Feedback Issued" : "Pending decision"}
               </div>
             </div>
           </div>
@@ -322,6 +340,35 @@ function StatusPageContent() {
                 className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-xs tracking-wider text-center"
               >
                 OPEN DISCORD
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {isRevoked && (
+          <div className="p-6 rounded-2xl bg-amber-950/35 border border-amber-500/40 space-y-4">
+            <h3 className="font-heading font-bold text-lg text-amber-300 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-400" />
+              Administrative Revocation Notice
+            </h3>
+            
+            <p className="text-xs text-slate-300">
+              Your citizen visa for character <strong>{app.character_name}</strong> was revoked by server administration with the following reason:
+            </p>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30 text-xs text-amber-100 font-mono whitespace-pre-line">
+              {app.rejection_reason?.replace("[REVOKED BY ADMIN]", "").trim() || "Visa revoked by administration."}
+            </div>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              <p className="text-slate-400">
+                If you believe this revocation was made in error or wish to appeal the decision, please open a support ticket on Discord.
+              </p>
+              <Link
+                href="/discord"
+                className="px-4 py-2 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-bold text-xs tracking-wider flex items-center gap-2"
+              >
+                <Users className="w-3.5 h-3.5" /> OPEN DISCORD SUPPORT
               </Link>
             </div>
           </div>

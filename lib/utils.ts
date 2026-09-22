@@ -22,7 +22,18 @@ export function formatDate(dateString: string | undefined): string {
   }
 }
 
-export function getStatusDetails(status: ApplicationStatus) {
+export function getStatusDetails(status: ApplicationStatus, rejectionReason?: string) {
+  if (status === "REJECTED" && rejectionReason?.includes("[REVOKED BY ADMIN]")) {
+    return {
+      label: "VISA REVOKED",
+      badgeClass: "bg-amber-500/15 text-amber-400 border-amber-500/40",
+      glowClass: "shadow-[0_0_15px_rgba(245,158,11,0.3)]",
+      icon: "AlertTriangle",
+      dotColor: "bg-amber-400",
+      description: "Your citizen visa has been revoked by server administration.",
+    };
+  }
+
   switch (status) {
     case "APPROVED":
       return {

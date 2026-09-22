@@ -27,12 +27,15 @@ export async function POST(
     if (isSupabaseConfigured()) {
       const supabase = getAdminSupabase();
 
-      // Look up application
-      const { data: app, error: fetchErr } = await supabase
-        .from("applications")
-        .select("id")
-        .or(`id.eq.${params.id},application_number.eq.${params.id}`)
-        .single();
+      // Look up application safely avoiding UUID cast error
+      const isParamUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id);
+      let appQuery = supabase.from("applications").select("id");
+      if (isParamUUID) {
+        appQuery = appQuery.or(`id.eq.${params.id},application_number.eq.${params.id}`);
+      } else {
+        appQuery = appQuery.eq("application_number", params.id);
+      }
+      const { data: app, error: fetchErr } = await appQuery.single();
 
       if (fetchErr || !app) {
         return NextResponse.json({ error: "Application not found." }, { status: 404 });

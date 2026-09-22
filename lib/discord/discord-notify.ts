@@ -262,3 +262,100 @@ export async function assignDiscordCitizenRole(guildId: string, discordUserId: s
     console.error("[DISCORD ROLE ERROR]", err);
   }
 }
+
+export async function removeDiscordCitizenRole(guildId: string, discordUserId: string, roleId: string) {
+  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
+  if (!token || !guildId || !discordUserId || !roleId || roleId.includes("your-")) return;
+
+  try {
+    const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members/${discordUserId}/roles/${roleId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bot ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.ok || res.status === 204) {
+      console.log(`[DISCORD ROLE] ✅ Removed citizen role ${roleId} from user ${discordUserId}`);
+    } else {
+      const errText = await res.text();
+      console.warn(`[DISCORD ROLE] ⚠️ Role remove warning (${res.status}):`, errText);
+    }
+  } catch (err) {
+    console.error("[DISCORD ROLE REMOVE ERROR]", err);
+  }
+}
+
+export async function sendDiscordRevocationEmbed(app: {
+  id: string;
+  application_number: string;
+  discord_id: string;
+  discord_username: string;
+  character_name: string;
+}, adminName: string, revocationReason: string) {
+  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
+  const channelId = process.env.DISCORD_REJECTED_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID || "1550802258646798417";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomix-rp.vercel.app";
+
+  if (!token || !channelId || channelId.includes("your-")) return;
+
+  try {
+    const embed = {
+      title: "━━━━━━━━━━━━━━━━━━━━━━━━\n⚠️ CITIZEN VISA REVOKED BY ADMINISTRATION\n━━━━━━━━━━━━━━━━━━━━━━━━",
+      description: `Attention <@${app.discord_id}>, your previously approved citizen visa has been **REVOKED** by an Administrator. Your Citizen whitelist role has been de-provisioned.\n\nPlease review the administrative reason below.`,
+      color: 0xf59e0b, // Amber / Gold
+      fields: [
+        { name: "👤 Citizen", value: `<@${app.discord_id}> (\`${app.discord_username}\`)`, inline: true },
+        { name: "🆔 Application ID", value: `\`${app.application_number}\``, inline: true },
+        { name: "🎭 Character", value: `**${app.character_name}**`, inline: true },
+        { name: "🛡️ Revoked By", value: `**${adminName}** (Administrator)`, inline: true },
+        { name: "📝 Reason for Revocation", value: `\`\`\`${revocationReason}\`\`\``, inline: false },
+      ],
+      footer: { text: "NOMIX RP • Administrative Decision" },
+      timestamp: new Date().toISOString(),
+    };
+
+    const components = [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            style: 5,
+            label: "📖 Server Rules & Guidelines",
+            url: `${siteUrl}/rules`,
+          },
+          {
+            type: 2,
+            style: 5,
+            label: "📊 Check Visa Status",
+            url: `${siteUrl}/status`,
+          },
+        ],
+      },
+    ];
+
+    const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bot ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: `⚠️ <@${app.discord_id}> Your citizen visa was revoked by an administrator. Check details below:`,
+        embeds: [embed],
+        components,
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("[DISCORD REVOKE NOTIFY] Failed:", res.status, errText);
+    } else {
+      console.log(`[DISCORD REVOKE NOTIFY] ✅ Posted revocation embed for ${app.discord_username}`);
+    }
+  } catch (err) {
+    console.error("[DISCORD REVOKE NOTIFY ERROR]", err);
+  }
+}

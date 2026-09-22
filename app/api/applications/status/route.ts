@@ -21,7 +21,12 @@ export async function GET(request: NextRequest) {
       const isUserIdUUID = userId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
 
       if (appId) {
-        query = query.or(`id.eq.${appId},application_number.eq.${appId}`);
+        const isAppIdUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(appId);
+        if (isAppIdUUID) {
+          query = query.or(`id.eq.${appId},application_number.eq.${appId}`);
+        } else {
+          query = query.eq("application_number", appId);
+        }
       } else if (discordId && isUserIdUUID) {
         query = query.or(`discord_id.eq.${discordId},user_id.eq.${userId}`).order("created_at", { ascending: false });
       } else if (discordId) {

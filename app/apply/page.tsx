@@ -179,7 +179,51 @@ export default function ApplyPage() {
     );
   }
 
-  // 4. Application was Rejected & Cooldown is active
+  // 4. Application was Revoked by Administration
+  if (existingApp && existingApp.status === "REJECTED" && existingApp.rejection_reason?.includes("[REVOKED BY ADMIN]")) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-24 space-y-8 text-center">
+        <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-amber-500/50 bg-gradient-to-b from-amber-950/20 to-[#0B0F17] space-y-6 shadow-2xl">
+          <div className="p-4 w-fit rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-400 mx-auto">
+            <AlertTriangle className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="text-xs font-mono font-bold uppercase text-amber-400 tracking-wider">
+              Citizen Visa Revoked ({existingApp.application_number})
+            </span>
+            <h1 className="font-heading font-black text-3xl text-white">
+              CITIZEN VISA REVOKED
+            </h1>
+            <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+              Your citizen visa for character <strong>{existingApp.character_name}</strong> was revoked by server administration.
+            </p>
+          </div>
+
+          <div className="p-4 max-w-md mx-auto rounded-xl bg-slate-950/80 border border-amber-500/30 text-xs font-mono text-amber-200 text-left whitespace-pre-line">
+            <strong>Administrative Reason:</strong> {existingApp.rejection_reason.replace("[REVOKED BY ADMIN]", "").trim()}
+          </div>
+
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/status"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs tracking-wider"
+            >
+              VIEW STATUS & DETAILS
+            </Link>
+            <Link
+              href="/discord"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-xs tracking-wider"
+            >
+              OPEN DISCORD SUPPORT
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 5. Application was Rejected & Cooldown is active
   if (existingApp && existingApp.status === "REJECTED") {
     const cooldownDays = Number(process.env.REAPPLICATION_COOLDOWN_DAYS) || 3;
     const reviewTime = existingApp.reviewed_at ? new Date(existingApp.reviewed_at).getTime() : Date.now();
