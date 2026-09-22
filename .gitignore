@@ -36,6 +36,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# Local Developer & Maintenance Scripts
+scripts/
+
 # OS Files
 .DS_Store
 Thumbs.db

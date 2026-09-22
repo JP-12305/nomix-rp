@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -30,6 +30,7 @@ import { formatDate } from "@/lib/utils";
 export default function HomePage() {
   const [latestNews, setLatestNews] = useState<NewsArticle[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     fetch("/api/news")
@@ -42,8 +43,13 @@ export default function HomePage() {
       .catch((err) => console.error(err));
 
     const handleScroll = () => {
-      // Trigger background watermark only after scrolling past top hero area
-      setIsScrolled(window.scrollY > 120);
+      // Trigger background watermark only when 'YOUR CITY. YOUR STORY.' text reaches/touches the navbar (top <= 80px)
+      if (headlineRef.current) {
+        const rect = headlineRef.current.getBoundingClientRect();
+        setIsScrolled(rect.top <= 80);
+      } else {
+        setIsScrolled(window.scrollY > 450);
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -108,7 +114,10 @@ export default function HomePage() {
           </div>
 
           {/* Main Slogan Headline */}
-          <h1 className="font-heading font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight text-metallic max-w-5xl leading-[1.1] mb-6">
+          <h1 
+            ref={headlineRef}
+            className="font-heading font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight text-metallic max-w-5xl leading-[1.1] mb-6"
+          >
             YOUR CITY. YOUR STORY. <br />
             <span className="text-glow-cyan text-cyan-400">YOUR LEGACY.</span>
           </h1>

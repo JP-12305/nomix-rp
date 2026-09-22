@@ -3,27 +3,35 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, Clock, User, ChevronRight, Search } from "lucide-react";
-import { NewsArticle } from "@/types";
+import { Sparkles, Clock, User, ChevronRight, Search, Globe, Tag } from "lucide-react";
+import { NewsArticle, NewsCategory } from "@/types";
 import { formatDate } from "@/lib/utils";
 
 export default function NewsPage() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [categories, setCategories] = useState<NewsCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
-    fetch("/api/news")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setArticles(data);
+    Promise.all([
+      fetch(`/api/news?_t=${Date.now()}`, { cache: "no-store" }),
+      fetch(`/api/news/categories?_t=${Date.now()}`, { cache: "no-store" })
+    ])
+      .then(async ([newsRes, catRes]) => {
+        if (newsRes.ok) {
+          const newsData = await newsRes.json();
+          if (Array.isArray(newsData)) setArticles(newsData);
+        }
+        if (catRes.ok) {
+          const catData = await catRes.json();
+          if (Array.isArray(catData)) setCategories(catData);
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.error("News load error:", err);
         setLoading(false);
       });
   }, []);
@@ -31,11 +39,14 @@ export default function NewsPage() {
   const filteredArticles = articles.filter((art) => {
     const matchesSearch =
       art.title.toLowerCase().includes(search.toLowerCase()) ||
-      art.excerpt.toLowerCase().includes(search.toLowerCase());
+      art.excerpt.toLowerCase().includes(search.toLowerCase()) ||
+      art.content.toLowerCase().includes(search.toLowerCase());
+      
     const matchesCat =
       selectedCategory === "all" ||
       art.category_id === selectedCategory ||
       art.category?.slug === selectedCategory;
+
     return matchesSearch && matchesCat;
   });
 
@@ -44,10 +55,6 @@ export default function NewsPage() {
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-xs font-mono text-cyan-400">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>SERVER DISPATCHES & TRANSMISSIONS</span>
-        </div>
         <h1 className="font-heading font-black text-4xl sm:text-5xl text-metallic">
           NEWS & ANNOUNCEMENTS
         </h1>
@@ -64,23 +71,33 @@ export default function NewsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search news..."
+            placeholder="Search news & changelogs..."
             className="w-full bg-surface-card border border-slate-800 rounded-xl py-2 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {["all", "server-update", "community-event", "law-and-order", "economy-tuning"].map((cat) => (
+          <button
+            onClick={() => setSelectedCategory("all")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
+              selectedCategory === "all"
+                ? "bg-cyan-500 text-black font-bold shadow-neon-cyan-sm"
+                : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
+            }`}
+          >
+            All Dispatches
+          </button>
+          {categories.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.slug || cat.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-                selectedCategory === cat
+                selectedCategory === cat.slug || selectedCategory === cat.id
                   ? "bg-cyan-500 text-black font-bold shadow-neon-cyan-sm"
                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
               }`}
             >
-              {cat.replace("-", " ")}
+              {cat.name}
             </button>
           ))}
         </div>
@@ -93,8 +110,10 @@ export default function NewsPage() {
           <span className="text-xs font-mono text-slate-400">Loading articles...</span>
         </div>
       ) : filteredArticles.length === 0 ? (
-        <div className="text-center py-16 glass-panel rounded-2xl border border-slate-800">
-          <p className="text-sm text-slate-400">No news articles found matching your criteria.</p>
+        <div className="text-center py-16 glass-panel rounded-2xl border border-slate-800 space-y-3">
+          <Globe className="w-8 h-8 text-cyan-400 mx-auto" />
+          <h3 className="font-heading font-bold text-white text-base">No News Articles Found</h3>
+          <p className="text-xs text-slate-400">There are currently no published dispatches matching your filter.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -104,17 +123,17 @@ export default function NewsPage() {
               href={`/news/${article.slug}`}
               className="glass-panel rounded-2xl overflow-hidden border border-white/5 hover:border-cyan-500/40 transition-all duration-300 group flex flex-col justify-between"
             >
-              <div className="relative h-52 w-full">
+              <div className="relative h-52 w-full bg-slate-950 overflow-hidden">
                 <Image
-                  src={article.cover_image || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800"}
+                  src={article.cover_image || "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80"}
                   alt={article.title}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/40 to-transparent" />
                 <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold bg-black/80 border border-white/10 text-cyan-400">
-                    {article.category?.name || "News"}
+                  <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold bg-black/80 backdrop-blur-md border border-white/10 text-cyan-400">
+                    {article.category?.name || "Dispatch"}
                   </span>
                 </div>
               </div>

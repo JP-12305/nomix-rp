@@ -26,6 +26,7 @@ import {
 import { Application, ApplicationStatus } from "@/types";
 import { formatDate, getStatusDetails } from "@/lib/utils";
 import ApplicationReviewModal from "@/components/admin/ApplicationReviewModal";
+import NewsManager from "@/components/admin/NewsManager";
 
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -44,16 +45,21 @@ function AdminDashboardContent() {
 
   const fetchApplications = () => {
     setLoading(true);
-    fetch(`/api/admin/applications?status=${activeStatusFilter}&search=${encodeURIComponent(searchQuery)}`)
+    fetch(`/api/admin/applications?status=${activeStatusFilter}&search=${encodeURIComponent(searchQuery)}&_t=${Date.now()}`, {
+      cache: "no-store",
+    })
       .then((res) => res.json())
       .then((data) => {
-        if (data.applications) {
+        if (Array.isArray(data.applications)) {
           setApplications(data.applications);
+        } else {
+          setApplications([]);
         }
         setLoading(false);
       })
       .catch((err) => {
         console.error(err);
+        setApplications([]);
         setLoading(false);
       });
   };
@@ -448,22 +454,7 @@ function AdminDashboardContent() {
       {/* 4. NEWS DISPATCHES TAB */}
       {/* ========================================================================= */}
       {activeTab === "news" && (
-        <div className="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-            <div>
-              <h2 className="font-heading font-black text-2xl text-white">News & Changelog Publisher</h2>
-              <p className="text-xs text-slate-400">Publish server updates, community events, and development dispatches.</p>
-            </div>
-            <Link href="/news" className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-cyan-400 font-bold hover:text-white">
-              Preview News Feed
-            </Link>
-          </div>
-
-          <div className="p-4 rounded-xl bg-surface-card border border-slate-800 text-xs text-slate-300 space-y-2">
-            <span className="text-cyan-400 font-mono font-bold block">NEWS PUBLISHING ENGINE</span>
-            <p>Articles are stored in <code>news_articles</code> with slug routing, markdown support, and cover images.</p>
-          </div>
-        </div>
+        <NewsManager />
       )}
 
       {/* Application Review Modal */}

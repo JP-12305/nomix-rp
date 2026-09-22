@@ -48,7 +48,8 @@ function StatusPageContent() {
         return;
       }
 
-      const res = await fetch(endpoint);
+      const sep = endpoint.includes("?") ? "&" : "?";
+      const res = await fetch(`${endpoint}${sep}_t=${Date.now()}`, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         if (data && data.application) {

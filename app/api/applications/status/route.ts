@@ -38,7 +38,16 @@ export async function GET(request: NextRequest) {
       }
 
       const application = data && data.length > 0 ? data[0] : null;
-      return NextResponse.json({ application });
+      return NextResponse.json(
+        { application },
+        {
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0",
+          },
+        }
+      );
     } else {
       // Mock Data Store
       let app = null;

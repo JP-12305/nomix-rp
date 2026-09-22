@@ -15,7 +15,7 @@ export default function SingleNewsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/news")
+    fetch(`/api/news?_t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((articles: NewsArticle[]) => {
         const found = articles.find((a) => a.slug === slug);
