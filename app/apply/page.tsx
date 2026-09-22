@@ -26,8 +26,10 @@ export default function ApplyPage() {
 
   useEffect(() => {
     if (user) {
-      // Check for user application
-      fetch(`/api/applications/status?discord_id=${user.discord_id}&user_id=${user.id}`)
+      // Check for user application with zero-cache
+      fetch(`/api/applications/status?discord_id=${encodeURIComponent(user.discord_id)}&user_id=${encodeURIComponent(user.id)}&_t=${Date.now()}`, {
+        cache: "no-store",
+      })
         .then((res) => {
           if (res.ok) return res.json();
           return null;
@@ -35,11 +37,17 @@ export default function ApplyPage() {
         .then((data) => {
           if (data && data.application) {
             setExistingApp(data.application);
+          } else {
+            setExistingApp(null);
           }
           setCheckingApp(false);
         })
-        .catch(() => setCheckingApp(false));
+        .catch(() => {
+          setExistingApp(null);
+          setCheckingApp(false);
+        });
     } else {
+      setExistingApp(null);
       setCheckingApp(false);
     }
   }, [user]);
