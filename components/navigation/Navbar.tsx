@@ -117,10 +117,10 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-3 py-1.5 text-xs font-semibold tracking-wider transition-all duration-200 rounded relative group ${
+                  className={`px-3 py-1.5 text-xs font-semibold tracking-wider transition-colors duration-150 rounded-lg relative group border outline-none focus:outline-none focus-visible:outline-none focus:ring-0 select-none ${
                     isActive
-                      ? "text-cyan-300 bg-cyan-950/40 border border-cyan-500/30"
-                      : "text-slate-300 hover:text-white hover:bg-white/5"
+                      ? "text-cyan-300 bg-cyan-950/40 border-cyan-500/40 shadow-[0_0_12px_rgba(0,240,255,0.15)]"
+                      : "text-slate-300 hover:text-white hover:bg-white/5 border-transparent hover:border-slate-800/80"
                   }`}
                 >
                   {link.name}
@@ -251,10 +251,10 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`px-3 py-2 text-xs font-semibold rounded-lg transition-all ${
+                className={`px-3 py-2 text-xs font-semibold rounded-lg transition-colors border outline-none focus:outline-none ${
                   pathname === link.href
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
-                    : "bg-slate-900/60 text-slate-300 hover:text-white"
+                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-sm"
+                    : "bg-slate-900/60 text-slate-300 hover:text-white border-transparent"
                 }`}
               >
                 {link.name}
