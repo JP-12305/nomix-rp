@@ -22,7 +22,8 @@ export default function NewsPage() {
       .then(async ([newsRes, catRes]) => {
         if (newsRes.ok) {
           const newsData = await newsRes.json();
-          if (Array.isArray(newsData)) setArticles(newsData);
+          const list = Array.isArray(newsData) ? newsData : (newsData.articles || []);
+          setArticles(list);
         }
         if (catRes.ok) {
           const catData = await catRes.json();

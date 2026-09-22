@@ -3,6 +3,8 @@ import { getAdminSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 function slugify(text: string): string {
   return text

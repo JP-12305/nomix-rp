@@ -3,6 +3,8 @@ import { getAdminSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 export async function GET() {
   try {
@@ -14,22 +16,27 @@ export async function GET() {
         .eq("is_published", true)
         .order("published_at", { ascending: false });
 
-      if (!newsError && articles) {
-        return NextResponse.json(articles, {
-          headers: {
-            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-          },
-        });
+      if (newsError) {
+        console.error("Public news query error:", newsError);
+        return NextResponse.json({ error: newsError.message, articles: [] }, { status: 500 });
       }
+
+      return NextResponse.json(articles || [], {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0, s-maxage=0",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        },
+      });
     }
 
     return NextResponse.json([], {
       headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0, s-maxage=0",
       },
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("Public news GET error:", err);
-    return NextResponse.json([]);
+    return NextResponse.json({ error: err.message, articles: [] }, { status: 500 });
   }
 }
