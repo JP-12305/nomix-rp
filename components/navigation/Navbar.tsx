@@ -131,16 +131,28 @@ export default function Navbar() {
           {/* Right Area: Status, Profile & Action CTA */}
           <div className="flex items-center justify-end gap-2.5 sm:gap-3 flex-shrink-0">
             {/* Live Server Status Pill */}
-            <div className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/80 border border-slate-800 text-xs text-slate-300 whitespace-nowrap flex-shrink-0">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-              </span>
-              <span className="font-mono text-emerald-400 font-bold">
-                {serverStatus ? `${serverStatus.players}/${serverStatus.max_players}` : "142/200"}
-              </span>
-              <span className="text-slate-400 font-semibold text-[10px]">PLAYERS</span>
-            </div>
+            {serverStatus?.online ? (
+              <div className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/80 border border-emerald-500/20 text-xs text-slate-300 whitespace-nowrap flex-shrink-0">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+                </span>
+                <span className="font-mono text-emerald-400 font-bold">
+                  {serverStatus.players}/{serverStatus.max_players}
+                </span>
+                <span className="text-slate-400 font-semibold text-[10px]">PLAYERS</span>
+              </div>
+            ) : (
+              <div className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/80 border border-red-500/30 text-xs text-slate-300 whitespace-nowrap flex-shrink-0">
+                <span className="relative flex h-2 w-2">
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
+                </span>
+                <span className="font-mono text-red-400 font-bold">
+                  {serverStatus ? `${serverStatus.players}/${serverStatus.max_players}` : "0/64"}
+                </span>
+                <span className="text-red-400 font-semibold text-[10px] tracking-wider">OFFLINE</span>
+              </div>
+            )}
 
             {/* User Profile / Discord Auth */}
             {user ? (
