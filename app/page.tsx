@@ -417,7 +417,7 @@ export default function HomePage() {
 
           <Link
             href="/rules"
-            className="flex-shrink-0 px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-white font-heading font-bold text-sm tracking-wider transition-all flex items-center gap-2 group"
+            className="w-full sm:w-auto flex-shrink-0 px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-white font-heading font-bold text-sm tracking-wider transition-all flex items-center justify-center gap-2 group"
           >
             <span>VIEW COMPLETE RULEBOOK</span>
             <ArrowRight className="w-4 h-4 text-cyan-400 group-hover:translate-x-1 transition-transform" />
@@ -429,10 +429,10 @@ export default function HomePage() {
       {/* 8. VISA APPLICATION CTA BANNER */}
       {/* ========================================================================= */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="relative rounded-3xl overflow-hidden glass-panel p-10 sm:p-16 border border-cyan-500/30 text-center flex flex-col items-center bg-gradient-to-b from-[#0B0F17] to-[#040609] shadow-2xl">
+        <div className="relative rounded-3xl overflow-hidden glass-panel p-8 sm:p-14 lg:p-16 border border-cyan-500/30 text-center flex flex-col items-center bg-gradient-to-b from-[#0B0F17] to-[#040609] shadow-2xl">
           <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
           
-          <div className="relative w-20 h-20 mb-6">
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 mb-6">
             <Image
               src="/logo/logo.png"
               alt="NOMIX Logo"
@@ -441,29 +441,29 @@ export default function HomePage() {
             />
           </div>
 
-          <h2 className="font-heading font-black text-3xl sm:text-5xl text-metallic max-w-3xl mb-4 leading-tight">
+          <h2 className="font-heading font-black text-2xl sm:text-4xl lg:text-5xl text-metallic max-w-3xl mb-4 leading-tight">
             READY TO WRITE YOUR STORY IN LOS SANTOS?
           </h2>
           
-          <p className="text-slate-300 text-sm sm:text-base max-w-xl mb-8 leading-relaxed">
+          <p className="text-slate-300 text-xs sm:text-base max-w-xl mb-8 leading-relaxed">
             Our multi-step visa process ensures high-standard roleplay. Applications are reviewed promptly by our dedicated recruitment team.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto">
             <Link
               href="/apply"
-              className="px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all transform hover:-translate-y-1 flex items-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
             >
               <FileText className="w-4 h-4" />
-              START VISA APPLICATION
+              <span>START VISA APPLICATION</span>
             </Link>
             
             <Link
               href="/discord"
-              className="px-8 py-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-bold text-sm tracking-wider transition-all transform hover:-translate-y-1 flex items-center gap-2 shadow-[0_0_15px_rgba(88,101,242,0.3)]"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-bold text-sm tracking-wider transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(88,101,242,0.3)]"
             >
               <Users className="w-4 h-4" />
-              JOIN DISCORD COMMUNITY
+              <span>JOIN DISCORD COMMUNITY</span>
             </Link>
           </div>
         </div>

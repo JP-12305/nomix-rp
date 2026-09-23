@@ -254,15 +254,32 @@ export default function Navbar() {
 
       {/* Mobile Animated Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="xl:hidden glass-panel border-b border-cyan-500/30 px-4 pt-2 pb-6 space-y-3">
+        <div className="xl:hidden glass-panel border-b border-cyan-500/30 px-4 pt-3 pb-6 space-y-4 max-h-[82vh] overflow-y-auto">
+          {/* Mobile Server Status Pill */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${serverStatus?.online ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-red-500"}`} />
+              </span>
+              <span className="text-slate-300 font-medium">Server Status</span>
+            </div>
+            <div className="flex items-center gap-1.5 font-mono font-bold">
+              {serverStatus?.online ? (
+                <span className="text-emerald-400">{serverStatus.players}/{serverStatus.max_players} ONLINE</span>
+              ) : (
+                <span className="text-red-400">OFFLINE</span>
+              )}
+            </div>
+          </div>
+
           <nav className="grid grid-cols-2 gap-2">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`px-3 py-2 text-xs font-semibold rounded-lg transition-colors border outline-none focus:outline-none ${
+                className={`px-3 py-2.5 text-xs font-semibold rounded-lg transition-colors border outline-none focus:outline-none flex items-center justify-center text-center ${
                   pathname === link.href
-                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-sm"
+                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-sm font-bold"
                     : "bg-slate-900/60 text-slate-300 hover:text-white border-transparent"
                 }`}
               >
@@ -271,42 +288,67 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
+          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2.5">
             {user ? (
-              <div className="flex items-center justify-between bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                <div className="flex items-center gap-2">
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-cyan-500/50">
-                    <Image
-                      src={user.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"}
-                      alt={user.username}
-                      fill
-                      className="object-cover"
-                    />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden border border-cyan-500/50 flex-shrink-0">
+                      <Image
+                        src={user.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"}
+                        alt={user.username}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="text-xs">
+                      <div className="font-bold text-white leading-tight">{user.display_name || user.username}</div>
+                      <div className={`capitalize text-[10px] font-semibold ${
+                        user.role === "admin" ? "text-red-400" : user.role === "staff" ? "text-cyan-400" : "text-slate-400"
+                      }`}>{user.role}</div>
+                    </div>
                   </div>
-                  <div className="text-xs">
-                    <div className="font-bold text-white">{user.username}</div>
-                    <div className="text-cyan-400 capitalize text-[10px] font-semibold">{user.role}</div>
-                  </div>
+                  <button
+                    onClick={logout}
+                    className="text-xs text-red-400 hover:text-red-300 p-1.5 rounded-lg bg-red-950/30 border border-red-900/40 flex items-center gap-1 font-medium transition-colors"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Sign Out</span>
+                  </button>
                 </div>
-                <button
-                  onClick={logout}
-                  className="text-xs text-red-400 hover:underline flex items-center gap-1 font-medium"
-                >
-                  <LogOut className="w-3.5 h-3.5" /> Logout
-                </button>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Link
+                    href="/status"
+                    className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-surface-card border border-slate-800 text-xs text-slate-200 hover:text-cyan-300"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>My Visa Application</span>
+                  </Link>
+                  {isStaff && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-amber-950/30 border border-amber-500/30 text-xs text-amber-300 font-semibold"
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Staff Portal</span>
+                    </Link>
+                  )}
+                </div>
               </div>
             ) : (
               <button
                 onClick={loginWithDiscord}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#5865F2] text-white text-xs font-bold"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs font-bold tracking-wider transition-all shadow-md"
               >
-                LOGIN WITH DISCORD
+                <Users className="w-4 h-4" />
+                <span>LOGIN WITH DISCORD</span>
               </button>
             )}
 
             <Link
               href="/apply"
-              className="w-full text-center py-2.5 rounded-xl bg-cyan-400 text-black font-heading font-black text-xs tracking-wider"
+              className="w-full text-center py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-xs tracking-wider shadow-neon-cyan-sm hover:shadow-neon-cyan transition-all"
             >
               APPLY FOR VISA
             </Link>

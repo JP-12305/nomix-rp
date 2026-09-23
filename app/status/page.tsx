@@ -356,15 +356,15 @@ function StatusPageContent() {
               {app.rejection_reason?.replace("[REVOKED BY ADMIN]", "").trim() || "Visa revoked by administration."}
             </div>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs sm:text-sm">
               <p className="text-slate-300">
                 If you believe this revocation was made in error or wish to appeal the decision, please open a support ticket on Discord.
               </p>
               <Link
                 href="/discord"
-                className="px-5 py-3 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-bold text-xs sm:text-sm tracking-wider flex items-center gap-2 flex-shrink-0"
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-heading font-bold text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 flex-shrink-0 shadow-md"
               >
-                <Users className="w-4 h-4" /> OPEN DISCORD SUPPORT
+                <Users className="w-4 h-4" /> <span>OPEN DISCORD SUPPORT</span>
               </Link>
             </div>
           </div>
@@ -381,18 +381,18 @@ function StatusPageContent() {
               {app.rejection_reason || "Application did not meet minimum roleplay detail standards."}
             </div>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs sm:text-sm">
               <p className="text-slate-300">
                 You may review our server guidelines on our <Link href="/rules" className="text-cyan-400 underline font-semibold">Rules Page</Link>.
               </p>
               {isCooldownActive ? (
-                <div className="px-4 py-2 rounded-lg bg-red-950/80 border border-red-500/30 text-red-300 text-xs sm:text-sm font-mono">
+                <div className="px-4 py-2.5 rounded-lg bg-red-950/80 border border-red-500/30 text-red-300 text-xs sm:text-sm font-mono text-center sm:text-left">
                   Cooldown ends: {new Date(cooldownEndTime).toLocaleDateString()} at {new Date(cooldownEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
               ) : (
                 <Link
                   href="/apply"
-                  className="px-5 py-2.5 rounded-lg bg-cyan-400 text-black font-bold text-xs sm:text-sm tracking-wider hover:shadow-neon-cyan transition-all"
+                  className="w-full sm:w-auto text-center px-6 py-3 rounded-xl bg-cyan-400 text-black font-heading font-bold text-xs sm:text-sm tracking-wider hover:shadow-neon-cyan transition-all"
                 >
                   RE-APPLY NOW
                 </Link>
@@ -402,20 +402,20 @@ function StatusPageContent() {
         )}
 
         {/* Applicant Summary Metadata */}
-        <div className="mt-8 pt-6 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-          <div>
+        <div className="mt-8 pt-6 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div className="bg-slate-900/40 sm:bg-transparent p-3 sm:p-0 rounded-xl border sm:border-0 border-slate-800">
             <span className="text-slate-400 uppercase text-xs block font-semibold">Character</span>
-            <strong className="text-white text-base">{app.character_name}</strong>
+            <strong className="text-white text-base break-words">{app.character_name}</strong>
           </div>
-          <div>
+          <div className="bg-slate-900/40 sm:bg-transparent p-3 sm:p-0 rounded-xl border sm:border-0 border-slate-800">
             <span className="text-slate-400 uppercase text-xs block font-semibold">Age & Gender</span>
             <strong className="text-white text-base">{app.character_age} yrs, {app.character_gender}</strong>
           </div>
-          <div>
+          <div className="bg-slate-900/40 sm:bg-transparent p-3 sm:p-0 rounded-xl border sm:border-0 border-slate-800">
             <span className="text-slate-400 uppercase text-xs block font-semibold">Discord Account</span>
-            <strong className="text-cyan-400 font-mono text-base">@{app.discord_username}</strong>
+            <strong className="text-cyan-400 font-mono text-base break-words">@{app.discord_username}</strong>
           </div>
-          <div>
+          <div className="bg-slate-900/40 sm:bg-transparent p-3 sm:p-0 rounded-xl border sm:border-0 border-slate-800">
             <span className="text-slate-400 uppercase text-xs block font-semibold">Server Reference</span>
             <strong className="text-slate-200 font-mono text-base">{app.application_number}</strong>
           </div>

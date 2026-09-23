@@ -161,10 +161,28 @@ export default function ApplicationWizard() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       
-      {/* Top Wizard Steps Header */}
-      <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-cyan-500/20 shadow-xl overflow-x-auto">
+      {/* Mobile Compact Step Indicator (< sm screens) */}
+      <div className="sm:hidden glass-panel p-4 rounded-2xl border border-cyan-500/30 space-y-2.5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-mono text-cyan-400 font-bold uppercase tracking-wider">
+            Step {currentStep} of 6
+          </span>
+          <span className="text-white font-bold font-heading">
+            {STEPS[currentStep - 1].title}
+          </span>
+        </div>
+        <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+          <div
+            className="bg-gradient-to-r from-cyan-500 to-cyan-300 h-full rounded-full transition-all duration-300"
+            style={{ width: `${(currentStep / 6) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Desktop & Tablet Wizard Steps Header (sm+ screens) */}
+      <div className="hidden sm:block glass-panel p-4 sm:p-6 rounded-2xl border border-cyan-500/20 shadow-xl overflow-x-auto">
         <div className="flex items-center justify-between min-w-[650px] gap-2">
           {STEPS.map((s) => {
             const Icon = s.icon;
@@ -227,7 +245,7 @@ export default function ApplicationWizard() {
 
       {/* Main Form Box */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <div className="glass-panel p-6 sm:p-10 rounded-3xl border border-white/10 relative">
+        <div className="glass-panel p-5 sm:p-10 rounded-3xl border border-white/10 relative">
           
           {/* Step Header */}
           <div className="border-b border-slate-800 pb-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -741,24 +759,24 @@ export default function ApplicationWizard() {
           )}
 
           {/* Wizard Action Bar */}
-          <div className="mt-10 pt-6 border-t border-slate-800 flex items-center justify-between">
+          <div className="mt-8 sm:mt-10 pt-6 border-t border-slate-800 flex flex-col-reverse sm:flex-row items-center justify-between gap-3 sm:gap-4">
             {currentStep > 1 ? (
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-heading font-bold text-slate-200 hover:text-white transition-all flex items-center gap-2"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-heading font-bold text-slate-200 hover:text-white transition-all flex items-center justify-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" /> PREVIOUS STEP
               </button>
             ) : (
-              <div />
+              <div className="hidden sm:block" />
             )}
 
             {currentStep < 6 ? (
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all flex items-center gap-2"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-heading font-black text-sm tracking-wider hover:shadow-neon-cyan transition-all flex items-center justify-center gap-2"
               >
                 NEXT STEP <ChevronRight className="w-4 h-4" />
               </button>
@@ -766,11 +784,11 @@ export default function ApplicationWizard() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-base tracking-wider hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all flex items-center gap-2 disabled:opacity-50"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 text-black font-heading font-black text-sm sm:text-base tracking-wider hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" /> SUBMITTING APPLICATION...
+                    <Loader2 className="w-5 h-5 animate-spin" /> SUBMITTING...
                   </>
                 ) : (
                   <>

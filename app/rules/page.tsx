@@ -29,14 +29,8 @@ export default function RulesPage() {
       .then((data) => {
         if (Array.isArray(data)) {
           setCategories(data);
-          // Pre-expand first few rules in the first category
-          const initialExpanded: Record<string, boolean> = {};
-          if (data[0] && data[0].rules) {
-            data[0].rules.forEach((r: Rule) => {
-              initialExpanded[r.id] = true;
-            });
-          }
-          setExpandedRules(initialExpanded);
+          // All rules start collapsed by default
+          setExpandedRules({});
         }
         setLoading(false);
       })
@@ -152,11 +146,19 @@ export default function RulesPage() {
               Select Category Filter:
             </span>
             <div className="flex items-center gap-3 text-xs sm:text-sm">
-              <button onClick={expandAll} className="text-cyan-400 hover:underline">
+              <button
+                type="button"
+                onClick={expandAll}
+                className="text-cyan-400 hover:text-cyan-300 font-semibold hover:underline cursor-pointer transition-colors"
+              >
                 Expand All
               </button>
-              <span>•</span>
-              <button onClick={collapseAll} className="text-slate-400 hover:underline">
+              <span className="text-slate-600">•</span>
+              <button
+                type="button"
+                onClick={collapseAll}
+                className="text-slate-400 hover:text-white font-semibold hover:underline cursor-pointer transition-colors"
+              >
                 Collapse All
               </button>
             </div>
@@ -227,7 +229,7 @@ export default function RulesPage() {
               {/* Rules List */}
               <div className="space-y-3">
                 {category.rules?.map((rule) => {
-                  const isExpanded = !expandedRules[rule.id];
+                  const isExpanded = !!expandedRules[rule.id];
                   const badge = getSeverityBadge(rule.severity);
 
                   return (
@@ -238,21 +240,21 @@ export default function RulesPage() {
                       {/* Rule Accordion Trigger */}
                       <button
                         onClick={() => toggleRule(rule.id)}
-                        className="w-full text-left p-4 sm:p-5 flex items-start sm:items-center justify-between gap-4"
+                        className="w-full text-left p-3.5 sm:p-5 flex items-start justify-between gap-3 sm:gap-4"
                       >
-                        <div className="flex items-start sm:items-center gap-4">
+                        <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
                           {/* Rule Number Badge */}
-                          <div className="flex-shrink-0 w-14 h-11 rounded-lg bg-surface-card border border-cyan-500/30 flex items-center justify-center font-mono font-black text-sm text-cyan-400">
+                          <div className="flex-shrink-0 w-11 h-9 sm:w-14 sm:h-11 rounded-lg bg-surface-card border border-cyan-500/30 flex items-center justify-center font-mono font-black text-xs sm:text-sm text-cyan-400">
                             {rule.rule_number}
                           </div>
 
-                          <div>
+                          <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2 mb-1">
-                              <h3 className="font-heading font-bold text-lg sm:text-xl text-white hover:text-cyan-300 transition-colors">
+                              <h3 className="font-heading font-bold text-base sm:text-xl text-white hover:text-cyan-300 transition-colors break-words">
                                 {rule.title}
                               </h3>
                               <span
-                                className={`px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase border ${badge.className}`}
+                                className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-mono font-bold uppercase border ${badge.className}`}
                               >
                                 {badge.label}
                               </span>
@@ -263,7 +265,7 @@ export default function RulesPage() {
                           </div>
                         </div>
 
-                        <div className="p-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 flex-shrink-0">
+                        <div className="p-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 flex-shrink-0 mt-0.5 sm:mt-0">
                           {isExpanded ? (
                             <ChevronUp className="w-4 h-4" />
                           ) : (

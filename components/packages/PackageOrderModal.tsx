@@ -176,36 +176,38 @@ export default function PackageOrderModal({
           {/* Ambient Glass Glow Accent in Corner */}
           <div className={`absolute -top-16 -right-16 w-64 h-64 rounded-full ${getAmbientLight()} blur-3xl pointer-events-none`} />
 
-          {/* Close Button */}
-          <button
-            onClick={resetAndClose}
-            className="absolute top-5 right-5 p-2 rounded-xl bg-slate-900/80 border border-white/10 text-slate-400 hover:text-white hover:border-white/20 transition-all z-10"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
           {/* Modal Header */}
-          <div className="relative flex items-center gap-3.5 border-b border-white/10 pb-3.5">
-            <div className={`p-2.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-white/10 ${getTextColor()}`}>
-              <Crown className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2.5">
-                <h2 className={`font-heading font-black text-xl sm:text-2xl ${getTextColor()}`}>
-                  {packageInfo.name} TIER
-                </h2>
-                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${packageInfo.badge_color}`}>
-                  {packageInfo.rank_badge}
-                </span>
+          <div className="relative flex items-center justify-between gap-3 border-b border-white/10 pb-3.5">
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
+              <div className={`p-2.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-white/10 flex-shrink-0 ${getTextColor()}`}>
+                <Crown className="w-6 h-6" />
               </div>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="font-mono text-lg sm:text-xl font-black text-white">
-                  {packageInfo.price} <span className="text-xs text-slate-400 font-sans font-normal">/ month</span>
-                </span>
-                <span className="text-slate-500">•</span>
-                <span className="text-xs text-slate-300">Automatic Discord Role Sync</span>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className={`font-heading font-black text-xl sm:text-2xl leading-none ${getTextColor()}`}>
+                    {packageInfo.name} TIER
+                  </h2>
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border flex-shrink-0 ${packageInfo.badge_color}`}>
+                    {packageInfo.rank_badge}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="font-mono text-lg sm:text-xl font-black text-white">
+                    {packageInfo.price}
+                  </span>
+                  <span className="text-xs text-slate-400 font-sans font-normal">/ month</span>
+                </div>
               </div>
             </div>
+
+            {/* Close Button cleanly positioned on the right without overlapping badges */}
+            <button
+              onClick={resetAndClose}
+              className="p-2 rounded-xl bg-slate-900/80 border border-white/10 text-slate-400 hover:text-white hover:border-white/20 transition-all flex-shrink-0"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Success Confirmation State */}

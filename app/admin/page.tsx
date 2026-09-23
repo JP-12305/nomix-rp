@@ -161,64 +161,64 @@ function AdminDashboardContent() {
       </div>
 
       {/* Main Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
         
         {/* Pending */}
-        <div className="glass-panel p-5 rounded-2xl border border-amber-500/30 flex flex-col justify-between">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-amber-500/30 flex flex-col justify-between">
           <div className="flex items-center justify-between text-amber-400">
             <span className="text-[10px] font-mono uppercase font-bold">Pending Queue</span>
             <Hourglass className="w-4 h-4 animate-pulse" />
           </div>
           <div className="mt-3">
-            <div className="font-mono font-black text-3xl text-amber-300">{pendingCount}</div>
-            <span className="text-[10px] text-slate-500">Awaiting initial review</span>
+            <div className="font-mono font-black text-2xl sm:text-3xl text-amber-300">{pendingCount}</div>
+            <span className="text-[10px] text-slate-500">Awaiting review</span>
           </div>
         </div>
 
         {/* Under Review */}
-        <div className="glass-panel p-5 rounded-2xl border border-cyan-500/30 flex flex-col justify-between">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-cyan-500/30 flex flex-col justify-between">
           <div className="flex items-center justify-between text-cyan-400">
             <span className="text-[10px] font-mono uppercase font-bold">Under Review</span>
             <Clock className="w-4 h-4" />
           </div>
           <div className="mt-3">
-            <div className="font-mono font-black text-3xl text-cyan-300">{underReviewCount}</div>
-            <span className="text-[10px] text-slate-500">Active recruiter evaluation</span>
+            <div className="font-mono font-black text-2xl sm:text-3xl text-cyan-300">{underReviewCount}</div>
+            <span className="text-[10px] text-slate-500">Active evaluation</span>
           </div>
         </div>
 
         {/* Approved */}
-        <div className="glass-panel p-5 rounded-2xl border border-emerald-500/30 flex flex-col justify-between">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-emerald-500/30 flex flex-col justify-between">
           <div className="flex items-center justify-between text-emerald-400">
             <span className="text-[10px] font-mono uppercase font-bold">Approved</span>
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div className="mt-3">
-            <div className="font-mono font-black text-3xl text-emerald-300">{approvedCount}</div>
-            <span className="text-[10px] text-slate-500">Citizen roles granted</span>
+            <div className="font-mono font-black text-2xl sm:text-3xl text-emerald-300">{approvedCount}</div>
+            <span className="text-[10px] text-slate-500">Citizens active</span>
           </div>
         </div>
 
         {/* Rejected */}
-        <div className="glass-panel p-5 rounded-2xl border border-red-500/30 flex flex-col justify-between">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-red-500/30 flex flex-col justify-between">
           <div className="flex items-center justify-between text-red-400">
             <span className="text-[10px] font-mono uppercase font-bold">Rejected</span>
             <XCircle className="w-4 h-4" />
           </div>
           <div className="mt-3">
-            <div className="font-mono font-black text-3xl text-red-300">{rejectedCount}</div>
+            <div className="font-mono font-black text-2xl sm:text-3xl text-red-300">{rejectedCount}</div>
             <span className="text-[10px] text-slate-500">Cooldown active</span>
           </div>
         </div>
 
         {/* Total & Acceptance */}
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col justify-between col-span-2 lg:col-span-1">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 flex flex-col justify-between col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between text-slate-400">
             <span className="text-[10px] font-mono uppercase font-bold">Total Processed</span>
             <Layers className="w-4 h-4 text-cyan-400" />
           </div>
           <div className="mt-3">
-            <div className="font-mono font-black text-3xl text-white">{totalCount}</div>
+            <div className="font-mono font-black text-2xl sm:text-3xl text-white">{totalCount}</div>
             <span className="text-[10px] text-emerald-400 font-semibold">{approvalRate}% Acceptance Rate</span>
           </div>
         </div>
@@ -226,7 +226,7 @@ function AdminDashboardContent() {
       </div>
 
       {/* Navigation Tabs (Applications / Content) */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-3 overflow-x-auto whitespace-nowrap">
         <button
           onClick={() => setActiveTab("applications")}
           className={`px-4 py-2 rounded-xl text-xs font-heading font-bold tracking-wider transition-all flex items-center gap-2 ${

@@ -77,7 +77,7 @@ export default function DiscordPage() {
       <div className="glass-panel rounded-3xl p-8 sm:p-12 border border-[#5865F2]/30 bg-gradient-to-b from-[#5865F2]/10 to-transparent text-center space-y-8 shadow-2xl relative overflow-hidden">
         
         {/* Live Sync Badge */}
-        <div className="absolute top-6 right-6 text-xs font-mono px-3.5 py-1.5 rounded-full bg-slate-900/95 border border-slate-800 text-slate-200 flex items-center gap-2 shadow-md">
+        <div className="sm:absolute sm:top-6 sm:right-6 inline-flex items-center gap-2 text-xs font-mono px-3.5 py-1.5 rounded-full bg-slate-900/95 border border-slate-800 text-slate-200 shadow-md mx-auto sm:mx-0">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
           <span className="text-emerald-400 font-bold">LIVE DISCORD SYNC</span>
         </div>
