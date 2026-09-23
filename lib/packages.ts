@@ -1,0 +1,57 @@
+import { PackageTierInfo } from "@/types";
+
+export const PREMIUM_PACKAGES: PackageTierInfo[] = [
+  {
+    id: "silver",
+    name: "SILVER",
+    price: "$5",
+    monthly_price: 5,
+    rank_badge: "ENTRY MEMBER",
+    badge_color: "bg-slate-800/80 text-slate-200 border-slate-600/50",
+    accent_color: "slate",
+    features: [
+      "1 Premium Vehicle",
+      "Custom Number Plate OR Custom Phone Number",
+      "1 Custom Event Coupon",
+      "Unique Surprise Gift",
+      "Silver Discord Badge & Role",
+    ],
+    popular: false,
+  },
+  {
+    id: "gold",
+    name: "GOLD",
+    price: "$10",
+    monthly_price: 10,
+    rank_badge: "PREMIUM MEMBER",
+    badge_color: "bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.2)]",
+    accent_color: "amber",
+    features: [
+      "1 Premium Vehicle",
+      "1 Custom Number Plate",
+      "Custom Phone Number",
+      "3 Custom Event Coupons",
+      "Unique Surprise Gift",
+      "Gold Discord Badge & Role",
+    ],
+    popular: true,
+  },
+  {
+    id: "emerald",
+    name: "EMERALD",
+    price: "$20",
+    monthly_price: 20,
+    rank_badge: "ADVANCED MEMBER",
+    badge_color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)]",
+    accent_color: "emerald",
+    features: [
+      "1 Premium Vehicle",
+      "2 Custom Number Plates",
+      "Custom Phone Number",
+      "5 Custom Event Coupons",
+      "Unique Surprise Gift",
+      "Emerald Discord Badge & Role",
+    ],
+    popular: false,
+  },
+];

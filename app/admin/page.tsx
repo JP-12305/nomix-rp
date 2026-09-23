@@ -20,12 +20,14 @@ import {
   Users, 
   ExternalLink,
   ChevronRight,
-  RefreshCw
+  RefreshCw,
+  Crown
 } from "lucide-react";
 import { Application, ApplicationStatus } from "@/types";
 import { formatDate, getStatusDetails } from "@/lib/utils";
 import ApplicationReviewModal from "@/components/admin/ApplicationReviewModal";
 import NewsManager from "@/components/admin/NewsManager";
+import PackageOrdersManager from "@/components/admin/PackageOrdersManager";
 
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -40,7 +42,7 @@ function AdminDashboardContent() {
   const [activeStatusFilter, setActiveStatusFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
-  const [activeTab, setActiveTab] = useState<"applications" | "rules" | "faqs" | "news">("applications");
+  const [activeTab, setActiveTab] = useState<"applications" | "orders" | "rules" | "faqs" | "news">("applications");
 
   const fetchApplications = () => {
     setLoading(true);
@@ -234,6 +236,17 @@ function AdminDashboardContent() {
           }`}
         >
           <FileText className="w-4 h-4" /> VISA APPLICATIONS QUEUE
+        </button>
+
+        <button
+          onClick={() => setActiveTab("orders")}
+          className={`px-4 py-2 rounded-xl text-xs font-heading font-bold tracking-wider transition-all flex items-center gap-2 ${
+            activeTab === "orders"
+              ? "bg-cyan-500 text-black shadow-neon-cyan-sm"
+              : "bg-surface-card border border-slate-800 text-slate-400 hover:text-white"
+          }`}
+        >
+          <Crown className="w-4 h-4" /> SUPPORTER ORDERS
         </button>
 
         {isAdmin && (
@@ -443,6 +456,13 @@ function AdminDashboardContent() {
             <p>Connected to <code>faqs</code> and <code>faq_categories</code> tables with automated categorized accordions.</p>
           </div>
         </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 2. SUPPORTER ORDERS TAB */}
+      {/* ========================================================================= */}
+      {activeTab === "orders" && (
+        <PackageOrdersManager />
       )}
 
       {/* ========================================================================= */}

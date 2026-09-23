@@ -23,6 +23,7 @@ const NAV_LINKS = [
   { name: "RULES", href: "/rules" },
   { name: "APPLICATION", href: "/apply" },
   { name: "STATUS", href: "/status" },
+  { name: "STORE", href: "/store" },
   { name: "NEWS", href: "/news" },
   { name: "FAQ", href: "/faq" },
   { name: "DISCORD", href: "/discord" },
@@ -106,14 +107,14 @@ export default function Navbar() {
           </Link>
 
           {/* Center Area: Desktop Navigation Links (Balanced Equal Spacing) */}
-          <nav className="hidden xl:flex items-center gap-1 2xl:gap-1.5 mx-auto flex-shrink-0">
+          <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1 mx-auto flex-shrink-0">
             {NAV_LINKS.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-2.5 2xl:px-3 py-1.5 text-xs font-bold tracking-wider transition-colors duration-150 rounded-lg relative group border outline-none focus:outline-none focus-visible:outline-none focus:ring-0 select-none whitespace-nowrap ${
+                  className={`px-2 2xl:px-2.5 py-1.5 text-xs font-bold tracking-wider transition-colors duration-150 rounded-lg relative group border outline-none focus:outline-none focus-visible:outline-none focus:ring-0 select-none whitespace-nowrap ${
                     isActive
                       ? "text-cyan-300 bg-cyan-950/40 border-cyan-500/40 shadow-[0_0_12px_rgba(0,240,255,0.15)]"
                       : "text-slate-300 hover:text-white hover:bg-white/5 border-transparent hover:border-slate-800/80"

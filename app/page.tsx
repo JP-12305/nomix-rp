@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import ServerStatusWidget from "@/components/server-status/ServerStatusWidget";
 import FeatureCard from "@/components/cards/FeatureCard";
-import DepartmentCard from "@/components/cards/DepartmentCard";
+import PackagesSection from "@/components/packages/PackagesSection";
 import { NewsArticle } from "@/types";
 import { formatDate } from "@/lib/utils";
 
@@ -323,56 +323,9 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. DEPARTMENTS & CAREERS */}
+      {/* 5. COMMUNITY SUPPORTER TIERS & PACKAGES */}
       {/* ========================================================================= */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs sm:text-sm font-mono uppercase tracking-widest text-cyan-400 block mb-2">
-            Whitelisted Factions
-          </span>
-          <h2 className="font-heading font-black text-3xl sm:text-4xl text-metallic mb-4">
-            CHOOSE YOUR CAREER PATH
-          </h2>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Whether you uphold justice, save lives on trauma helicopters, or rule the underground, your story shapes the city.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <DepartmentCard
-            title="Los Santos Police Dept"
-            category="Law Enforcement"
-            description="Patrol, Traffic Interceptors, SWAT, Air Support, and Detective divisions dedicated to maintaining citywide order."
-            image="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=600&auto=format&fit=crop"
-            accent="blue"
-            badge="LSPD / SASP"
-          />
-          <DepartmentCard
-            title="San Andreas Medical"
-            category="Emergency Services"
-            description="Trauma surgery, medevac air response, paramedic patrols, and realistic injury treatment at Mount Zonah."
-            image="https://images.unsplash.com/photo-1587745416684-47953f16f02f?q=80&w=600&auto=format&fit=crop"
-            accent="red"
-            badge="SAFR / EMS"
-          />
-          <DepartmentCard
-            title="Underground Syndicate"
-            category="Organized Crime"
-            description="Black market arms dealing, custom chop shops, illegal street racing circuits, and turf racketeering."
-            image="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=600&auto=format&fit=crop"
-            accent="red"
-            badge="SYN / CARTEL"
-          />
-          <DepartmentCard
-            title="Department of Justice"
-            category="Legal & Judicial"
-            description="Bar-certified defense attorneys, state prosecutors, and judges presiding over high-stakes criminal court trials."
-            image="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop"
-            accent="amber"
-            badge="DOJ / COURTS"
-          />
-        </div>
-      </section>
+      <PackagesSection />
 
       {/* ========================================================================= */}
       {/* 6. LATEST NEWS & CHANGELOGS */}

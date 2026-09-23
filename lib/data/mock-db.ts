@@ -10,7 +10,8 @@ import {
   ApplicationStatus,
   ServerStatusData,
   StaffNote,
-  ApplicationEvent
+  ApplicationEvent,
+  PackageOrder
 } from "@/types";
 
 // In-memory persistent state for local development / demo mode
@@ -1361,6 +1362,53 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
       server_name: "No Mix RP | Season 2",
       is_mock: true,
     };
+  }
+
+  public packageOrders: PackageOrder[] = [
+    {
+      id: "ord-sample-01",
+      user_id: "usr-demo-applicant",
+      discord_id: "789123456789012345",
+      discord_username: "SpectreRider",
+      discord_avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
+      package_tier: "gold",
+      package_name: "GOLD",
+      price: "$10 / mo",
+      character_name: "Marcus Vance",
+      custom_plate: "GOLDEN1",
+      custom_phone: "555-0777",
+      vehicle_preference: "Sports / Tuner class",
+      notes: "Looking forward to supporting the community!",
+      status: "pending",
+      created_at: new Date(Date.now() - 3600000).toISOString(),
+      updated_at: new Date(Date.now() - 3600000).toISOString(),
+    }
+  ];
+
+  public getPackageOrders(): PackageOrder[] {
+    return [...this.packageOrders].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  }
+
+  public addPackageOrder(orderData: Omit<PackageOrder, "id" | "created_at" | "updated_at">): PackageOrder {
+    const newOrder: PackageOrder = {
+      ...orderData,
+      id: `ord-${Date.now()}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.packageOrders.unshift(newOrder);
+    return newOrder;
+  }
+
+  public updatePackageOrderStatus(orderId: string, status: PackageOrder["status"], staffNotes?: string): PackageOrder | null {
+    const order = this.packageOrders.find((o) => o.id === orderId);
+    if (!order) return null;
+    order.status = status;
+    if (staffNotes !== undefined) order.staff_notes = staffNotes;
+    order.updated_at = new Date().toISOString();
+    return order;
   }
 }
 

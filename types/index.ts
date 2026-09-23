@@ -153,3 +153,40 @@ export interface ServerStatusData {
   server_name: string;
   is_mock: boolean;
 }
+
+export type PackageTier = 'silver' | 'gold' | 'emerald';
+export type PackageOrderStatus = 'pending' | 'active' | 'delivered' | 'rejected';
+
+export interface PackageTierInfo {
+  id: PackageTier;
+  name: string;
+  price: string;
+  monthly_price: number;
+  rank_badge: string;
+  badge_color: string;
+  accent_color: 'slate' | 'amber' | 'emerald';
+  features: string[];
+  popular?: boolean;
+}
+
+export interface PackageOrder {
+  id: string;
+  user_id?: string;
+  discord_id: string;
+  discord_username: string;
+  discord_avatar?: string;
+  package_tier: PackageTier;
+  package_name: string;
+  price: string;
+  character_name?: string;
+  custom_plate?: string;
+  custom_phone?: string;
+  choice_type?: 'plate' | 'phone';
+  vehicle_preference?: string;
+  notes?: string;
+  status: PackageOrderStatus;
+  staff_notes?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
