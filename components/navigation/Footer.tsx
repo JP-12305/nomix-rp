@@ -117,11 +117,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/staff" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
-                  Staff & Management Team
-                </Link>
-              </li>
-              <li>
                 <Link href="/admin" className="hover:text-amber-400 transition-colors flex items-center gap-1 text-slate-300">
                   <Shield className="w-4 h-4 text-amber-400" />
                   Staff Review Dashboard

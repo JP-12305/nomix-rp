@@ -1,9 +1,20 @@
+import { redirect } from "next/navigation";
+
+// TEMPORARILY DISABLED: Redirect staff roster page to home
+export default function StaffPage() {
+  redirect("/");
+}
+
+/*
+// =========================================================================
+// ORIGINAL STAFF & LEADERSHIP PAGE (PRESERVED FOR FUTURE RE-ENABLING)
+// =========================================================================
 "use client";
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Shield, Terminal, MessageSquare } from "lucide-react";
+import { Shield } from "lucide-react";
 
 const STAFF_ROSTER = [
   {
@@ -36,7 +47,7 @@ const STAFF_ROSTER = [
   },
 ];
 
-export default function StaffPage() {
+export function ActiveStaffPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -78,3 +89,4 @@ export default function StaffPage() {
     </div>
   );
 }
+*/

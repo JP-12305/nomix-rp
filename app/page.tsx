@@ -54,6 +54,7 @@ export default function HomePage() {
       })
       .catch((err) => console.error(err));
 
+
     const handleScroll = () => {
       // Trigger background watermark only when 'YOUR CITY. YOUR STORY.' text reaches/touches the navbar (top <= 80px)
       if (headlineRef.current) {
@@ -393,6 +394,8 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+
 
       {/* ========================================================================= */}
       {/* 7. RULES REMINDER CALLOUT */}
