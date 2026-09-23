@@ -367,127 +367,127 @@ export default function ApplicationReviewModal({
           </div>
 
           {/* Modal Scrollable Content */}
-          <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-6 text-xs text-slate-300 [scrollbar-width:thin]">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 sm:p-8 space-y-6 text-xs text-slate-300 [scrollbar-width:thin] min-w-0">
           
           {actionError && (
-            <div className="p-4 rounded-xl bg-red-950/60 border border-red-500/50 text-red-300 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-red-400" />
-              <span>{actionError}</span>
+            <div className="p-4 rounded-xl bg-red-950/60 border border-red-500/50 text-red-300 flex items-center gap-2 min-w-0 overflow-hidden">
+              <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
+              <span className="break-words [overflow-wrap:anywhere]">{actionError}</span>
             </div>
           )}
 
           {/* TAB 1: FULL QUESTIONNAIRE */}
           {activeTab === "answers" && (
-            <div className="space-y-8">
+            <div className="space-y-8 min-w-0">
               
               {/* Section 1: Demographics */}
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 <h3 className="font-heading font-bold text-sm text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-1">
                   1. Personal & FiveM Credentials
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-0">
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 text-[10px] block">Real Age</span>
-                    <strong className="text-white">{answersMap.age || app.character_age}</strong>
+                    <strong className="text-white break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.age || app.character_age}</strong>
                   </div>
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 text-[10px] block">Location</span>
-                    <strong className="text-white">{answersMap.country || "N/A"}</strong>
+                    <strong className="text-white break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.country || "N/A"}</strong>
                   </div>
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 text-[10px] block">Timezone</span>
-                    <strong className="text-white">{answersMap.timezone || "N/A"}</strong>
+                    <strong className="text-white break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.timezone || "N/A"}</strong>
                   </div>
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
-                    <span className="text-slate-500 text-[10px] block">FiveM ID</span>
-                    <strong className="text-cyan-300 font-mono">{answersMap.fivem_id || "N/A"}</strong>
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
+                    <span className="text-slate-500 text-[10px] block">FiveM Name</span>
+                    <strong className="text-cyan-300 font-mono break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.fivem_id || "N/A"}</strong>
                   </div>
                 </div>
               </div>
 
               {/* Section 2: RP Experience */}
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 <h3 className="font-heading font-bold text-sm text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-1">
                   2. Roleplay Background
                 </h3>
-                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2">
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">Previous Servers & Hours:</span>
-                  <p className="text-slate-200 whitespace-pre-line">{answersMap.previous_servers || "No servers listed."}</p>
+                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2 min-w-0 overflow-hidden">
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Previous Servers & Hours:</span>
+                  <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.previous_servers || "No servers listed."}</p>
                 </div>
                 {answersMap.whitelist_experience && (
-                  <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold">Whitelisted Experience:</span>
-                    <p className="text-slate-200 whitespace-pre-line">{answersMap.whitelist_experience}</p>
+                  <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2 min-w-0 overflow-hidden">
+                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Whitelisted Experience:</span>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.whitelist_experience}</p>
                   </div>
                 )}
               </div>
 
               {/* Section 3: Character Concept */}
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 <h3 className="font-heading font-bold text-sm text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-1">
                   3. Character Profile ({app.character_name}, {app.character_age} yrs, {app.character_gender})
                 </h3>
-                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2">
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">Backstory & Origins:</span>
-                  <p className="text-slate-200 leading-relaxed whitespace-pre-line">{answersMap.char_background || "No backstory provided."}</p>
+                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2 min-w-0 overflow-hidden">
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Backstory & Origins:</span>
+                  <p className="text-slate-200 leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.char_background || "No backstory provided."}</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-1">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold">Personality & Flaws:</span>
-                    <p className="text-slate-200">{answersMap.char_personality || "N/A"}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 min-w-0">
+                  <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-1 min-w-0 overflow-hidden">
+                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Personality & Flaws:</span>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.char_personality || "N/A"}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-1">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold">Character Goals:</span>
-                    <p className="text-slate-200">{answersMap.char_goals || "N/A"}</p>
+                  <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-1 min-w-0 overflow-hidden">
+                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Character Goals:</span>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.char_goals || "N/A"}</p>
                   </div>
                 </div>
               </div>
 
               {/* Section 4: RP Knowledge */}
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 <h3 className="font-heading font-bold text-sm text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-1">
                   4. Rule Definitions & Understanding
                 </h3>
-                <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                <div className="space-y-3 min-w-0">
+                  <div className="p-3.5 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 font-bold uppercase text-[10px] block mb-1">RDM:</span>
-                    <p className="text-slate-200">{answersMap.def_rdm || "N/A"}</p>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.def_rdm || "N/A"}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                  <div className="p-3.5 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 font-bold uppercase text-[10px] block mb-1">VDM:</span>
-                    <p className="text-slate-200">{answersMap.def_vdm || "N/A"}</p>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.def_vdm || "N/A"}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                  <div className="p-3.5 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 font-bold uppercase text-[10px] block mb-1">Metagaming:</span>
-                    <p className="text-slate-200">{answersMap.def_meta || "N/A"}</p>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.def_meta || "N/A"}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                  <div className="p-3.5 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 font-bold uppercase text-[10px] block mb-1">Powergaming:</span>
-                    <p className="text-slate-200">{answersMap.def_power || "N/A"}</p>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.def_power || "N/A"}</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800">
+                  <div className="p-3.5 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 font-bold uppercase text-[10px] block mb-1">Fail RP:</span>
-                    <p className="text-slate-200">{answersMap.def_failrp || "N/A"}</p>
+                    <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.def_failrp || "N/A"}</p>
                   </div>
                 </div>
               </div>
 
               {/* Section 5: Scenario Responses */}
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 <h3 className="font-heading font-bold text-sm text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-1">
                   5. In-Game Roleplay Scenario Responses
                 </h3>
-                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2">
-                  <span className="text-[10px] text-cyan-400 font-bold uppercase">Scenario 1: High-Stakes Traffic Stop</span>
-                  <p className="text-slate-200 leading-relaxed whitespace-pre-line">{answersMap.scenario_police_stop || "N/A"}</p>
+                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2 min-w-0 overflow-hidden">
+                  <span className="text-[10px] text-cyan-400 font-bold uppercase block">Scenario 1: High-Stakes Traffic Stop</span>
+                  <p className="text-slate-200 leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.scenario_police_stop || "N/A"}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2">
-                  <span className="text-[10px] text-cyan-400 font-bold uppercase">Scenario 2: Hostage at Gunpoint</span>
-                  <p className="text-slate-200 leading-relaxed whitespace-pre-line">{answersMap.scenario_hostage || "N/A"}</p>
+                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2 min-w-0 overflow-hidden">
+                  <span className="text-[10px] text-cyan-400 font-bold uppercase block">Scenario 2: Hostage at Gunpoint</span>
+                  <p className="text-slate-200 leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.scenario_hostage || "N/A"}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2">
-                  <span className="text-[10px] text-cyan-400 font-bold uppercase">Scenario 3: Narrative Loss</span>
-                  <p className="text-slate-200 leading-relaxed whitespace-pre-line">{answersMap.scenario_loss || "N/A"}</p>
+                <div className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-2 min-w-0 overflow-hidden">
+                  <span className="text-[10px] text-cyan-400 font-bold uppercase block">Scenario 3: Narrative Loss</span>
+                  <p className="text-slate-200 leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{answersMap.scenario_loss || "N/A"}</p>
                 </div>
               </div>
 
@@ -496,14 +496,14 @@ export default function ApplicationReviewModal({
 
           {/* TAB 2: STAFF NOTES (Private) */}
           {activeTab === "notes" && (
-            <div className="space-y-6">
-              <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2">
+            <div className="space-y-6 min-w-0">
+              <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2 min-w-0 overflow-hidden">
                 <ShieldCheck className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                <span>Confidential: Staff notes are strictly internal and never visible to the applicant.</span>
+                <span className="break-words [overflow-wrap:anywhere]">Confidential: Staff notes are strictly internal and never visible to the applicant.</span>
               </div>
 
               {/* Add Note Form */}
-              <form onSubmit={handleAddNote} className="space-y-3">
+              <form onSubmit={handleAddNote} className="space-y-3 min-w-0">
                 <textarea
                   rows={3}
                   value={noteInput}
@@ -521,17 +521,17 @@ export default function ApplicationReviewModal({
               </form>
 
               {/* Existing Notes */}
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0">
                 {(!app.notes || app.notes.length === 0) ? (
                   <p className="text-slate-500 text-center py-6">No staff notes recorded yet.</p>
                 ) : (
                   app.notes.map((note) => (
-                    <div key={note.id} className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-1">
-                      <div className="flex items-center justify-between text-[11px]">
-                        <strong className="text-amber-400 font-mono">@{note.staff_name}</strong>
-                        <span className="text-slate-500">{formatDate(note.created_at)}</span>
+                    <div key={note.id} className="p-4 rounded-xl bg-surface-card border border-slate-800 space-y-1 min-w-0 overflow-hidden">
+                      <div className="flex items-center justify-between text-[11px] gap-2">
+                        <strong className="text-amber-400 font-mono truncate">@{note.staff_name}</strong>
+                        <span className="text-slate-500 flex-shrink-0">{formatDate(note.created_at)}</span>
                       </div>
-                      <p className="text-slate-200 whitespace-pre-line">{note.note}</p>
+                      <p className="text-slate-200 whitespace-pre-line break-words [overflow-wrap:anywhere] [word-break:break-word]">{note.note}</p>
                     </div>
                   ))
                 )}
@@ -541,7 +541,7 @@ export default function ApplicationReviewModal({
 
           {/* TAB 3: AUDIT TIMELINE */}
           {activeTab === "audit" && (
-            <div className="space-y-3">
+            <div className="space-y-3 min-w-0">
               {(!app.events || app.events.length === 0) ? (
                 <p className="text-slate-500 text-center py-6">No audit history recorded.</p>
               ) : (
@@ -554,7 +554,7 @@ export default function ApplicationReviewModal({
                   return (
                     <div 
                       key={evt.id} 
-                      className={`p-3.5 rounded-xl bg-surface-card border flex items-center justify-between ${
+                      className={`p-3.5 rounded-xl bg-surface-card border flex flex-col sm:flex-row sm:items-center justify-between gap-2 min-w-0 overflow-hidden ${
                         isRevokedEvt 
                           ? "border-amber-500/50 bg-amber-950/20" 
                           : isOverruleEvt 
@@ -562,9 +562,9 @@ export default function ApplicationReviewModal({
                           : "border-slate-800"
                       }`}
                     >
-                      <div className="space-y-1">
+                      <div className="space-y-1 min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className={`text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded ${
+                          <span className={`text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded flex-shrink-0 ${
                             isRevokedEvt
                               ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
                               : isOverruleEvt
@@ -578,16 +578,16 @@ export default function ApplicationReviewModal({
                             {evt.event_type}
                           </span>
                         </div>
-                        <span className="text-slate-300 text-xs block">
+                        <span className="text-slate-300 text-xs block truncate">
                           Actor: <strong className="text-white">{evt.actor_name || "System"}</strong>
                         </span>
                         {evt.metadata?.reason && (
-                          <p className="text-[11px] text-slate-400 font-mono italic">
+                          <p className="text-[11px] text-slate-400 font-mono italic break-words [overflow-wrap:anywhere] [word-break:break-word]">
                             Reason: "{evt.metadata.reason}"
                           </p>
                         )}
                       </div>
-                      <span className="text-[11px] text-slate-500 font-mono">
+                      <span className="text-[11px] text-slate-500 font-mono flex-shrink-0">
                         {formatDate(evt.created_at)}
                       </span>
                     </div>

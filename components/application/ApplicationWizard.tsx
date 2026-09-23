@@ -339,15 +339,15 @@ export default function ApplicationWizard() {
                 )}
               </div>
 
-              {/* FiveM Identifier */}
+              {/* FiveM Name */}
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
-                  FiveM / Steam / Rockstar Identifier <span className="text-red-400">*</span>
+                  FiveM Name <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   {...register("fivem_id")}
-                  placeholder="e.g. steam:1100001xxxxxxxx or FiveM username"
+                  placeholder="e.g. Your FiveM Name"
                   className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                 />
                 <span className="text-xs sm:text-sm text-slate-400 block mt-1">

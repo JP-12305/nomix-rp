@@ -16,7 +16,8 @@ export const applicationSchema = z.object({
     .max(50, "Timezone identifier is too long."),
   fivem_id: z
     .string()
-    .min(3, "FiveM / Steam / Discord identifier is required."),
+    .min(2, "FiveM Name is required.")
+    .max(100, "FiveM Name is too long."),
 
   // Step 2: RP Experience
   played_before: z.string().min(1, "Please select whether you have played FiveM before."),

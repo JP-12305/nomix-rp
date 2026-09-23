@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Rajdhani, Orbitron, Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth/auth-context";
@@ -23,15 +23,24 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#00f0ff",
+};
+
+const siteOrigin = 
+  process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_SITE_URL.includes("localhost")
+    ? process.env.NEXT_PUBLIC_SITE_URL
+    : "https://nomixroleplay.xyz";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://nomixrp.com"),
+  metadataBase: new URL(siteOrigin),
   title: "NOMIX Roleplay | Premium FiveM Community",
   description: "YOUR CITY. YOUR STORY. YOUR LEGACY. Experience the next generation of FiveM roleplay with custom economy, high-tier crime, and living urban stories.",
   keywords: ["FiveM", "GTA RP", "NOMIX RP", "Roleplay Server", "FiveM Whitelist", "Custom FiveM Economy"],
   openGraph: {
     title: "NOMIX Roleplay | Premium FiveM Community",
     description: "YOUR CITY. YOUR STORY. YOUR LEGACY. Join the whitelist today.",
-    url: "https://nomixrp.com",
+    url: siteOrigin,
     siteName: "NOMIX Roleplay",
     images: [
       {
@@ -39,13 +48,21 @@ export const metadata: Metadata = {
         width: 800,
         height: 800,
         alt: "NOMIX Roleplay Official Logo",
+        type: "image/png",
       },
     ],
     locale: "en_US",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "NOMIX Roleplay | Premium FiveM Community",
+    description: "YOUR CITY. YOUR STORY. YOUR LEGACY. Join the whitelist today.",
+    images: ["/logo/logo.png"],
+  },
   icons: {
     icon: "/logo/logo.png",
+    shortcut: "/logo/logo.png",
     apple: "/logo/logo.png",
   },
 };
