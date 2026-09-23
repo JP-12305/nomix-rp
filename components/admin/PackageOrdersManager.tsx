@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { PackageOrder, PackageOrderStatus } from "@/types";
 import { formatDate } from "@/lib/utils";
+import { useAuth } from "@/lib/auth/auth-context";
 import { 
   Crown, 
   CheckCircle2, 
@@ -16,10 +17,13 @@ import {
   Phone, 
   Car, 
   FileText,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  Users
 } from "lucide-react";
 
 export default function PackageOrdersManager() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState<PackageOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
@@ -27,6 +31,11 @@ export default function PackageOrdersManager() {
   const [selectedOrder, setSelectedOrder] = useState<PackageOrder | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [staffNotes, setStaffNotes] = useState("");
+  const [roleFeedback, setRoleFeedback] = useState<{
+    orderId: string;
+    success: boolean;
+    message: string;
+  } | null>(null);
 
   const fetchOrders = () => {
     setLoading(true);
@@ -59,6 +68,7 @@ export default function PackageOrdersManager() {
 
   const handleUpdateStatus = async (orderId: string, newStatus: PackageOrderStatus) => {
     setUpdatingId(orderId);
+    setRoleFeedback(null);
     try {
       const res = await fetch("/api/packages/orders", {
         method: "PATCH",
@@ -67,6 +77,7 @@ export default function PackageOrdersManager() {
           order_id: orderId,
           status: newStatus,
           staff_notes: staffNotes || undefined,
+          staff_name: user?.username || "Server Staff",
         }),
       });
 
@@ -77,6 +88,66 @@ export default function PackageOrdersManager() {
         );
         if (selectedOrder?.id === orderId) {
           setSelectedOrder(data.order);
+        }
+
+        if (data.discord_role) {
+          if (data.discord_role.success) {
+            setRoleFeedback({
+              orderId,
+              success: true,
+              message: `Bot assigned @${data.discord_role.roleName} to <@${selectedOrder?.discord_id}>!`,
+            });
+          } else if (!data.discord_role.skipped) {
+            setRoleFeedback({
+              orderId,
+              success: false,
+              message: data.discord_role.error || "Failed to grant Discord role.",
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleSyncRole = async (orderId: string) => {
+    setUpdatingId(orderId);
+    setRoleFeedback(null);
+    try {
+      const res = await fetch("/api/packages/orders", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id: orderId,
+          action: "sync_role",
+          staff_name: user?.username || "Server Staff",
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setOrders((prev) =>
+          prev.map((o) => (o.id === orderId ? data.order : o))
+        );
+        if (selectedOrder?.id === orderId) {
+          setSelectedOrder(data.order);
+        }
+
+        if (data.discord_role?.success) {
+          setRoleFeedback({
+            orderId,
+            success: true,
+            message: `Bot assigned @${data.discord_role.roleName} to Discord member!`,
+          });
+        } else {
+          setRoleFeedback({
+            orderId,
+            success: false,
+            message: data.discord_role?.error || data.discord_role?.details || "Discord role assignment could not be completed.",
+          });
         }
       }
     } catch (err) {
@@ -304,10 +375,34 @@ export default function PackageOrdersManager() {
                   )}
                 </div>
 
+                {/* Discord Role Automation Feedback */}
+                {roleFeedback && roleFeedback.orderId === selectedOrder.id && (
+                  <div className={`p-3 rounded-xl border text-xs flex items-center gap-2 ${
+                    roleFeedback.success 
+                      ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-300" 
+                      : "bg-amber-950/60 border-amber-500/40 text-amber-300"
+                  }`}>
+                    {roleFeedback.success ? (
+                      <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-400" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 flex-shrink-0 text-amber-400" />
+                    )}
+                    <span>{roleFeedback.message}</span>
+                  </div>
+                )}
+
+                {/* Staff Notes Audit History if existing */}
+                {selectedOrder.staff_notes && (
+                  <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold">Delivery Log / History:</span>
+                    <p className="text-slate-300 text-xs whitespace-pre-wrap font-mono">{selectedOrder.staff_notes}</p>
+                  </div>
+                )}
+
                 {/* Staff Notes Input */}
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                    Staff Internal Notes / Delivery Memo:
+                    Add Staff Internal Notes / Delivery Memo:
                   </label>
                   <textarea
                     rows={2}
@@ -326,7 +421,16 @@ export default function PackageOrdersManager() {
                     className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-heading font-black text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    MARK AS DELIVERED / ACTIVE
+                    {updatingId === selectedOrder.id ? "PROCESSING DELIVERY..." : "MARK AS DELIVERED / ACTIVE"}
+                  </button>
+
+                  <button
+                    onClick={() => handleSyncRole(selectedOrder.id)}
+                    disabled={updatingId === selectedOrder.id}
+                    className="w-full py-2 rounded-xl bg-[#5865F2]/20 hover:bg-[#5865F2]/30 text-[#5865F2] border border-[#5865F2]/40 text-xs font-bold flex items-center justify-center gap-2 transition-all"
+                  >
+                    <Users className="w-3.5 h-3.5" />
+                    {updatingId === selectedOrder.id ? "SYNCING ROLE..." : "RE-SYNC DISCORD ROLE"}
                   </button>
 
                   <button

@@ -15,6 +15,9 @@ export const config = {
   verifiedRoleId: process.env.DISCORD_VERIFIED_ROLE_ID || "",
   staffRoleId: process.env.DISCORD_STAFF_ROLE_ID || "",
   adminRoleId: process.env.DISCORD_ADMIN_ROLE_ID || "",
+  silverRoleId: process.env.DISCORD_SILVER_ROLE_ID || "",
+  goldRoleId: process.env.DISCORD_GOLD_ROLE_ID || "",
+  emeraldRoleId: process.env.DISCORD_EMERALD_ROLE_ID || "",
   
   // Supabase
   supabaseUrl: process.env.SUPABASE_URL || "",

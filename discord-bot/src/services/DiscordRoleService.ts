@@ -64,4 +64,59 @@ export class DiscordRoleService {
       return { success: false, error: err.message || "Failed to assign role." };
     }
   }
+
+  static async assignPackageRole(
+    guild: Guild, 
+    targetDiscordId: string, 
+    tier: string
+  ): Promise<{ success: boolean; roleName?: string; error?: string }> {
+    const normalizedTier = tier.toLowerCase();
+    let roleId = "";
+    let roleName = "Supporter";
+
+    if (normalizedTier === "silver") {
+      roleId = config.silverRoleId;
+      roleName = "Silver Supporter";
+    } else if (normalizedTier === "gold") {
+      roleId = config.goldRoleId;
+      roleName = "Gold Supporter";
+    } else if (normalizedTier === "emerald") {
+      roleId = config.emeraldRoleId;
+      roleName = "Emerald Supporter";
+    }
+
+    if (!roleId || roleId.startsWith("your-")) {
+      return { success: false, error: `Role ID for ${roleName} is not configured in .env.` };
+    }
+
+    try {
+      const member = await guild.members.fetch(targetDiscordId).catch(() => null);
+      if (!member) {
+        return { success: false, error: "Supporter is not in the Discord server." };
+      }
+
+      const role = await guild.roles.fetch(roleId).catch(() => null);
+      if (!role) {
+        return { success: false, error: `Role ID (${roleId}) not found on Discord server.` };
+      }
+
+      const botMember = guild.members.me;
+      if (!botMember || !botMember.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+        return { success: false, error: "Bot lacks 'Manage Roles' permission in server." };
+      }
+
+      if (botMember.roles.highest.position <= role.position) {
+        return { 
+          success: false, 
+          error: `Bot's role position is lower than or equal to '@${role.name}'.` 
+        };
+      }
+
+      await member.roles.add(role);
+      return { success: true, roleName };
+    } catch (err: any) {
+      console.error(`[ROLE ERROR] Failed to assign ${roleName}:`, err);
+      return { success: false, error: err.message || "Failed to assign role." };
+    }
+  }
 }
