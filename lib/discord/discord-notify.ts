@@ -10,11 +10,11 @@ export async function sendDiscordApplicationEmbed(app: {
   submitted_at?: string;
   created_at?: string;
 }) {
-  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
-  const channelId = process.env.DISCORD_APPLICATION_CHANNEL_ID || "1550802258646798417";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomix-rp.vercel.app";
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = process.env.DISCORD_APPLICATION_CHANNEL_ID;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomixrp.com";
 
-  if (!token || !channelId || channelId.includes("your-")) return;
+  if (!token || !channelId || channelId.includes("your-") || token.includes("your-")) return;
 
   try {
     const rawDate = app.submitted_at || app.created_at || new Date().toISOString();
@@ -88,12 +88,12 @@ export async function sendDiscordApprovalEmbed(app: {
   character_age: number;
   character_gender: string;
 }, reviewerName: string) {
-  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
-  const channelId = process.env.DISCORD_APPROVED_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID || "1550802258646798417";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomix-rp.vercel.app";
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = process.env.DISCORD_APPROVED_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomixrp.com";
   const connectUrl = process.env.NEXT_PUBLIC_FIVEM_CONNECT_URL || "fivem://connect/play.nomixroleplay.xyz";
 
-  if (!token || !channelId || channelId.includes("your-")) return;
+  if (!token || !channelId || channelId.includes("your-") || token.includes("your-")) return;
 
   try {
     const embed = {
@@ -165,11 +165,11 @@ export async function sendDiscordRejectionEmbed(app: {
   character_age: number;
   character_gender: string;
 }, reviewerName: string, rejectionReason: string, cooldownDays: number = 3) {
-  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
-  const channelId = process.env.DISCORD_REJECTED_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID || "1550802258646798417";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomix-rp.vercel.app";
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = process.env.DISCORD_REJECTED_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomixrp.com";
 
-  if (!token || !channelId || channelId.includes("your-")) return;
+  if (!token || !channelId || channelId.includes("your-") || token.includes("your-")) return;
 
   try {
     const cooldownEnd = new Date(Date.now() + cooldownDays * 24 * 60 * 60 * 1000);
@@ -236,8 +236,8 @@ export async function sendDiscordRejectionEmbed(app: {
 }
 
 export async function assignDiscordCitizenRole(guildId: string, discordUserId: string, roleId: string) {
-  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
-  if (!token || !guildId || !discordUserId || !roleId || roleId.includes("your-")) return;
+  const token = process.env.DISCORD_BOT_TOKEN;
+  if (!token || !guildId || !discordUserId || !roleId || roleId.includes("your-") || token.includes("your-")) return;
 
   try {
     const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members/${discordUserId}/roles/${roleId}`, {
@@ -264,8 +264,8 @@ export async function assignDiscordCitizenRole(guildId: string, discordUserId: s
 }
 
 export async function removeDiscordCitizenRole(guildId: string, discordUserId: string, roleId: string) {
-  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
-  if (!token || !guildId || !discordUserId || !roleId || roleId.includes("your-")) return;
+  const token = process.env.DISCORD_BOT_TOKEN;
+  if (!token || !guildId || !discordUserId || !roleId || roleId.includes("your-") || token.includes("your-")) return;
 
   try {
     const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members/${discordUserId}/roles/${roleId}`, {
@@ -294,11 +294,11 @@ export async function sendDiscordRevocationEmbed(app: {
   discord_username: string;
   character_name: string;
 }, adminName: string, revocationReason: string) {
-  const token = process.env.DISCORD_BOT_TOKEN || "MTU1MDgwMDIyOTgzMjU5MzQxOA.Gf1ckU.qCvsraCBadi_zx6ybfGqdHqjPrZa4O7OPopfFk";
-  const channelId = process.env.DISCORD_REJECTED_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID || "1550802258646798417";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomix-rp.vercel.app";
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = process.env.DISCORD_REJECTED_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomixrp.com";
 
-  if (!token || !channelId || channelId.includes("your-")) return;
+  if (!token || !channelId || channelId.includes("your-") || token.includes("your-")) return;
 
   try {
     const embed = {

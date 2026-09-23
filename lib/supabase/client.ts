@@ -1,28 +1,33 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://mcqhlvkzrqqphtbqbprk.supabase.co";
-let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_pvg6rn0O1yZQr66QiUkUaw_rP8hBoH-";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 // Auto-correct if copy-pasted without trailing hyphen
-if (supabaseAnonKey === "sb_publishable_pvg6rn0O1yZQr66QiUkUaw_rP8hBoH") {
-  supabaseAnonKey = "sb_publishable_pvg6rn0O1yZQr66QiUkUaw_rP8hBoH-";
+if (supabaseAnonKey && supabaseAnonKey.endsWith("rP8hBoH")) {
+  supabaseAnonKey = supabaseAnonKey + "-";
 }
 
 export const isSupabaseConfigured = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || supabaseUrl;
-  const key = supabaseAnonKey;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || supabaseAnonKey;
   return Boolean(
     url &&
     key &&
-    !url.includes("placeholder-url")
+    !url.includes("placeholder-url") &&
+    !key.includes("placeholder")
   );
 };
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
-});
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder-url.supabase.co",
+  supabaseAnonKey || "placeholder-anon-key",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  }
+);
 
