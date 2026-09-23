@@ -1038,73 +1038,7 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
     }
   ];
 
-  public applications: Application[] = [
-    {
-      id: "app-seed-001",
-      application_number: "APP-001042",
-      user_id: "usr-demo-applicant",
-      discord_id: "789123456789012345",
-      discord_username: "SpectreRider",
-      character_name: "Marcus Vance",
-      character_age: 29,
-      character_gender: "Male",
-      status: "UNDER_REVIEW",
-      submitted_at: "2026-09-18T10:15:00Z",
-      created_at: "2026-09-18T10:15:00Z",
-      updated_at: "2026-09-18T14:00:00Z",
-      answers: [
-        { id: "a1", application_id: "app-seed-001", question_key: "age", answer_text: "24", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a2", application_id: "app-seed-001", question_key: "country", answer_text: "United States", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a3", application_id: "app-seed-001", question_key: "timezone", answer_text: "EST (UTC-5)", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a4", application_id: "app-seed-001", question_key: "fivem_id", answer_text: "fivem:spectrerider99", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a5", application_id: "app-seed-001", question_key: "played_before", answer_text: "Yes, experienced player", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a6", application_id: "app-seed-001", question_key: "previous_servers", answer_text: "Over 800 hours across ProdigyRP and NoPixel WL. Focused on business ownership and vehicle tuning.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a7", application_id: "app-seed-001", question_key: "whitelist_experience", answer_text: "Manager at Hayes Auto and Lead Mechanic.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a8", application_id: "app-seed-001", question_key: "char_name", answer_text: "Marcus Vance", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a9", application_id: "app-seed-001", question_key: "char_age", answer_text: "29", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a10", application_id: "app-seed-001", question_key: "char_gender", answer_text: "Male", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a11", application_id: "app-seed-001", question_key: "char_background", answer_text: "Marcus grew up in industrial Liberty City working in shipping docks. After a syndicate fallout, he relocated west to Los Santos to open a legitimate automotive styling studio.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a12", application_id: "app-seed-001", question_key: "char_personality", answer_text: "Charismatic, loyal to friends, but stubborn and struggles with gambling temptation when cornered.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a13", application_id: "app-seed-001", question_key: "char_goals", answer_text: "Build a high-end luxury vehicle import brand and invest in commercial nightclub real estate.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a14", application_id: "app-seed-001", question_key: "def_rdm", answer_text: "RDM is attacking, damaging, or killing another player without prior verbal interaction, valid motive, or narrative escalation.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a15", application_id: "app-seed-001", question_key: "def_vdm", answer_text: "VDM is using any vehicle as an offensive weapon to ram, kill, or incapacitate players without roleplay context.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a16", application_id: "app-seed-001", question_key: "def_meta", answer_text: "Metagaming is taking information obtained out of character (such as streams or Discord DMs) and acting upon it in-game.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a17", application_id: "app-seed-001", question_key: "def_power", answer_text: "Powergaming is forcing actions on players without giving them a chance to counter (/me knocks out instantly) or roleplaying superhuman physical abilities.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a18", application_id: "app-seed-001", question_key: "def_failrp", answer_text: "Fail RP is failing to value human life, acting out of character, or ignoring immersion. If bugs happen, RP through it and ticket afterward.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a19", application_id: "app-seed-001", question_key: "scenario_police_stop", answer_text: "I pull over immediately, turn off the engine, keep my hands visible on the steering wheel, roleplay my character subtle nervousness in voice, and try to talk my way through the inspection calmly rather than instantly pulling a weapon.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a20", application_id: "app-seed-001", question_key: "scenario_hostage", answer_text: "I value my life completely, follow the robbers instructions, roleplay authentic fear, and cooperate with police negotiators when on scene.", created_at: "2026-09-18T10:15:00Z" },
-        { id: "a21", application_id: "app-seed-001", question_key: "scenario_loss", answer_text: "I accept the loss as exciting narrative progression, roleplay the frustration in character, and create a revenge arc instead of complaining out of character.", created_at: "2026-09-18T10:15:00Z" },
-      ],
-      notes: [
-        {
-          id: "note-1",
-          application_id: "app-seed-001",
-          staff_id: "usr-demo-staff",
-          staff_name: "NomixRecruiter",
-          note: "Strong character backstory and solid understanding of Fear RP and NLR.",
-          created_at: "2026-09-18T14:10:00Z",
-        }
-      ],
-      events: [
-        {
-          id: "evt-1",
-          application_id: "app-seed-001",
-          actor_name: "SpectreRider",
-          event_type: "APPLICATION_SUBMITTED",
-          metadata: { app_number: "APP-001042" },
-          created_at: "2026-09-18T10:15:00Z",
-        },
-        {
-          id: "evt-2",
-          application_id: "app-seed-001",
-          actor_name: "NomixRecruiter",
-          event_type: "APPLICATION_REVIEW_STARTED",
-          metadata: { status: "UNDER_REVIEW" },
-          created_at: "2026-09-18T14:00:00Z",
-        }
-      ]
-    }
-  ];
+  public applications: Application[] = [];
 
   // Helper Methods
   public getRulesWithCategories(): RuleCategory[] {
@@ -1364,26 +1298,7 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
     };
   }
 
-  public packageOrders: PackageOrder[] = [
-    {
-      id: "ord-sample-01",
-      user_id: "usr-demo-applicant",
-      discord_id: "789123456789012345",
-      discord_username: "SpectreRider",
-      discord_avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
-      package_tier: "gold",
-      package_name: "GOLD",
-      price: "$10 / mo",
-      character_name: "Marcus Vance",
-      custom_plate: "GOLDEN1",
-      custom_phone: "555-0777",
-      vehicle_preference: "Sports / Tuner class",
-      notes: "Looking forward to supporting the community!",
-      status: "pending",
-      created_at: new Date(Date.now() - 3600000).toISOString(),
-      updated_at: new Date(Date.now() - 3600000).toISOString(),
-    }
-  ];
+  public packageOrders: PackageOrder[] = [];
 
   public getPackageOrders(): PackageOrder[] {
     return [...this.packageOrders].sort(
