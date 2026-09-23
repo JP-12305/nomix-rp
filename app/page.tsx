@@ -31,8 +31,20 @@ export default function HomePage() {
   const [latestNews, setLatestNews] = useState<NewsArticle[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
   const headlineRef = useRef<HTMLHeadingElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const watermarkVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    // Explicitly set muted property and trigger play to prevent browser autoplay block
+    if (heroVideoRef.current) {
+      heroVideoRef.current.muted = true;
+      heroVideoRef.current.play().catch(() => {});
+    }
+    if (watermarkVideoRef.current) {
+      watermarkVideoRef.current.muted = true;
+      watermarkVideoRef.current.play().catch(() => {});
+    }
+
     fetch("/api/news")
       .then((res) => res.json())
       .then((data) => {
@@ -71,11 +83,13 @@ export default function HomePage() {
         aria-hidden="true"
       >
         <video
+          ref={watermarkVideoRef}
           autoPlay
           loop
           muted
           playsInline
           preload="auto"
+          poster="/logo/logo.png"
           className="w-full h-full object-contain drop-shadow-[0_0_80px_rgba(0,240,255,0.4)]"
         >
           <source src="/logo/logo.webm" type="video/webm" />
@@ -92,24 +106,19 @@ export default function HomePage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 flex flex-col items-center">
 
-          {/* Official Animated Hero Logo (Layer 1) */}
+          {/* Official Animated Hero Logo (Single element with native poster fallback) */}
           <div className="relative w-full max-w-[320px] sm:max-w-[400px] md:max-w-[460px] aspect-[1280/1080] mb-8 sm:mb-12 transition-transform duration-500 hover:scale-105 flex items-center justify-center">
             <video
+              ref={heroVideoRef}
               autoPlay
               loop
               muted
               playsInline
               preload="auto"
+              poster="/logo/logo.png"
               className="w-full h-full object-contain drop-shadow-[0_0_50px_rgba(0,240,255,0.45)] pointer-events-none"
             >
               <source src="/logo/logo.webm" type="video/webm" />
-              <Image
-                src="/logo/logo.png"
-                alt="NOMIX Roleplay Official Logo"
-                fill
-                className="object-contain drop-shadow-[0_0_35px_rgba(0,240,255,0.45)]"
-                priority
-              />
             </video>
           </div>
 
