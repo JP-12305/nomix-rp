@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { 
   X, 
   CheckCircle2, 
@@ -32,10 +33,42 @@ export default function ApplicationReviewModal({
   onRefresh,
 }: ApplicationReviewModalProps) {
   const { user, isAdmin } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [app, setApp] = useState<Application>(initialApp);
   const [activeTab, setActiveTab] = useState<"answers" | "notes" | "audit">("answers");
   const [noteInput, setNoteInput] = useState("");
   const [addingNote, setAddingNote] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
+  useEffect(() => {
+    if (initialApp) {
+      setApp((prev) => ({
+        ...prev,
+        ...initialApp,
+        answers: (initialApp.answers && initialApp.answers.length > 0) ? initialApp.answers : prev.answers,
+        notes: (initialApp.notes && initialApp.notes.length > 0) ? initialApp.notes : prev.notes,
+        events: (initialApp.events && initialApp.events.length > 0) ? initialApp.events : prev.events,
+      }));
+    }
+  }, [initialApp]);
+
+  const updateAppSafely = (newAppData: Partial<Application>) => {
+    if (!newAppData) return;
+    setApp((prev) => ({
+      ...prev,
+      ...newAppData,
+      answers: (newAppData.answers && newAppData.answers.length > 0) ? newAppData.answers : prev.answers,
+      notes: (newAppData.notes && newAppData.notes.length > 0) ? newAppData.notes : prev.notes,
+      events: (newAppData.events && newAppData.events.length > 0) ? newAppData.events : prev.events,
+    }));
+  };
   
   // Rejection modal prompt (initial review)
   const [showRejectPrompt, setShowRejectPrompt] = useState(false);
@@ -77,7 +110,7 @@ export default function ApplicationReviewModal({
         return;
       }
 
-      setApp(data.application);
+      updateAppSafely(data.application);
       setProcessingAction(false);
       onRefresh();
     } catch (err: any) {
@@ -114,7 +147,7 @@ export default function ApplicationReviewModal({
         return;
       }
 
-      setApp(data.application);
+      updateAppSafely(data.application);
       setShowRejectPrompt(false);
       setProcessingAction(false);
       onRefresh();
@@ -152,7 +185,7 @@ export default function ApplicationReviewModal({
         return;
       }
 
-      setApp(data.application);
+      updateAppSafely(data.application);
       setShowRevokePrompt(false);
       setRevocationReason("");
       setProcessingAction(false);
@@ -185,7 +218,7 @@ export default function ApplicationReviewModal({
         return;
       }
 
-      setApp(data.application);
+      updateAppSafely(data.application);
       setShowOverrulePrompt(false);
       setProcessingAction(false);
       onRefresh();
@@ -207,8 +240,8 @@ export default function ApplicationReviewModal({
         }),
       });
       const data = await res.json();
-      if (res.ok) {
-        setApp(data.application);
+      if (res.ok && data.application) {
+        updateAppSafely(data.application);
         onRefresh();
       }
       setProcessingAction(false);
@@ -252,76 +285,89 @@ export default function ApplicationReviewModal({
     return acc;
   }, {});
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-4xl glass-panel rounded-3xl border border-cyan-500/30 shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col">
-        
-        {/* Modal Header */}
-        <div className="p-6 border-b border-slate-800 bg-[#090D14] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-400">
-              <FileText className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-heading font-black text-xl text-white">
-                  {app.character_name}
-                </h2>
-                <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${statusInfo.badgeClass}`}>
-                  {statusInfo.label}
-                </span>
+  if (!mounted) return null;
+
+  const modalContent = (
+    <div 
+      className="fixed inset-0 z-[99999] overflow-y-auto bg-[#06080C]/85 backdrop-blur-xl p-4 sm:p-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="min-h-full flex items-center justify-center py-6 sm:py-8">
+        <div className="relative w-full max-w-4xl rounded-3xl bg-[#090D17] border border-cyan-500/35 shadow-[0_0_60px_rgba(0,240,255,0.2),0_30px_70px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[88vh] my-auto animate-in fade-in zoom-in-95 duration-200">
+          
+          {/* Modal Header */}
+          <div className="p-5 sm:p-6 border-b border-white/10 bg-[#0A0E18] flex items-center justify-between gap-4 flex-shrink-0">
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
+              <div className="p-3 rounded-2xl bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 flex-shrink-0">
+                <FileText className="w-6 h-6" />
               </div>
-              <p className="text-xs text-slate-400 font-mono">
-                {app.application_number} • Discord: @{app.discord_username} ({app.discord_id})
-              </p>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="font-heading font-black text-xl sm:text-2xl text-white tracking-wide truncate">
+                    {app.character_name}
+                  </h2>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border flex-shrink-0 ${statusInfo.badgeClass}`}>
+                    {statusInfo.label}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 font-mono mt-0.5 truncate">
+                  <span className="text-cyan-400 font-semibold">{app.application_number}</span> • Discord: <span className="text-slate-200">@{app.discord_username}</span> ({app.discord_id})
+                </p>
+              </div>
             </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-slate-400 hover:text-white transition-all cursor-pointer flex-shrink-0"
+              title="Close Review"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+          {/* Modal Navigation Tabs */}
+          <div className="flex items-center gap-2 px-6 pt-3.5 border-b border-white/10 bg-slate-950/60 flex-shrink-0 overflow-x-auto [scrollbar-width:none]">
+            <button
+              type="button"
+              onClick={() => setActiveTab("answers")}
+              className={`px-4 py-2.5 text-xs font-heading font-bold tracking-wider rounded-t-xl transition-all flex-shrink-0 ${
+                activeTab === "answers"
+                  ? "bg-[#090D17] text-cyan-300 border-t-2 border-cyan-400 border-x border-white/10 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Applicant Questionnaire ({app.answers?.length || 0})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("notes")}
+              className={`px-4 py-2.5 text-xs font-heading font-bold tracking-wider rounded-t-xl transition-all flex items-center gap-1.5 flex-shrink-0 ${
+                activeTab === "notes"
+                  ? "bg-[#090D17] text-cyan-300 border-t-2 border-cyan-400 border-x border-white/10 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              Private Staff Notes ({app.notes?.length || 0})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("audit")}
+              className={`px-4 py-2.5 text-xs font-heading font-bold tracking-wider rounded-t-xl transition-all flex-shrink-0 ${
+                activeTab === "audit"
+                  ? "bg-[#090D17] text-cyan-300 border-t-2 border-cyan-400 border-x border-white/10 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Audit History ({app.events?.length || 0})
+            </button>
+          </div>
 
-        {/* Modal Navigation Tabs */}
-        <div className="flex items-center gap-1 px-6 pt-3 border-b border-slate-800 bg-slate-950/40">
-          <button
-            onClick={() => setActiveTab("answers")}
-            className={`px-4 py-2.5 text-xs font-heading font-bold tracking-wider rounded-t-lg transition-all ${
-              activeTab === "answers"
-                ? "bg-surface-card text-cyan-300 border-t-2 border-cyan-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            Applicant Questionnaire ({app.answers?.length || 0})
-          </button>
-          <button
-            onClick={() => setActiveTab("notes")}
-            className={`px-4 py-2.5 text-xs font-heading font-bold tracking-wider rounded-t-lg transition-all flex items-center gap-1.5 ${
-              activeTab === "notes"
-                ? "bg-surface-card text-cyan-300 border-t-2 border-cyan-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-            Private Staff Notes ({app.notes?.length || 0})
-          </button>
-          <button
-            onClick={() => setActiveTab("audit")}
-            className={`px-4 py-2.5 text-xs font-heading font-bold tracking-wider rounded-t-lg transition-all ${
-              activeTab === "audit"
-                ? "bg-surface-card text-cyan-300 border-t-2 border-cyan-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            Audit History ({app.events?.length || 0})
-          </button>
-        </div>
-
-        {/* Modal Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 text-xs text-slate-300">
+          {/* Modal Scrollable Content */}
+          <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-6 text-xs text-slate-300 [scrollbar-width:thin]">
           
           {actionError && (
             <div className="p-4 rounded-xl bg-red-950/60 border border-red-500/50 text-red-300 flex items-center gap-2">
@@ -554,7 +600,7 @@ export default function ApplicationReviewModal({
         </div>
 
         {/* Modal Action Bar */}
-        <div className="p-6 border-t border-slate-800 bg-[#090D14] flex flex-wrap items-center justify-between gap-4">
+        <div className="p-5 sm:p-6 border-t border-white/10 bg-[#0A0E18] flex flex-wrap items-center justify-between gap-4 flex-shrink-0">
           <div className="text-xs text-slate-400 font-mono">
             Current Status: <strong className="text-white">{app.status}</strong>
             {app.rejection_reason?.includes("[REVOKED BY ADMIN]") && (
@@ -804,7 +850,10 @@ export default function ApplicationReviewModal({
           </div>
         )}
 
+        </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

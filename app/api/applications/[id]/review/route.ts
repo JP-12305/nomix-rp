@@ -146,7 +146,14 @@ export async function POST(
             console.error("Discord revocation dispatch error (non-fatal):", discordErr);
           }
 
-          return NextResponse.json({ success: true, application: updatedApp, action: "REVOKED" });
+          // Fetch full updated application record with answers, notes, and audit events to prevent UI state resets
+          const { data: fullApp } = await supabase
+            .from("applications")
+            .select("*, answers:application_answers(*), notes:staff_notes(*), events:application_events(*)")
+            .eq("id", app.id)
+            .single();
+
+          return NextResponse.json({ success: true, application: fullApp || updatedApp, action: "REVOKED" });
         }
 
         // Any other transition from APPROVED requires admin
@@ -218,7 +225,14 @@ export async function POST(
             console.error("Discord approval dispatch error (non-fatal):", discordErr);
           }
 
-          return NextResponse.json({ success: true, application: updatedApp, action: "OVERRULED_APPROVED" });
+          // Fetch full updated application record with answers, notes, and audit events
+          const { data: fullApp } = await supabase
+            .from("applications")
+            .select("*, answers:application_answers(*), notes:staff_notes(*), events:application_events(*)")
+            .eq("id", app.id)
+            .single();
+
+          return NextResponse.json({ success: true, application: fullApp || updatedApp, action: "OVERRULED_APPROVED" });
         }
 
         if (!isReviewerAdmin) {
@@ -297,7 +311,14 @@ export async function POST(
         }
       }
 
-      return NextResponse.json({ success: true, application: updatedApp });
+      // Fetch full updated application record with answers, notes, and audit events
+      const { data: fullApp } = await supabase
+        .from("applications")
+        .select("*, answers:application_answers(*), notes:staff_notes(*), events:application_events(*)")
+        .eq("id", app.id)
+        .single();
+
+      return NextResponse.json({ success: true, application: fullApp || updatedApp });
     } else {
       // Mock / Dev Store
       const result = mockDb.updateApplicationStatus(

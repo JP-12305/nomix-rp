@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     if (isSupabaseConfigured()) {
       const supabase = getAdminSupabase();
-      let query = supabase.from("applications").select("*, answers:application_answers(*), events:application_events(*)");
+      let query = supabase.from("applications").select("*, answers:application_answers(*), notes:staff_notes(*), events:application_events(*)");
 
       const isUserIdUUID = userId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
 

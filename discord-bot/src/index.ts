@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Partials } from "discord.js";
+import { Client, GatewayIntentBits, Partials, Events } from "discord.js";
 import { config, isBotConfigured } from "./config";
 import { onReady } from "./events/ready";
 import { onInteractionCreate } from "./events/interactionCreate";
@@ -12,7 +12,7 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-client.once("ready", () => onReady(client));
+client.once(Events.ClientReady, () => onReady(client));
 client.on("interactionCreate", onInteractionCreate);
 
 if (isBotConfigured()) {

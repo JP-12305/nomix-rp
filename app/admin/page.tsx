@@ -483,8 +483,17 @@ function AdminDashboardContent() {
             fetch(`/api/applications/status?id=${selectedApp.id}`)
               .then((res) => res.json())
               .then((d) => {
-                if (d.application) setSelectedApp(d.application);
-              });
+                if (d.application) {
+                  setSelectedApp((prev) => prev ? {
+                    ...prev,
+                    ...d.application,
+                    answers: (d.application.answers && d.application.answers.length > 0) ? d.application.answers : prev.answers,
+                    notes: (d.application.notes && d.application.notes.length > 0) ? d.application.notes : prev.notes,
+                    events: (d.application.events && d.application.events.length > 0) ? d.application.events : prev.events,
+                  } : d.application);
+                }
+              })
+              .catch(console.error);
           }}
         />
       )}
