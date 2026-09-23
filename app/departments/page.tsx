@@ -1,3 +1,14 @@
+import { redirect } from "next/navigation";
+
+// TEMPORARILY DISABLED: Redirect departments page to home
+export default function DepartmentsPage() {
+  redirect("/");
+}
+
+/*
+// =========================================================================
+// ORIGINAL DEPARTMENTS & FACTIONS PAGE (PRESERVED FOR FUTURE RE-ENABLING)
+// =========================================================================
 "use client";
 
 import React from "react";
@@ -5,7 +16,7 @@ import Link from "next/link";
 import { Shield, HeartPulse, Building2, Flame, Scale, ArrowRight } from "lucide-react";
 import DepartmentCard from "@/components/cards/DepartmentCard";
 
-export default function DepartmentsPage() {
+export function ActiveDepartmentsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -69,3 +80,4 @@ export default function DepartmentsPage() {
     </div>
   );
 }
+*/

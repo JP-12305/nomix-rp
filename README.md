@@ -17,7 +17,7 @@
 - **News & Announcements (`/news` & `/news/[slug]`)**: Database-driven patch notes and community dispatches with markdown formatting.
 - **FAQ Knowledgebase (`/faq`)**: Animated categorized accordions and 24/7 ticket support callouts.
 - **Discord Gateway (`/discord`)**: Live guild stats, member counts, community guidelines, and instant invite links.
-- **Faction Directories**: Preview pages for `/departments`, `/staff`, `/media`, and cosmetic `/store`.
+- **Media & Store Gateway**: Gallery showcase (`/media`) and cosmetic store (`/store`).
 
 ### 📝 2. Multi-Step Visa Application System (`/apply`)
 - **6-Step Interactive Form**:

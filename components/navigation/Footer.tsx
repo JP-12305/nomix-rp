@@ -105,15 +105,15 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 5: Departments & Staff */}
+          {/* Col 5: Store & Staff */}
           <div className="space-y-4">
             <h3 className="text-sm font-heading font-bold text-cyan-300 tracking-wider uppercase">
-              Departments & Staff
+              Store & Staff
             </h3>
             <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
-                <Link href="/departments" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
-                  LSPD & Emergency Services
+                <Link href="/store" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                  Server Store & Packages
                 </Link>
               </li>
               <li>
