@@ -23,6 +23,17 @@ export function formatDate(dateString: string | undefined): string {
 }
 
 export function getStatusDetails(status: ApplicationStatus, rejectionReason?: string) {
+  if (status === "REJECTED" && rejectionReason?.includes("[ACTION REQUIRED")) {
+    return {
+      label: "ACTION REQUIRED",
+      badgeClass: "bg-orange-500/15 text-orange-400 border-orange-500/40",
+      glowClass: "shadow-[0_0_15px_rgba(249,115,22,0.3)]",
+      icon: "AlertCircle",
+      dotColor: "bg-orange-400",
+      description: "Action is required on your application. Please review administration instructions and reapply.",
+    };
+  }
+
   if (status === "REJECTED" && rejectionReason?.includes("[REVOKED BY ADMIN]")) {
     return {
       label: "VISA REVOKED",

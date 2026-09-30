@@ -15,6 +15,7 @@ import {
   ArrowRight, 
   Sparkles,
   AlertTriangle,
+  AlertCircle,
   Play,
   RotateCcw,
   Users,
@@ -138,17 +139,21 @@ function StatusPageContent() {
     );
   }
 
-  const isRevoked = app.status === "REJECTED" && (
+  const isActionRequired = app.status === "REJECTED" && (
+    app.rejection_reason?.includes("[ACTION REQUIRED") || 
+    app.events?.some(e => e.event_type === "ACTION_REQUIRED_REQUESTED")
+  );
+  const isRevoked = app.status === "REJECTED" && !isActionRequired && (
     app.rejection_reason?.includes("[REVOKED BY ADMIN]") || 
     app.events?.some(e => e.event_type === "VISA_REVOKED_BY_ADMIN")
   );
   const details = getStatusDetails(app.status, app.rejection_reason);
   const isApproved = app.status === "APPROVED";
-  const isRejected = app.status === "REJECTED" && !isRevoked;
+  const isRejected = app.status === "REJECTED" && !isRevoked && !isActionRequired;
   const isUnderReview = app.status === "UNDER_REVIEW";
   const isPending = app.status === "PENDING";
 
-  // Reapplication Cooldown Calculation
+  // Reapplication Cooldown Calculation (No cooldown for Action Required)
   const cooldownDays = 3;
   const reviewTime = app.reviewed_at ? new Date(app.reviewed_at).getTime() : Date.now();
   const cooldownEndTime = reviewTime + cooldownDays * 24 * 60 * 60 * 1000;
@@ -193,6 +198,8 @@ function StatusPageContent() {
         className={`glass-panel rounded-3xl p-8 sm:p-10 border transition-all duration-500 shadow-2xl relative overflow-hidden ${
           isApproved
             ? "border-emerald-500/50 bg-gradient-to-b from-emerald-950/20 to-[#0B0F17] shadow-[0_0_40px_rgba(16,185,129,0.15)]"
+            : isActionRequired
+            ? "border-orange-500/50 bg-gradient-to-b from-orange-950/25 to-[#0B0F17] shadow-[0_0_40px_rgba(249,115,22,0.2)]"
             : isRevoked
             ? "border-amber-500/50 bg-gradient-to-b from-amber-950/25 to-[#0B0F17] shadow-[0_0_40px_rgba(245,158,11,0.2)]"
             : isRejected
@@ -208,6 +215,8 @@ function StatusPageContent() {
               className={`p-4 rounded-2xl border ${
                 isApproved
                   ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-400"
+                  : isActionRequired
+                  ? "bg-orange-950/60 border-orange-500/40 text-orange-400"
                   : isRevoked
                   ? "bg-amber-950/60 border-amber-500/40 text-amber-400"
                   : isRejected
@@ -217,6 +226,8 @@ function StatusPageContent() {
             >
               {isApproved ? (
                 <CheckCircle2 className="w-9 h-9" />
+              ) : isActionRequired ? (
+                <AlertCircle className="w-9 h-9" />
               ) : isRevoked ? (
                 <AlertTriangle className="w-9 h-9" />
               ) : isRejected ? (
@@ -233,6 +244,8 @@ function StatusPageContent() {
               <h2 className="font-heading font-black text-2xl sm:text-3xl lg:text-4xl text-white mt-1.5">
                 {isApproved
                   ? "VISA APPROVED — WELCOME CITIZEN"
+                  : isActionRequired
+                  ? "ACTION REQUIRED — REAPPLICATION REQUESTED"
                   : isRevoked
                   ? "CITIZEN VISA REVOKED BY ADMINISTRATION"
                   : isRejected
@@ -242,7 +255,9 @@ function StatusPageContent() {
                   : "APPLICATION QUEUED"}
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-                {isRevoked
+                {isActionRequired
+                  ? "The administration has reviewed your submission and requested corrections. You can reapply immediately with updated answers."
+                  : isRevoked
                   ? "Your citizen visa was revoked by server administration. Citizen Discord role and in-game privileges have been removed."
                   : details.description}
               </p>
@@ -336,6 +351,35 @@ function StatusPageContent() {
                 className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-heading font-bold text-sm tracking-wider text-center hover:bg-slate-800 transition-all"
               >
                 OPEN DISCORD
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {isActionRequired && (
+          <div className="p-6 sm:p-8 rounded-2xl bg-orange-950/35 border border-orange-500/40 space-y-4 shadow-xl">
+            <h3 className="font-heading font-bold text-xl sm:text-2xl text-orange-300 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-orange-400" />
+              Admin Revision Instructions
+            </h3>
+            
+            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+              The reviewer requested the following updates on your application for character <strong>{app.character_name}</strong>:
+            </p>
+
+            <div className="p-4 sm:p-5 rounded-xl bg-slate-950/80 border border-orange-500/30 text-xs sm:text-sm text-orange-100 font-mono whitespace-pre-line leading-relaxed">
+              {app.rejection_reason?.replace(/^\[ACTION REQUIRED(: REAPPLY)?\]\s*/i, "").trim() || "Please update your answers and submit again."}
+            </div>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs sm:text-sm">
+              <p className="text-slate-300">
+                ⚡ No cooldown period applies. You can update your answers and reapply right away.
+              </p>
+              <Link
+                href="/apply"
+                className="w-full sm:w-auto text-center px-6 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-400 hover:to-amber-300 text-black font-heading font-black text-xs sm:text-sm tracking-wider shadow-lg transition-all"
+              >
+                REAPPLY NOW
               </Link>
             </div>
           </div>

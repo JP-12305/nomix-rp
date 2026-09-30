@@ -8,7 +8,8 @@ import {
   removeDiscordCitizenRole,
   sendDiscordApprovalEmbed, 
   sendDiscordRejectionEmbed,
-  sendDiscordRevocationEmbed
+  sendDiscordRevocationEmbed,
+  sendDiscordActionRequiredEmbed
 } from "@/lib/discord/discord-notify";
 
 export const dynamic = "force-dynamic";
@@ -19,14 +20,19 @@ export async function POST(
 ) {
   try {
     const body = await request.json();
-    const { status, rejection_reason, reviewer, is_admin_override } = body as {
+    const { status, rejection_reason, reviewer, is_admin_override, action } = body as {
       status: ApplicationStatus;
       rejection_reason?: string;
       reviewer: { id: string; name: string; role?: string };
       is_admin_override?: boolean;
+      action?: string;
     };
 
-    if (!status || !["APPROVED", "REJECTED", "UNDER_REVIEW"].includes(status)) {
+    const isActionRequired = action === "ACTION_REQUIRED" || status === ("ACTION_REQUIRED" as any) || rejection_reason?.startsWith("[ACTION REQUIRED");
+
+    const effectiveStatus: ApplicationStatus = isActionRequired ? "REJECTED" : status;
+
+    if (!effectiveStatus || !["APPROVED", "REJECTED", "UNDER_REVIEW"].includes(effectiveStatus)) {
       return NextResponse.json({ error: "Invalid status transition." }, { status: 400 });
     }
 
@@ -72,19 +78,100 @@ export async function POST(
       const now = new Date().toISOString();
       const guildId = process.env.DISCORD_GUILD_ID || "1459096221129113680";
       const citizenRoleId = process.env.DISCORD_VERIFIED_ROLE_ID || "1550803618653937714";
+      const specificReapplyLink = "https://nomixroleplay.xyz/apply";
+
+      // -------------------------------------------------------------
+      // SPECIAL CASE: ACTION REQUIRED / REAPPLY REQUESTED
+      // -------------------------------------------------------------
+      if (isActionRequired) {
+        const rawReason = rejection_reason?.replace(/^\[ACTION REQUIRED(: REAPPLY)?\]\s*/i, "").trim();
+        if (!rawReason || rawReason.length < 5) {
+          return NextResponse.json(
+            { error: "Please provide a constructive reason explaining what actions/corrections the applicant must take (min 5 characters)." },
+            { status: 400 }
+          );
+        }
+
+        const finalReason = `[ACTION REQUIRED: REAPPLY] ${rawReason}`;
+
+        // If previously approved, ensure admin authority and strip citizen role
+        if (app.status === "APPROVED") {
+          if (!isReviewerAdmin) {
+            return NextResponse.json(
+              { error: "Only Administrators can request reapplication on an approved citizen visa." },
+              { status: 403 }
+            );
+          }
+          try {
+            if (app.discord_id && guildId && citizenRoleId) {
+              await removeDiscordCitizenRole(guildId, app.discord_id, citizenRoleId);
+            }
+          } catch (e) {
+            console.error("Citizen role removal error:", e);
+          }
+        }
+
+        const { data: updatedApp, error: updateErr } = await supabase
+          .from("applications")
+          .update({
+            status: "REJECTED",
+            rejection_reason: finalReason,
+            reviewer_id: finalReviewerId,
+            reviewed_at: now,
+            updated_at: now,
+          })
+          .eq("id", app.id)
+          .select()
+          .single();
+
+        if (updateErr) {
+          return NextResponse.json({ error: updateErr.message }, { status: 500 });
+        }
+
+        // Insert audit event
+        await supabase.from("application_events").insert({
+          application_id: app.id,
+          actor_id: finalReviewerId,
+          actor_name: reviewer.name,
+          event_type: "ACTION_REQUIRED_REQUESTED",
+          metadata: { 
+            previous_status: app.status, 
+            status: "ACTION_REQUIRED", 
+            reason: rawReason,
+            admin_name: reviewer.name,
+            reapply_url: specificReapplyLink
+          },
+        });
+
+        // Dispatch Discord Action Required Embed
+        try {
+          await sendDiscordActionRequiredEmbed(updatedApp, reviewer.name, rawReason, specificReapplyLink);
+        } catch (discordErr) {
+          console.error("Discord action required notify error (non-fatal):", discordErr);
+        }
+
+        // Fetch full updated application record with answers, notes, and audit events
+        const { data: fullApp } = await supabase
+          .from("applications")
+          .select("*, answers:application_answers(*), notes:staff_notes(*), events:application_events(*)")
+          .eq("id", app.id)
+          .single();
+
+        return NextResponse.json({ success: true, application: fullApp || updatedApp, action: "ACTION_REQUIRED" });
+      }
 
       // -------------------------------------------------------------
       // CASE 1: Previously APPROVED Application
       // -------------------------------------------------------------
       if (app.status === "APPROVED") {
-        if (status === "APPROVED") {
+        if (effectiveStatus === "APPROVED") {
           return NextResponse.json(
             { error: "This application is already approved." },
             { status: 400 }
           );
         }
 
-        if (status === "REJECTED") {
+        if (effectiveStatus === "REJECTED") {
           // ADMIN OVERRIDE: Revoke Visa
           if (!isReviewerAdmin) {
             return NextResponse.json(
@@ -169,14 +256,14 @@ export async function POST(
       // CASE 2: Previously REJECTED Application
       // -------------------------------------------------------------
       if (app.status === "REJECTED") {
-        if (status === "REJECTED") {
+        if (effectiveStatus === "REJECTED") {
           return NextResponse.json(
             { error: "This application has already been rejected." },
             { status: 400 }
           );
         }
 
-        if (status === "APPROVED") {
+        if (effectiveStatus === "APPROVED") {
           // ADMIN OVERRIDE: Overrule Rejection & Grant Visa
           if (!isReviewerAdmin) {
             return NextResponse.json(
@@ -246,7 +333,7 @@ export async function POST(
       // -------------------------------------------------------------
       // CASE 3: Initial Review (PENDING or UNDER_REVIEW)
       // -------------------------------------------------------------
-      if (status === "REJECTED" && (!rejection_reason || rejection_reason.trim().length < 5)) {
+      if (effectiveStatus === "REJECTED" && (!rejection_reason || rejection_reason.trim().length < 5)) {
         return NextResponse.json(
           { error: "A constructive rejection reason is mandatory (min 5 characters)." },
           { status: 400 }
@@ -254,15 +341,15 @@ export async function POST(
       }
 
       const updatePayload: Record<string, any> = {
-        status,
+        status: effectiveStatus,
         reviewer_id: finalReviewerId,
         reviewed_at: now,
         updated_at: now,
       };
 
-      if (status === "REJECTED") {
+      if (effectiveStatus === "REJECTED") {
         updatePayload.rejection_reason = rejection_reason?.trim();
-      } else if (status === "APPROVED") {
+      } else if (effectiveStatus === "APPROVED") {
         updatePayload.rejection_reason = null;
       }
 
@@ -278,9 +365,9 @@ export async function POST(
       }
 
       // Record standard audit event
-      const eventType = status === "APPROVED" 
+      const eventType = effectiveStatus === "APPROVED" 
         ? "APPLICATION_APPROVED" 
-        : status === "REJECTED" 
+        : effectiveStatus === "REJECTED" 
         ? "APPLICATION_REJECTED" 
         : "APPLICATION_REVIEW_STARTED";
 
@@ -289,11 +376,11 @@ export async function POST(
         actor_id: finalReviewerId,
         actor_name: reviewer.name,
         event_type: eventType,
-        metadata: { status, rejection_reason },
+        metadata: { status: effectiveStatus, rejection_reason },
       });
 
       // Automated Discord Actions (non-blocking)
-      if (status === "APPROVED") {
+      if (effectiveStatus === "APPROVED") {
         try {
           if (app.discord_id && guildId && citizenRoleId) {
             await assignDiscordCitizenRole(guildId, app.discord_id, citizenRoleId);
@@ -302,7 +389,7 @@ export async function POST(
         } catch (discordErr) {
           console.error("Discord approval dispatch error (non-fatal):", discordErr);
         }
-      } else if (status === "REJECTED") {
+      } else if (effectiveStatus === "REJECTED") {
         try {
           const cooldownDays = Number(process.env.REAPPLICATION_COOLDOWN_DAYS) || 3;
           await sendDiscordRejectionEmbed(updatedApp, reviewer.name, rejection_reason || "Application did not meet standards.", cooldownDays);

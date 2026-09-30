@@ -55,16 +55,19 @@ export async function POST(request: NextRequest) {
           );
         }
         if (latest.status === "REJECTED") {
-          const rejectedDate = new Date(latest.reviewed_at || latest.updated_at);
-          const cooldownDays = Number(process.env.REAPPLICATION_COOLDOWN_DAYS) || 3;
-          const cooldownEnd = new Date(rejectedDate.getTime() + cooldownDays * 24 * 60 * 60 * 1000);
-          if (new Date() < cooldownEnd) {
-            return NextResponse.json(
-              { 
-                error: `Reapplication cooldown is active. You may re-apply after ${cooldownEnd.toLocaleDateString()} at ${cooldownEnd.toLocaleTimeString()}.` 
-              },
-              { status: 429 }
-            );
+          const isActionRequired = latest.rejection_reason?.includes("[ACTION REQUIRED");
+          if (!isActionRequired) {
+            const rejectedDate = new Date(latest.reviewed_at || latest.updated_at);
+            const cooldownDays = Number(process.env.REAPPLICATION_COOLDOWN_DAYS) || 3;
+            const cooldownEnd = new Date(rejectedDate.getTime() + cooldownDays * 24 * 60 * 60 * 1000);
+            if (new Date() < cooldownEnd) {
+              return NextResponse.json(
+                { 
+                  error: `Reapplication cooldown is active. You may re-apply after ${cooldownEnd.toLocaleDateString()} at ${cooldownEnd.toLocaleTimeString()}.` 
+                },
+                { status: 429 }
+              );
+            }
           }
         }
       }

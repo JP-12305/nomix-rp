@@ -235,6 +235,95 @@ export async function sendDiscordRejectionEmbed(app: {
   }
 }
 
+export async function sendDiscordActionRequiredEmbed(app: {
+  id: string;
+  application_number: string;
+  discord_id: string;
+  discord_username: string;
+  character_name: string;
+  character_age?: number;
+  character_gender?: string;
+}, reviewerName: string, reason: string, reapplyUrl: string = "https://nomixroleplay.xyz/apply") {
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = 
+    process.env.DISCORD_REVIEW_CHANNEL_ID || 
+    process.env.DISCORD_ACTION_REQUIRED_CHANNEL_ID || 
+    process.env.DISCORD_REJECTED_CHANNEL_ID || 
+    process.env.DISCORD_APPLICATION_CHANNEL_ID;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_SITE_URL.includes("localhost")
+    ? process.env.NEXT_PUBLIC_SITE_URL
+    : "https://nomixroleplay.xyz";
+
+  if (!token || !channelId || channelId.includes("your-") || token.includes("your-")) return;
+
+  try {
+    const embed = {
+      title: "━━━━━━━━━━━━━━━━━━━━━━━━\n⚠️ ACTION REQUIRED — REAPPLICATION REQUESTED\n━━━━━━━━━━━━━━━━━━━━━━━━",
+      description: `Attention <@${app.discord_id}>! The NOMIX RP Administration has reviewed your application and requested revisions. Please review the admin instructions below and submit an updated application.`,
+      color: 0xf59e0b, // Amber / Orange
+      fields: [
+        { name: "👤 Applicant", value: `<@${app.discord_id}> (\`${app.discord_username}\`)`, inline: true },
+        { name: "🆔 Application ID", value: `\`${app.application_number}\``, inline: true },
+        { name: "🎭 Character", value: `**${app.character_name}**`, inline: true },
+        { name: "🛡️ Evaluated By", value: `**${reviewerName}**`, inline: true },
+        { name: "⚡ Action Status", value: "🟠 **REAPPLICATION REQUIRED (NO COOLDOWN)**", inline: true },
+        { name: "🔗 Reapply Link", value: `[Click Here to Reapply](${reapplyUrl})`, inline: true },
+        { name: "📝 Admin Reason & Action Instructions", value: `\`\`\`${reason}\`\`\``, inline: false },
+      ],
+      footer: { text: "NOMIX RP • Action Required • You can reapply immediately" },
+      timestamp: new Date().toISOString(),
+    };
+
+    const components = [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            style: 5,
+            label: "📝 Reapply Now",
+            url: reapplyUrl,
+          },
+          {
+            type: 2,
+            style: 5,
+            label: "📖 Server Rules & Guidelines",
+            url: `${siteUrl}/rules`,
+          },
+          {
+            type: 2,
+            style: 5,
+            label: "📊 Check Visa Status",
+            url: `${siteUrl}/status`,
+          },
+        ],
+      },
+    ];
+
+    const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bot ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: `⚠️ **Action Required** <@${app.discord_id}>: The administration has requested revisions on your application. Please reapply using the link below:`,
+        embeds: [embed],
+        components,
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("[DISCORD ACTION REQUIRED NOTIFY] Failed:", res.status, errText);
+    } else {
+      console.log(`[DISCORD ACTION REQUIRED NOTIFY] ✅ Posted action required embed for ${app.discord_username}`);
+    }
+  } catch (err) {
+    console.error("[DISCORD ACTION REQUIRED NOTIFY ERROR]", err);
+  }
+}
+
 export async function assignDiscordCitizenRole(guildId: string, discordUserId: string, roleId: string) {
   const token = process.env.DISCORD_BOT_TOKEN;
   if (!token || !guildId || !discordUserId || !roleId || roleId.includes("your-") || token.includes("your-")) return;

@@ -42,6 +42,27 @@
   *:focus:not(:focus-visible) {
     outline: none !important;
   }
+
+  /* Force dark theme controls for native browser elements */
+  html, :root {
+    color-scheme: dark;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: #00F0FF;
+  }
+
+  select {
+    color-scheme: dark;
+    accent-color: #00F0FF;
+  }
+
+  select option {
+    background-color: #090D17;
+    color: #F8FAFC;
+    padding: 8px 12px;
+  }
 }
 
 /* Custom Scrollbars */

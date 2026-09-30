@@ -26,6 +26,7 @@ import {
 import { NewsArticle, NewsCategory } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/auth/auth-context";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 const IMAGE_PRESETS = [
   {
@@ -387,22 +388,18 @@ export default function NewsManager() {
 
               {/* Category & Author */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-slate-300 font-bold uppercase text-[10px] tracking-wider block">
-                    Category <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500/60 text-xs"
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id} className="bg-slate-900">
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <CustomSelect
+                  label="Category"
+                  required
+                  value={categoryId}
+                  onChange={setCategoryId}
+                  buttonClassName="p-3 text-xs"
+                  labelClassName="text-slate-300 font-bold uppercase text-[10px] tracking-wider block"
+                  options={categories.map((cat) => ({
+                    value: cat.id,
+                    label: cat.name,
+                  }))}
+                />
 
                 <div className="space-y-1.5">
                   <label className="text-slate-300 font-bold uppercase text-[10px] tracking-wider block">

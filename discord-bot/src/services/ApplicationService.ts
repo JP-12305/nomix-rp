@@ -23,17 +23,34 @@ export interface ApplicationRecord {
 
 export class ApplicationService {
   static createApplicationEmbed(app: ApplicationRecord): EmbedBuilder {
+    const isActionRequired = app.status === "REJECTED" && app.rejection_reason?.includes("[ACTION REQUIRED");
+    const color = app.status === "APPROVED" 
+      ? 0x10B981 
+      : isActionRequired 
+      ? 0xF59E0B 
+      : app.status === "REJECTED" 
+      ? 0xEF4444 
+      : 0x00F0FF;
+
+    const statusValue = app.status === "APPROVED" 
+      ? "🟢 **APPROVED**" 
+      : isActionRequired 
+      ? "🟠 **ACTION REQUIRED (REAPPLY)**" 
+      : app.status === "REJECTED" 
+      ? "🔴 **REJECTED**" 
+      : "🟡 **PENDING REVIEW**";
+
     const embed = new EmbedBuilder()
       .setTitle(`━━━━━━━━━━━━━━━━━━━━━━━━\nNOMIX ROLEPLAY — VISA APPLICATION\n━━━━━━━━━━━━━━━━━━━━━━━━`)
       .setDescription(`A new citizen visa application has been submitted and is awaiting staff evaluation.`)
-      .setColor(app.status === "APPROVED" ? 0x10B981 : app.status === "REJECTED" ? 0xEF4444 : 0x00F0FF)
+      .setColor(color)
       .addFields(
         { name: "👤 Applicant", value: `<@${app.discord_id}> (${app.discord_username})`, inline: true },
         { name: "🆔 Application ID", value: `\`${app.application_number}\``, inline: true },
         { name: "🎭 Character", value: `**${app.character_name}** (${app.character_age}, ${app.character_gender})`, inline: true },
         { 
           name: "📊 Status", 
-          value: app.status === "APPROVED" ? "🟢 **APPROVED**" : app.status === "REJECTED" ? "🔴 **REJECTED**" : "🟡 **PENDING REVIEW**", 
+          value: statusValue, 
           inline: true 
         },
         { name: "📅 Submitted At", value: `<t:${Math.floor(new Date(app.submitted_at).getTime() / 1000)}:R>`, inline: true }
@@ -42,7 +59,15 @@ export class ApplicationService {
       .setTimestamp();
 
     if (app.status === "REJECTED" && app.rejection_reason) {
-      embed.addFields({ name: "❌ Rejection Reason", value: `\`\`\`${app.rejection_reason}\`\`\`` });
+      if (isActionRequired) {
+        const cleanReason = app.rejection_reason.replace(/^\[ACTION REQUIRED(: REAPPLY)?\]\s*/i, "").trim();
+        embed.addFields(
+          { name: "📝 Admin Revision Instructions", value: `\`\`\`${cleanReason}\`\`\`` },
+          { name: "🔗 Reapply URL", value: `https://nomixroleplay.xyz/apply` }
+        );
+      } else {
+        embed.addFields({ name: "❌ Rejection Reason", value: `\`\`\`${app.rejection_reason}\`\`\`` });
+      }
     }
 
     if (app.reviewer_name) {

@@ -223,8 +223,15 @@ export default function ApplyPage() {
     );
   }
 
-  // 5. Application was Rejected & Cooldown is active
-  if (existingApp && existingApp.status === "REJECTED") {
+  // 5. Application was Rejected & Cooldown is active (Bypassed if Action Required)
+  const isActionRequired = existingApp && existingApp.status === "REJECTED" && (
+    existingApp.rejection_reason?.includes("[ACTION REQUIRED") || false
+  );
+  const actionRequiredReason = isActionRequired
+    ? existingApp.rejection_reason?.replace(/^\[ACTION REQUIRED(: REAPPLY)?\]\s*/i, "").trim()
+    : null;
+
+  if (existingApp && existingApp.status === "REJECTED" && !isActionRequired) {
     const cooldownDays = Number(process.env.REAPPLICATION_COOLDOWN_DAYS) || 3;
     const reviewTime = existingApp.reviewed_at ? new Date(existingApp.reviewed_at).getTime() : Date.now();
     const cooldownEndTime = reviewTime + cooldownDays * 24 * 60 * 60 * 1000;
@@ -272,7 +279,7 @@ export default function ApplyPage() {
     }
   }
 
-  // 5. User is authenticated and eligible to apply
+  // 6. User is authenticated and eligible to apply (or reapplying after Action Required)
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-8">
       <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -280,9 +287,28 @@ export default function ApplyPage() {
           APPLY FOR CITIZEN VISA
         </h1>
         <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-          Please complete all 6 sections with high-effort answers. Applications with low-effort definitions or poor character backstories will be rejected.
+          Please complete all 5 sections with high-effort answers. Applications with low-effort scenario responses or poor character concepts will be rejected.
         </p>
       </div>
+
+      {isActionRequired && (
+        <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-b from-orange-950/40 to-[#0B0F17] border border-orange-500/50 shadow-[0_0_40px_rgba(249,115,22,0.15)] space-y-4 animate-in fade-in slide-in-from-top-3 duration-300">
+          <div className="flex items-center gap-2.5 text-orange-400 font-heading font-black text-base sm:text-lg">
+            <AlertCircle className="w-5 h-5 text-orange-400 flex-shrink-0" />
+            <span>ACTION REQUIRED ON PREVIOUS SUBMISSION ({existingApp.application_number})</span>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+            The server administration has reviewed your previous submission and requested specific adjustments before approval can be granted:
+          </p>
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/90 border border-orange-500/30 text-xs sm:text-sm font-mono text-orange-200 whitespace-pre-line leading-relaxed shadow-inner">
+            <strong className="text-orange-300 block mb-1">Admin Revision Instructions:</strong>
+            {actionRequiredReason || "Please update your answers and submit your application again."}
+          </div>
+          <div className="text-xs text-orange-300/90 font-semibold flex items-center gap-2">
+            <span>⚡ Reapplication cooldown is waived. Please review your answers below, make the necessary corrections, and re-submit.</span>
+          </div>
+        </div>
+      )}
 
       <ApplicationWizard />
     </div>

@@ -8,6 +8,7 @@ export const config = {
   
   // Channels
   appChannelId: process.env.DISCORD_APPLICATION_CHANNEL_ID || "",
+  reviewChannelId: process.env.DISCORD_REVIEW_CHANNEL_ID || process.env.DISCORD_APPLICATION_CHANNEL_ID || "",
   approvedChannelId: process.env.DISCORD_APPROVED_CHANNEL_ID || "",
   rejectedChannelId: process.env.DISCORD_REJECTED_CHANNEL_ID || "",
   

@@ -1222,7 +1222,8 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
       }
     }
 
-    // 3. Initial Review (PENDING or UNDER_REVIEW)
+    // 3. Initial Review (PENDING or UNDER_REVIEW or ACTION_REQUIRED)
+    const isActionRequired = rejection_reason?.startsWith("[ACTION REQUIRED");
     app.status = status;
     app.reviewer_id = reviewer.id;
     app.reviewer_name = reviewer.name;
@@ -1235,7 +1236,9 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
       app.rejection_reason = undefined;
     }
 
-    const eventType = status === "APPROVED" 
+    const eventType = isActionRequired
+      ? "ACTION_REQUIRED_REQUESTED"
+      : status === "APPROVED" 
       ? "APPLICATION_APPROVED" 
       : status === "REJECTED" 
       ? "APPLICATION_REJECTED" 
@@ -1248,7 +1251,11 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
       actor_id: reviewer.id,
       actor_name: reviewer.name,
       event_type: eventType,
-      metadata: { status, rejection_reason },
+      metadata: { 
+        status, 
+        rejection_reason,
+        reapply_url: "https://nomixroleplay.xyz/apply"
+      },
       created_at: now,
     });
 

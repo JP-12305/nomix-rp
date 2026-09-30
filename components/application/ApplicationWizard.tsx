@@ -23,16 +23,18 @@ import {
   AlertCircle,
   Save,
   Send,
-  Loader2
+  Loader2,
+  Video
 } from "lucide-react";
+import { CustomSelect } from "@/components/ui/CustomSelect";
+import { CustomCheckbox } from "@/components/ui/CustomCheckbox";
 
 const STEPS = [
   { step: 1, title: "Personal Info", desc: "Applicant & FiveM details", icon: User },
   { step: 2, title: "RP Experience", desc: "Past servers & hours", icon: Compass },
-  { step: 3, title: "Character Concept", desc: "Identity & backstory", icon: Sparkles },
-  { step: 4, title: "RP Knowledge", desc: "Core rule definitions", icon: HelpCircle },
-  { step: 5, title: "Scenarios", desc: "In-game roleplay tests", icon: Flame },
-  { step: 6, title: "Agreements", desc: "Rulebook confirmation", icon: ShieldCheck },
+  { step: 3, title: "Character Concept", desc: "Identity & character goals", icon: Sparkles },
+  { step: 4, title: "Scenarios", desc: "In-game roleplay tests", icon: Flame },
+  { step: 5, title: "Agreements", desc: "Rulebook confirmation", icon: ShieldCheck },
 ];
 
 export default function ApplicationWizard() {
@@ -61,17 +63,14 @@ export default function ApplicationWizard() {
       played_before: "yes_experienced",
       previous_servers: "",
       whitelist_experience: "",
+      is_content_creator: false,
+      creator_platform: "",
+      creator_other_platform: "",
+      creator_channel_url: "",
       char_name: "",
       char_age: 25,
       char_gender: "Male",
-      char_background: "",
-      char_personality: "",
       char_goals: "",
-      def_rdm: "",
-      def_vdm: "",
-      def_meta: "",
-      def_power: "",
-      def_failrp: "",
       scenario_police_stop: "",
       scenario_hostage: "",
       scenario_loss: "",
@@ -80,6 +79,9 @@ export default function ApplicationWizard() {
       agree_microphone: false as unknown as true,
     },
   });
+
+  const isContentCreator = watch("is_content_creator");
+  const selectedPlatform = watch("creator_platform");
 
   // Load saved draft on mount
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function ApplicationWizard() {
     const fields = stepFields[currentStep];
     const isStepValid = await trigger(fields);
     if (isStepValid) {
-      setCurrentStep((prev) => Math.min(6, prev + 1));
+      setCurrentStep((prev) => Math.min(5, prev + 1));
       window.scrollTo({ top: 150, behavior: "smooth" });
     }
   };
@@ -167,7 +169,7 @@ export default function ApplicationWizard() {
       <div className="sm:hidden glass-panel p-4 rounded-2xl border border-cyan-500/30 space-y-2.5">
         <div className="flex items-center justify-between text-xs">
           <span className="font-mono text-cyan-400 font-bold uppercase tracking-wider">
-            Step {currentStep} of 6
+            Step {currentStep} of 5
           </span>
           <span className="text-white font-bold font-heading">
             {STEPS[currentStep - 1].title}
@@ -176,7 +178,7 @@ export default function ApplicationWizard() {
         <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
           <div
             className="bg-gradient-to-r from-cyan-500 to-cyan-300 h-full rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / 6) * 100}%` }}
+            style={{ width: `${(currentStep / 5) * 100}%` }}
           />
         </div>
       </div>
@@ -229,7 +231,7 @@ export default function ApplicationWizard() {
                   </div>
                 </button>
 
-                {s.step < 6 && (
+                {s.step < 5 && (
                   <div className="flex-1 h-[2px] mx-3 bg-slate-800">
                     <div
                       className="h-full bg-cyan-400 transition-all duration-300"
@@ -251,7 +253,7 @@ export default function ApplicationWizard() {
           <div className="border-b border-slate-800 pb-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <span className="text-xs sm:text-sm font-mono text-cyan-400 uppercase tracking-widest font-bold">
-                Step {currentStep} of 6 — {STEPS[currentStep - 1].desc}
+                Step {currentStep} of 5 — {STEPS[currentStep - 1].desc}
               </span>
               <h2 className="font-heading font-black text-2xl sm:text-4xl text-white mt-1.5">
                 {STEPS[currentStep - 1].title}
@@ -363,24 +365,23 @@ export default function ApplicationWizard() {
           )}
 
           {/* ================================================================= */}
-          {/* STEP 2: ROLEPLAY EXPERIENCE */}
+          {/* STEP 2: ROLEPLAY EXPERIENCE & CONTENT CREATION */}
           {/* ================================================================= */}
           {currentStep === 2 && (
             <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
-                  Have you played FiveM roleplay before? <span className="text-red-400">*</span>
-                </label>
-                <select
-                  {...register("played_before")}
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
-                >
-                  <option value="yes_experienced">Yes, I have extensive roleplay experience (500+ hours)</option>
-                  <option value="yes_moderate">Yes, moderate experience (100 - 500 hours)</option>
-                  <option value="yes_beginner">Yes, beginner (&lt; 100 hours)</option>
-                  <option value="no_new">No, I am new to FiveM but understand text/voice RP</option>
-                </select>
-              </div>
+              <CustomSelect
+                label="Have you played FiveM roleplay before?"
+                required
+                value={watch("played_before") || "yes_experienced"}
+                onChange={(val) => setValue("played_before", val, { shouldValidate: true })}
+                options={[
+                  { value: "yes_experienced", label: "Yes, I have extensive roleplay experience (500+ hours)" },
+                  { value: "yes_moderate", label: "Yes, moderate experience (100 - 500 hours)" },
+                  { value: "yes_beginner", label: "Yes, beginner (< 100 hours)" },
+                  { value: "no_new", label: "No, I am new to FiveM but understand text/voice RP" },
+                ]}
+                error={errors.played_before?.message}
+              />
 
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
@@ -409,6 +410,97 @@ export default function ApplicationWizard() {
                   placeholder="List any past positions held in Police, EMS, DOJ, or approved syndicate leadership..."
                   className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
+              </div>
+
+              {/* Content Creator / Streamer Checkbox Section */}
+              <div className="pt-2 border-t border-slate-800/80 space-y-4">
+                <CustomCheckbox
+                  {...register("is_content_creator")}
+                  checked={!!isContentCreator}
+                  onChange={(e) =>
+                    setValue("is_content_creator", e.target.checked, { shouldValidate: true })
+                  }
+                  icon={<Video className="w-4 h-4 text-cyan-400" />}
+                  label="I am a Content Creator / Streamer (Twitch, YouTube, TikTok, Kick, etc.)"
+                  subtitle="Check this box if you plan to broadcast live, record roleplay gameplay, or produce community content."
+                />
+
+                {/* Dynamic Streaming Details (Revealed only when checkbox is active) */}
+                {isContentCreator && (
+                  <div className="p-5 rounded-2xl bg-slate-950/80 border border-cyan-500/30 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono font-bold uppercase tracking-wider">
+                      <Sparkles className="w-3.5 h-3.5" /> Content Creator Details
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Platform Dropdown */}
+                      <CustomSelect
+                        label="Primary Streaming / Video Platform"
+                        required
+                        value={selectedPlatform || ""}
+                        onChange={(val) =>
+                          setValue("creator_platform", val, { shouldValidate: true })
+                        }
+                        placeholder="Select Platform..."
+                        options={[
+                          { value: "Twitch", label: "Twitch" },
+                          { value: "YouTube", label: "YouTube" },
+                          { value: "TikTok", label: "TikTok" },
+                          { value: "Kick", label: "Kick" },
+                          { value: "Facebook Gaming", label: "Facebook Gaming" },
+                          { value: "Other", label: "Other Platform" },
+                        ]}
+                        error={errors.creator_platform?.message}
+                      />
+
+                      {/* If 'Other' platform is selected */}
+                      {selectedPlatform === "Other" && (
+                        <div className="space-y-2 animate-in fade-in duration-200">
+                          <label className="text-xs sm:text-sm font-semibold text-slate-200 uppercase tracking-wider block">
+                            Specify Other Platform <span className="text-red-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            {...register("creator_other_platform")}
+                            placeholder="e.g. Trovo, Rumble, Custom Platform"
+                            className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60"
+                          />
+                          {errors.creator_other_platform && (
+                            <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                              <AlertCircle className="w-3.5 h-3.5" /> {errors.creator_other_platform.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Channel Link */}
+                      <div className={`space-y-2 ${selectedPlatform !== "Other" ? "sm:col-span-1" : "sm:col-span-2"}`}>
+                        <label className="text-xs sm:text-sm font-semibold text-slate-200 uppercase tracking-wider block">
+                          Channel / Profile Link <span className="text-red-400">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          {...register("creator_channel_url")}
+                          placeholder={
+                            selectedPlatform === "Twitch"
+                              ? "https://twitch.tv/yourchannel"
+                              : selectedPlatform === "YouTube"
+                              ? "https://youtube.com/@yourchannel"
+                              : selectedPlatform === "TikTok"
+                              ? "https://tiktok.com/@yourhandle"
+                              : "https://... (Channel link or handle)"
+                          }
+                          className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 font-mono"
+                        />
+                        {errors.creator_channel_url && (
+                          <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                            <AlertCircle className="w-3.5 h-3.5" /> {errors.creator_channel_url.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -453,172 +545,43 @@ export default function ApplicationWizard() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
-                    Gender <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    {...register("char_gender")}
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Non-Binary">Non-Binary</option>
-                  </select>
-                </div>
+                <CustomSelect
+                  label="Gender"
+                  required
+                  value={watch("char_gender") || "Male"}
+                  onChange={(val) => setValue("char_gender", val, { shouldValidate: true })}
+                  options={[
+                    { value: "Male", label: "Male" },
+                    { value: "Female", label: "Female" },
+                    { value: "Non-Binary", label: "Non-Binary" },
+                  ]}
+                  error={errors.char_gender?.message}
+                />
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
-                  Character Backstory & Origins (Min 60 chars) <span className="text-red-400">*</span>
+                  Short & Long Term Goals in the City <span className="text-red-400">*</span>
                 </label>
                 <textarea
-                  rows={5}
-                  {...register("char_background")}
-                  placeholder="Where was your character born? What formative events defined their youth, and what circumstances led them to move to Los Santos?"
+                  rows={4}
+                  {...register("char_goals")}
+                  placeholder="What career, syndicate, or narrative storyline does your character plan to pursue in Los Santos?"
                   className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
                 />
-                {errors.char_background && (
+                {errors.char_goals && (
                   <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.char_background.message}
+                    <AlertCircle className="w-4 h-4" /> {errors.char_goals.message}
                   </p>
                 )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
-                    Personality Traits & Human Flaws <span className="text-red-400">*</span>
-                  </label>
-                  <textarea
-                    rows={3}
-                    {...register("char_personality")}
-                    placeholder="Describe their mannerisms, psychological weaknesses, or vices (e.g. quick-tempered, overly trusting, claustrophobic)..."
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
-                  />
-                  {errors.char_personality && (
-                    <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-4 h-4" /> {errors.char_personality.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
-                    Short & Long Term Goals <span className="text-red-400">*</span>
-                  </label>
-                  <textarea
-                    rows={3}
-                    {...register("char_goals")}
-                    placeholder="What does your character hope to accomplish in the next few weeks and over the next year in the city?"
-                    className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
-                  />
-                  {errors.char_goals && (
-                    <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-4 h-4" /> {errors.char_goals.message}
-                    </p>
-                  )}
-                </div>
               </div>
             </div>
           )}
 
           {/* ================================================================= */}
-          {/* STEP 4: ROLEPLAY KNOWLEDGE */}
+          {/* STEP 4: ROLEPLAY SCENARIOS */}
           {/* ================================================================= */}
           {currentStep === 4 && (
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm sm:text-base font-heading font-bold text-white block">
-                  1. Define RDM (Random Deathmatch) & Give an Example <span className="text-red-400">*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  {...register("def_rdm")}
-                  placeholder="Explain RDM in your own words with an example..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
-                />
-                {errors.def_rdm && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.def_rdm.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm sm:text-base font-heading font-bold text-white block">
-                  2. Define VDM (Vehicle Deathmatch) <span className="text-red-400">*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  {...register("def_vdm")}
-                  placeholder="Explain VDM and accidental collisions vs deliberate ramming..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
-                />
-                {errors.def_vdm && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.def_vdm.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm sm:text-base font-heading font-bold text-white block">
-                  3. Define Metagaming & Stream Sniping <span className="text-red-400">*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  {...register("def_meta")}
-                  placeholder="Explain how external Discord DMs or Twitch streams must never be used in character..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
-                />
-                {errors.def_meta && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.def_meta.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm sm:text-base font-heading font-bold text-white block">
-                  4. Define Powergaming <span className="text-red-400">*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  {...register("def_power")}
-                  placeholder="Explain powergaming and forcing actions on other players..."
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
-                />
-                {errors.def_power && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.def_power.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm sm:text-base font-heading font-bold text-white block">
-                  5. Define Fail RP & Breaking Character <span className="text-red-400">*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  {...register("def_failrp")}
-                  placeholder="What should you do if an immersion glitch or rule violation happens during a live scene?"
-                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-500/60 leading-relaxed"
-                />
-                {errors.def_failrp && (
-                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.def_failrp.message}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ================================================================= */}
-          {/* STEP 5: ROLEPLAY SCENARIOS */}
-          {/* ================================================================= */}
-          {currentStep === 5 && (
             <div className="space-y-6">
               <div className="space-y-2">
                 <label className="text-sm sm:text-base font-heading font-bold text-white block">
@@ -683,9 +646,9 @@ export default function ApplicationWizard() {
           )}
 
           {/* ================================================================= */}
-          {/* STEP 6: RULES & AGREEMENT */}
+          {/* STEP 5: RULES & AGREEMENT */}
           {/* ================================================================= */}
-          {currentStep === 6 && (
+          {currentStep === 5 && (
             <div className="space-y-6">
               <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
                 <h4 className="font-heading font-bold text-sm sm:text-base text-white">
@@ -697,56 +660,44 @@ export default function ApplicationWizard() {
               </div>
 
               <div className="space-y-4">
-                <label className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
-                  <input
-                    type="checkbox"
-                    {...register("agree_rules")}
-                    className="mt-1 w-4 h-4 rounded bg-slate-900 border-slate-700 text-cyan-400 focus:ring-cyan-400"
-                  />
-                  <div className="text-xs sm:text-sm text-slate-200">
-                    <strong className="text-white block mb-0.5">I have read and agree to all server rules and regulations.</strong>
-                    <span className="text-xs text-slate-400">I understand that claiming ignorance of rules is not an acceptable defense for violations.</span>
-                  </div>
-                </label>
-                {errors.agree_rules && (
-                  <p className="text-xs text-red-400 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.agree_rules.message}
-                  </p>
-                )}
+                <CustomCheckbox
+                  {...register("agree_rules")}
+                  checked={!!watch("agree_rules")}
+                  onChange={(e) =>
+                    setValue("agree_rules", e.target.checked as unknown as true, {
+                      shouldValidate: true,
+                    })
+                  }
+                  label="I have read and agree to all server rules and regulations."
+                  subtitle="I understand that claiming ignorance of rules is not an acceptable defense for violations."
+                  error={errors.agree_rules?.message}
+                />
 
-                <label className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
-                  <input
-                    type="checkbox"
-                    {...register("agree_nvl")}
-                    className="mt-1 w-4 h-4 rounded bg-slate-900 border-slate-700 text-cyan-400 focus:ring-cyan-400"
-                  />
-                  <div className="text-xs sm:text-sm text-slate-200">
-                    <strong className="text-white block mb-0.5">I agree to strictly value my character life (NVL).</strong>
-                    <span className="text-xs text-slate-400">I will not act recklessly or fail to fear weapons during hostile roleplay encounters.</span>
-                  </div>
-                </label>
-                {errors.agree_nvl && (
-                  <p className="text-xs text-red-400 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.agree_nvl.message}
-                  </p>
-                )}
+                <CustomCheckbox
+                  {...register("agree_nvl")}
+                  checked={!!watch("agree_nvl")}
+                  onChange={(e) =>
+                    setValue("agree_nvl", e.target.checked as unknown as true, {
+                      shouldValidate: true,
+                    })
+                  }
+                  label="I agree to strictly value my character life (NVL)."
+                  subtitle="I will not act recklessly or fail to fear weapons during hostile roleplay encounters."
+                  error={errors.agree_nvl?.message}
+                />
 
-                <label className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-surface-card border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition-colors">
-                  <input
-                    type="checkbox"
-                    {...register("agree_microphone")}
-                    className="mt-1 w-4 h-4 rounded bg-slate-900 border-slate-700 text-cyan-400 focus:ring-cyan-400"
-                  />
-                  <div className="text-xs sm:text-sm text-slate-200">
-                    <strong className="text-white block mb-0.5">I possess a working, clear microphone with zero static.</strong>
-                    <span className="text-xs text-slate-400">I will stay in-character in voice at all times while connected to the server.</span>
-                  </div>
-                </label>
-                {errors.agree_microphone && (
-                  <p className="text-xs text-red-400 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" /> {errors.agree_microphone.message}
-                  </p>
-                )}
+                <CustomCheckbox
+                  {...register("agree_microphone")}
+                  checked={!!watch("agree_microphone")}
+                  onChange={(e) =>
+                    setValue("agree_microphone", e.target.checked as unknown as true, {
+                      shouldValidate: true,
+                    })
+                  }
+                  label="I possess a working, clear microphone with zero static."
+                  subtitle="I will stay in-character in voice at all times while connected to the server."
+                  error={errors.agree_microphone?.message}
+                />
               </div>
 
               {submitError && (
@@ -772,7 +723,7 @@ export default function ApplicationWizard() {
               <div className="hidden sm:block" />
             )}
 
-            {currentStep < 6 ? (
+            {currentStep < 5 ? (
               <button
                 type="button"
                 onClick={nextStep}
