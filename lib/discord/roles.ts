@@ -15,11 +15,17 @@ export interface DiscordRoleResult {
 export function getTierRoleId(tier: string): string | null {
   const normalizedTier = tier.toLowerCase().trim();
   
+  if (normalizedTier === "bronze") {
+    return process.env.DISCORD_BRONZE_ROLE_ID || process.env.DISCORD_SUPPORTER_ROLE_ID || null;
+  }
   if (normalizedTier === "silver") {
     return process.env.DISCORD_SILVER_ROLE_ID || process.env.DISCORD_SUPPORTER_ROLE_ID || null;
   }
   if (normalizedTier === "gold") {
     return process.env.DISCORD_GOLD_ROLE_ID || process.env.DISCORD_SUPPORTER_ROLE_ID || null;
+  }
+  if (normalizedTier === "platinum") {
+    return process.env.DISCORD_PLATINUM_ROLE_ID || process.env.DISCORD_SUPPORTER_ROLE_ID || null;
   }
   if (normalizedTier === "emerald") {
     return process.env.DISCORD_EMERALD_ROLE_ID || process.env.DISCORD_SUPPORTER_ROLE_ID || null;
@@ -31,8 +37,10 @@ export function getTierRoleId(tier: string): string | null {
 export function getTierDisplayName(tier: string): string {
   const normalizedTier = tier.toLowerCase().trim();
   if (normalizedTier === "emerald") return "Emerald Supporter";
+  if (normalizedTier === "platinum") return "Platinum Supporter";
   if (normalizedTier === "gold") return "Gold Supporter";
   if (normalizedTier === "silver") return "Silver Supporter";
+  if (normalizedTier === "bronze") return "Bronze Supporter";
   return "Supporter";
 }
 
@@ -186,8 +194,10 @@ export async function sendDiscordDeliveryWebhook(
   try {
     const color = 
       order.package_tier === "emerald" ? 0x10B981 :
+      order.package_tier === "platinum" ? 0xA855F7 :
       order.package_tier === "gold" ? 0xF59E0B : 
-      0x94A3B8;
+      order.package_tier === "silver" ? 0x38BDF8 :
+      0xD97706; // bronze
 
     const embed = {
       title: `📦 Package Delivered: ${order.package_name.toUpperCase()} TIER`,
@@ -235,8 +245,9 @@ export async function sendDiscordDeliveryWebhook(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        content: `🎉 **DONATION APPROVED & DELIVERED!** <@${order.discord_id}> — Thank you for supporting **NOMIX Roleplay**! Your **${order.package_name}** Supporter Perks are now active in-game!`,
         username: "NOMIX Delivery Dispatcher",
-        avatar_url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200",
+        avatar_url: "https://play.nomixroleplay.xyz/logo/logo.png",
         embeds: [embed],
       }),
     });

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { mockDb } from "@/lib/data/mock-db";
 import { getAdminSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { sendDiscordNewOrderNotification } from "@/lib/discord/discord-notify";
 
 export const dynamic = "force-dynamic";
 
@@ -74,65 +75,11 @@ export async function POST(request: NextRequest) {
       createdOrder = mockDb.addPackageOrder(orderPayload);
     }
 
-    // Attempt Discord Webhook Notification to Staff Channel if configured
-    const webhookUrl = 
-      process.env.DISCORD_STAFF_WEBHOOK_URL || 
-      process.env.DISCORD_DONOR_WEBHOOK_URL || 
-      process.env.DISCORD_WEBHOOK_URL;
-
-    if (webhookUrl) {
-      try {
-        const tierColor = 
-          package_tier === "emerald" ? 0x10B981 : 
-          package_tier === "gold" ? 0xF59E0B : 
-          0x94A3B8;
-
-        const embedFields = [
-          { name: "👤 Discord Member", value: `<@${discord_id}> (${discord_username})`, inline: true },
-          { name: "🎭 Character Name", value: `**${character_name}**`, inline: true },
-          { name: "💎 Package Tier", value: `**${package_name}** (${price})`, inline: true },
-        ];
-
-        if (custom_plate) {
-          embedFields.push({ name: "🏷️ Custom Plate(s)", value: `\`${custom_plate}\``, inline: true });
-        }
-        if (custom_phone) {
-          embedFields.push({ name: "📱 Custom Phone", value: `\`${custom_phone}\``, inline: true });
-        }
-        if (vehicle_preference) {
-          embedFields.push({ name: "🏎️ Vehicle Preference", value: vehicle_preference, inline: true });
-        }
-        if (notes) {
-          embedFields.push({ name: "📝 Notes", value: notes, inline: false });
-        }
-
-        embedFields.push({
-          name: "⚡ Next Step",
-          value: "Open `/admin` portal to deliver in-game perks and verify Discord Supporter role.",
-          inline: false,
-        });
-
-        await fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: "NOMIX Supporter Bot",
-            avatar_url: "https://play.nomixroleplay.xyz/logo/logo.png",
-            embeds: [
-              {
-                title: `💎 NEW DONOR ORDER: ${package_name.toUpperCase()} TIER`,
-                description: `A new supporter package order has been received from **${discord_username}**.`,
-                color: tierColor,
-                fields: embedFields,
-                footer: { text: `Order ID: ${createdOrder.id} • NOMIX RP Store` },
-                timestamp: new Date().toISOString(),
-              },
-            ],
-          }),
-        });
-      } catch (webhookErr) {
-        console.error("[DISCORD WEBHOOK ERROR]", webhookErr);
-      }
+    // Dispatch real-time notification to Discord "New Orders" staff channel
+    try {
+      await sendDiscordNewOrderNotification(createdOrder);
+    } catch (notifyErr) {
+      console.error("[NEW ORDER NOTIFY ERROR]", notifyErr);
     }
 
     return NextResponse.json(

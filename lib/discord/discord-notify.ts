@@ -1,3 +1,5 @@
+import { PackageOrder } from "@/types";
+
 export async function sendDiscordApplicationEmbed(app: {
   id: string;
   application_number: string;
@@ -448,3 +450,251 @@ export async function sendDiscordRevocationEmbed(app: {
     console.error("[DISCORD REVOKE NOTIFY ERROR]", err);
   }
 }
+
+/**
+ * Sends a notification embed to the Admin/Staff "New Orders" Discord channel
+ * when a user submits a supporter package order.
+ */
+export async function sendDiscordNewOrderNotification(order: PackageOrder) {
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = 
+    process.env.DISCORD_NEW_ORDERS_CHANNEL_ID || 
+    process.env.DISCORD_STAFF_CHANNEL_ID;
+  const webhookUrl = 
+    process.env.DISCORD_NEW_ORDERS_WEBHOOK_URL || 
+    process.env.DISCORD_STAFF_WEBHOOK_URL || 
+    process.env.DISCORD_DONOR_WEBHOOK_URL || 
+    process.env.DISCORD_WEBHOOK_URL;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomixrp.com";
+
+  const tierColor = 
+    order.package_tier === "emerald" ? 0x10b981 : 
+    order.package_tier === "platinum" ? 0xa855f7 : 
+    order.package_tier === "gold" ? 0xf59e0b : 
+    order.package_tier === "silver" ? 0x38bdf8 : 
+    0xd97706; // bronze
+
+  const embedFields = [
+    { name: "👤 Supporter", value: `<@${order.discord_id}> (\`${order.discord_username}\`)`, inline: true },
+    { name: "🎭 Character Name", value: `**${order.character_name}**`, inline: true },
+    { name: "💎 Package Tier", value: `**${order.package_name}** (${order.price})`, inline: true },
+  ];
+
+  if (order.custom_plate) {
+    embedFields.push({ name: "🏷️ Custom Plate(s)", value: `\`${order.custom_plate}\``, inline: true });
+  }
+  if (order.custom_phone) {
+    embedFields.push({ name: "📱 Custom Phone", value: `\`${order.custom_phone}\``, inline: true });
+  }
+  if (order.vehicle_preference) {
+    embedFields.push({ name: "🏎️ Vehicle Preference", value: order.vehicle_preference, inline: true });
+  }
+  if (order.notes) {
+    embedFields.push({ name: "📝 Notes", value: order.notes, inline: false });
+  }
+
+  embedFields.push({
+    name: "⚡ Admin Action Required",
+    value: "Open the `/admin` portal -> **Supporter Orders** tab to deliver in-game perks and verify Discord Supporter role.",
+    inline: false,
+  });
+
+  const embed = {
+    title: `━━━━━━━━━━━━━━━━━━━━━━━━\n📦 NEW SUPPORTER ORDER: ${order.package_name.toUpperCase()} TIER\n━━━━━━━━━━━━━━━━━━━━━━━━`,
+    description: `A new supporter package order has been received from **${order.discord_username}** and is awaiting admin approval/delivery.`,
+    color: tierColor,
+    fields: embedFields,
+    footer: { text: `Order ID: ${order.id} • NOMIX RP Store` },
+    timestamp: new Date().toISOString(),
+  };
+
+  const components = [
+    {
+      type: 1,
+      components: [
+        {
+          type: 2,
+          style: 5,
+          label: "🛡️ Open Supporter Orders (Admin)",
+          url: `${siteUrl}/admin`,
+        },
+      ],
+    },
+  ];
+
+  // 1. Try Bot Channel REST API first
+  if (token && channelId && !token.includes("your-") && !channelId.includes("your-")) {
+    try {
+      const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bot ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          embeds: [embed],
+          components,
+        }),
+      });
+      if (res.ok) {
+        console.log(`[DISCORD NOTIFY] ✅ Posted new order embed to channel ${channelId}`);
+        return true;
+      }
+    } catch (botErr) {
+      console.error("[DISCORD BOT POST ERROR]", botErr);
+    }
+  }
+
+  // 2. Fallback to Webhook
+  if (webhookUrl && !webhookUrl.includes("your-")) {
+    try {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "NOMIX Orders Dispatcher",
+          avatar_url: "https://play.nomixroleplay.xyz/logo/logo.png",
+          embeds: [embed],
+        }),
+      });
+      if (res.ok) {
+        console.log("[DISCORD NOTIFY] ✅ Posted new order embed via webhook");
+        return true;
+      }
+    } catch (whErr) {
+      console.error("[DISCORD WEBHOOK POST ERROR]", whErr);
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Pushes a notification to the "Donations" channel tagging the specific user
+ * when an admin approves/delivers the donation in the /admin portal.
+ */
+export async function sendDiscordDonationApprovedNotification(
+  order: PackageOrder,
+  staffName?: string
+) {
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = 
+    process.env.DISCORD_DONATIONS_CHANNEL_ID || 
+    process.env.DISCORD_DELIVERY_CHANNEL_ID || 
+    process.env.DISCORD_APPROVED_CHANNEL_ID;
+  const webhookUrl = 
+    process.env.DISCORD_DONATIONS_WEBHOOK_URL || 
+    process.env.DISCORD_DELIVERY_WEBHOOK_URL || 
+    process.env.DISCORD_PACKAGE_DELIVERY_WEBHOOK_URL;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nomixrp.com";
+
+  const tierColor = 
+    order.package_tier === "emerald" ? 0x10b981 : 
+    order.package_tier === "platinum" ? 0xa855f7 : 
+    order.package_tier === "gold" ? 0xf59e0b : 
+    order.package_tier === "silver" ? 0x38bdf8 : 
+    0xd97706; // bronze
+
+  // Pings and tags the specific user directly in Discord message content!
+  const pingMessage = `🎉 **DONATION APPROVED & ACTIVATED!** <@${order.discord_id}> — Thank you for supporting **NOMIX Roleplay**! Your **${order.package_name}** Supporter Perks are now active in-game!`;
+
+  const embedFields = [
+    { name: "👑 Supporter", value: `<@${order.discord_id}> (\`${order.discord_username}\`)`, inline: true },
+    { name: "💎 Supporter Tier", value: `**${order.package_name}** (${order.price})`, inline: true },
+    { name: "🎭 Character Name", value: `**${order.character_name}**`, inline: true },
+  ];
+
+  if (order.custom_plate) {
+    embedFields.push({ name: "🚗 Custom Plate(s)", value: `\`${order.custom_plate}\``, inline: true });
+  }
+  if (order.custom_phone) {
+    embedFields.push({ name: "📱 Custom Phone", value: `\`${order.custom_phone}\``, inline: true });
+  }
+  if (order.vehicle_preference) {
+    embedFields.push({ name: "🏎️ Vehicle Delivery", value: order.vehicle_preference, inline: true });
+  }
+
+  embedFields.push({
+    name: "🛡️ Approved & Delivered By",
+    value: staffName || "NOMIX Administration",
+    inline: true,
+  });
+
+  const embed = {
+    title: `━━━━━━━━━━━━━━━━━━━━━━━━\n💎 SUPPORTER PACK DELIVERED & APPROVED\n━━━━━━━━━━━━━━━━━━━━━━━━`,
+    description: `A special thank you to <@${order.discord_id}> for contributing to NOMIX server development, custom vehicle handling, and dedicated infrastructure!`,
+    color: tierColor,
+    fields: embedFields,
+    footer: { text: `NOMIX RP Supporter Perks • Ref: ${order.id.slice(0, 8).toUpperCase()}` },
+    timestamp: new Date().toISOString(),
+  };
+
+  const components = [
+    {
+      type: 1,
+      components: [
+        {
+          type: 2,
+          style: 5,
+          label: "🛍️ View Supporter Packages",
+          url: `${siteUrl}/store`,
+        },
+        {
+          type: 2,
+          style: 5,
+          label: "🎮 Connect to Server",
+          url: process.env.NEXT_PUBLIC_FIVEM_CONNECT_URL || "fivem://connect/play.nomixroleplay.xyz",
+        },
+      ],
+    },
+  ];
+
+  // 1. Try Bot Channel REST API first
+  if (token && channelId && !token.includes("your-") && !channelId.includes("your-")) {
+    try {
+      const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bot ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: pingMessage,
+          embeds: [embed],
+          components,
+        }),
+      });
+      if (res.ok) {
+        console.log(`[DISCORD NOTIFY] ✅ Posted donation approval ping to channel for ${order.discord_username}`);
+        return true;
+      }
+    } catch (botErr) {
+      console.error("[DISCORD BOT POST ERROR]", botErr);
+    }
+  }
+
+  // 2. Fallback to Webhook
+  if (webhookUrl && !webhookUrl.includes("your-")) {
+    try {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: pingMessage,
+          username: "NOMIX Supporter Broadcast",
+          avatar_url: "https://play.nomixroleplay.xyz/logo/logo.png",
+          embeds: [embed],
+        }),
+      });
+      if (res.ok) {
+        console.log(`[DISCORD NOTIFY] ✅ Posted donation approval ping via webhook for ${order.discord_username}`);
+        return true;
+      }
+    } catch (whErr) {
+      console.error("[DISCORD WEBHOOK POST ERROR]", whErr);
+    }
+  }
+
+  return false;
+}
+

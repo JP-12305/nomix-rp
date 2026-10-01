@@ -154,7 +154,7 @@ export interface ServerStatusData {
   is_mock: boolean;
 }
 
-export type PackageTier = 'silver' | 'gold' | 'emerald';
+export type PackageTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'emerald';
 export type PackageOrderStatus = 'pending' | 'active' | 'delivered' | 'rejected';
 
 export interface PackageTierInfo {
@@ -164,7 +164,7 @@ export interface PackageTierInfo {
   monthly_price: number;
   rank_badge: string;
   badge_color: string;
-  accent_color: 'slate' | 'amber' | 'emerald';
+  accent_color: 'bronze' | 'silver' | 'gold' | 'platinum' | 'emerald';
   features: string[];
   popular?: boolean;
 }

@@ -9,12 +9,9 @@ import {
   X, 
   CheckCircle2, 
   Crown, 
-  ShieldCheck, 
   Users, 
-  Car, 
   Phone, 
   Tag, 
-  Sparkles, 
   ArrowRight,
   AlertCircle
 } from "lucide-react";
@@ -34,9 +31,12 @@ export default function PackageOrderModal({
   const [mounted, setMounted] = useState(false);
   
   const [characterName, setCharacterName] = useState("");
-  const [silverChoice, setSilverChoice] = useState<"plate" | "phone">("plate");
+  const [choiceType, setChoiceType] = useState<"plate" | "phone">("plate");
   const [customPlate1, setCustomPlate1] = useState("");
   const [customPlate2, setCustomPlate2] = useState("");
+  const [customPlate3, setCustomPlate3] = useState("");
+  const [customPlate4, setCustomPlate4] = useState("");
+  const [customPlate5, setCustomPlate5] = useState("");
   const [customPhone, setCustomPhone] = useState("");
   const [vehiclePref, setVehiclePref] = useState("");
   const [notes, setNotes] = useState("");
@@ -76,20 +76,30 @@ export default function PackageOrderModal({
 
     try {
       let finalPlate = "";
-      let finalPhone = "";
+      let finalPhone = customPhone.trim();
 
-      if (packageInfo.id === "silver") {
-        if (silverChoice === "plate") {
+      if (packageInfo.id === "bronze") {
+        if (choiceType === "plate") {
           finalPlate = customPlate1.trim();
+          finalPhone = "";
         } else {
+          finalPlate = "";
           finalPhone = customPhone.trim();
         }
-      } else if (packageInfo.id === "gold") {
+      } else if (packageInfo.id === "silver") {
         finalPlate = customPlate1.trim();
-        finalPhone = customPhone.trim();
-      } else if (packageInfo.id === "emerald") {
+      } else if (packageInfo.id === "gold") {
         finalPlate = [customPlate1.trim(), customPlate2.trim()].filter(Boolean).join(", ");
-        finalPhone = customPhone.trim();
+      } else if (packageInfo.id === "platinum") {
+        finalPlate = [customPlate1.trim(), customPlate2.trim(), customPlate3.trim()].filter(Boolean).join(", ");
+      } else if (packageInfo.id === "emerald") {
+        finalPlate = [
+          customPlate1.trim(),
+          customPlate2.trim(),
+          customPlate3.trim(),
+          customPlate4.trim(),
+          customPlate5.trim(),
+        ].filter(Boolean).join(", ");
       }
 
       const res = await fetch("/api/packages/order", {
@@ -106,7 +116,7 @@ export default function PackageOrderModal({
           character_name: characterName.trim(),
           custom_plate: finalPlate || undefined,
           custom_phone: finalPhone || undefined,
-          choice_type: packageInfo.id === "silver" ? silverChoice : undefined,
+          choice_type: packageInfo.id === "bronze" ? choiceType : undefined,
           vehicle_preference: vehiclePref.trim() || undefined,
           notes: notes.trim() || undefined,
         }),
@@ -130,8 +140,12 @@ export default function PackageOrderModal({
     setSubmittedOrder(null);
     setError(null);
     setCharacterName("");
+    setChoiceType("plate");
     setCustomPlate1("");
     setCustomPlate2("");
+    setCustomPlate3("");
+    setCustomPlate4("");
+    setCustomPlate5("");
     setCustomPhone("");
     setVehiclePref("");
     setNotes("");
@@ -139,27 +153,43 @@ export default function PackageOrderModal({
   };
 
   const getAccentGlow = () => {
-    if (packageInfo.id === "emerald") return "border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.25),0_20px_60px_rgba(0,0,0,0.9)]";
-    if (packageInfo.id === "gold") return "border-amber-500/50 shadow-[0_0_50px_rgba(245,158,11,0.25),0_20px_60px_rgba(0,0,0,0.9)]";
-    return "border-slate-400/40 shadow-[0_0_50px_rgba(148,163,184,0.2),0_20px_60px_rgba(0,0,0,0.9)]";
+    if (packageInfo.id === "emerald")
+      return "border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.25),0_20px_60px_rgba(0,0,0,0.9)]";
+    if (packageInfo.id === "platinum")
+      return "border-purple-500/50 shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_60px_rgba(0,0,0,0.9)]";
+    if (packageInfo.id === "gold")
+      return "border-amber-400/60 shadow-[0_0_50px_rgba(245,158,11,0.35),0_20px_60px_rgba(0,0,0,0.9)]";
+    if (packageInfo.id === "silver")
+      return "border-sky-500/50 shadow-[0_0_50px_rgba(56,189,248,0.2),0_20px_60px_rgba(0,0,0,0.9)]";
+    return "border-amber-600/50 shadow-[0_0_50px_rgba(217,119,6,0.2),0_20px_60px_rgba(0,0,0,0.9)]";
   };
 
   const getAmbientLight = () => {
     if (packageInfo.id === "emerald") return "bg-emerald-500/15";
-    if (packageInfo.id === "gold") return "bg-amber-500/15";
-    return "bg-cyan-500/15";
+    if (packageInfo.id === "platinum") return "bg-purple-500/15";
+    if (packageInfo.id === "gold") return "bg-amber-400/20";
+    if (packageInfo.id === "silver") return "bg-sky-500/15";
+    return "bg-amber-600/15";
   };
 
   const getTextColor = () => {
-    if (packageInfo.id === "emerald") return "text-emerald-400";
-    if (packageInfo.id === "gold") return "text-amber-400";
-    return "text-slate-200";
+    if (packageInfo.id === "emerald") return "text-[#6EE7B7]";
+    if (packageInfo.id === "platinum") return "text-[#C084FC]";
+    if (packageInfo.id === "gold") return "text-[#FACC15]";
+    if (packageInfo.id === "silver") return "text-[#38BDF8]";
+    return "text-[#F97316]";
   };
 
   const getButtonBg = () => {
-    if (packageInfo.id === "emerald") return "bg-emerald-500 hover:bg-emerald-400 text-black";
-    if (packageInfo.id === "gold") return "bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black";
-    return "bg-slate-200 hover:bg-white text-black";
+    if (packageInfo.id === "emerald")
+      return "bg-gradient-to-r from-[#34D399] to-[#10B981] hover:from-[#6EE7B7] hover:to-[#34D399] text-black font-heading font-bold shadow-[0_0_20px_rgba(16,185,129,0.4)]";
+    if (packageInfo.id === "platinum")
+      return "bg-gradient-to-r from-[#C084FC] to-[#A855F7] hover:from-[#E9D5FF] hover:to-[#C084FC] text-black font-heading font-bold shadow-[0_0_20px_rgba(168,85,247,0.4)]";
+    if (packageInfo.id === "gold")
+      return "bg-gradient-to-r from-[#FACC15] to-[#F59E0B] hover:from-[#FDE047] hover:to-[#FACC15] text-black font-heading font-black shadow-[0_0_22px_rgba(245,158,11,0.5)]";
+    if (packageInfo.id === "silver")
+      return "bg-gradient-to-r from-[#E0F2FE] to-[#BAE6FD] hover:from-white hover:to-[#E0F2FE] text-black font-heading font-bold shadow-[0_0_18px_rgba(56,189,248,0.35)]";
+    return "bg-gradient-to-r from-[#D97706] to-[#EA580C] hover:from-[#F59E0B] hover:to-[#D97706] text-black font-heading font-black shadow-[0_0_18px_rgba(217,119,6,0.35)]";
   };
 
   const modalContent = (
@@ -200,7 +230,7 @@ export default function PackageOrderModal({
               </div>
             </div>
 
-            {/* Close Button cleanly positioned on the right without overlapping badges */}
+            {/* Close Button */}
             <button
               onClick={resetAndClose}
               className="p-2 rounded-xl bg-slate-900/80 border border-white/10 text-slate-400 hover:text-white hover:border-white/20 transition-all flex-shrink-0"
@@ -327,20 +357,20 @@ export default function PackageOrderModal({
                 />
               </div>
 
-              {/* Tier-Specific Perk Customizations */}
-              {packageInfo.id === "silver" && (
-                <div className="space-y-2 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-white/10">
+              {/* BRONZE PERK: Option between Plate OR Phone */}
+              {packageInfo.id === "bronze" && (
+                <div className="space-y-2 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-amber-600/30">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-300">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">
                       Select Customization Option:
                     </span>
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
-                        onClick={() => setSilverChoice("plate")}
+                        onClick={() => setChoiceType("plate")}
                         className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                          silverChoice === "plate"
-                            ? "bg-cyan-500/20 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(0,240,255,0.2)]"
+                          choiceType === "plate"
+                            ? "bg-amber-500/20 border border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.2)]"
                             : "bg-slate-900/60 border border-white/5 text-slate-400 hover:text-white"
                         }`}
                       >
@@ -348,10 +378,10 @@ export default function PackageOrderModal({
                       </button>
                       <button
                         type="button"
-                        onClick={() => setSilverChoice("phone")}
+                        onClick={() => setChoiceType("phone")}
                         className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                          silverChoice === "phone"
-                            ? "bg-cyan-500/20 border border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(0,240,255,0.2)]"
+                          choiceType === "phone"
+                            ? "bg-amber-500/20 border border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.2)]"
                             : "bg-slate-900/60 border border-white/5 text-slate-400 hover:text-white"
                         }`}
                       >
@@ -360,15 +390,15 @@ export default function PackageOrderModal({
                     </div>
                   </div>
 
-                  {silverChoice === "plate" ? (
+                  {choiceType === "plate" ? (
                     <div>
                       <input
                         type="text"
                         maxLength={8}
                         value={customPlate1}
                         onChange={(e) => setCustomPlate1(e.target.value.toUpperCase())}
-                        placeholder="Requested Plate Text (Max 8 Chars, e.g. NOMIX1)"
-                        className="w-full px-3.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-cyan-400 focus:outline-none placeholder:normal-case placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-500"
+                        placeholder="Requested Plate Text (Max 8 Chars, e.g. BRONZE1)"
+                        className="w-full px-3.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-amber-400 focus:outline-none placeholder:normal-case placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-500"
                       />
                     </div>
                   ) : (
@@ -377,45 +407,47 @@ export default function PackageOrderModal({
                         type="text"
                         value={customPhone}
                         onChange={(e) => setCustomPhone(e.target.value)}
-                        placeholder="Requested Phone Number (e.g. 555-0199)"
-                        className="w-full px-3.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none placeholder:text-slate-500"
+                        placeholder="Requested Phone Number (e.g. 555-0188)"
+                        className="w-full px-3.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-amber-400 focus:outline-none placeholder:text-slate-500"
                       />
                     </div>
                   )}
                 </div>
               )}
 
-              {packageInfo.id === "gold" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-white/10">
+              {/* SILVER PERK: 1 Plate + 1 Phone */}
+              {packageInfo.id === "silver" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-sky-500/30">
                   <div>
-                    <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">1x Custom Plate (Max 8):</label>
+                    <label className="text-[10px] text-sky-300 block mb-0.5 font-semibold">1x Custom Plate (Max 8):</label>
                     <input
                       type="text"
                       maxLength={8}
                       value={customPlate1}
                       onChange={(e) => setCustomPlate1(e.target.value.toUpperCase())}
-                      placeholder="e.g. GOLDEN"
-                      className="w-full px-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-amber-400 focus:outline-none placeholder:text-slate-500"
+                      placeholder="e.g. SILVER1"
+                      className="w-full px-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-sky-400 focus:outline-none placeholder:text-slate-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Custom Phone Number:</label>
+                    <label className="text-[10px] text-sky-300 block mb-0.5 font-semibold">Custom Phone Number:</label>
                     <input
                       type="text"
                       value={customPhone}
                       onChange={(e) => setCustomPhone(e.target.value)}
-                      placeholder="e.g. 555-0777"
-                      className="w-full px-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-amber-400 focus:outline-none placeholder:text-slate-500"
+                      placeholder="e.g. 555-0199"
+                      className="w-full px-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-sky-400 focus:outline-none placeholder:text-slate-500"
                     />
                   </div>
                 </div>
               )}
 
-              {packageInfo.id === "emerald" && (
-                <div className="space-y-1.5 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-emerald-500/25">
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400 flex items-center justify-between">
-                    <span>Emerald Customizations Included:</span>
-                    <span className="text-[9px] text-emerald-400/80 font-mono">2 Plates + 1 Phone</span>
+              {/* GOLD PERK: 2 Plates + 1 Phone */}
+              {packageInfo.id === "gold" && (
+                <div className="space-y-1.5 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-amber-400/30">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-amber-400 flex items-center justify-between">
+                    <span>Gold Customizations:</span>
+                    <span className="text-[9px] text-amber-400/80 font-mono">2 Plates + 1 Phone</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
@@ -425,8 +457,8 @@ export default function PackageOrderModal({
                         maxLength={8}
                         value={customPlate1}
                         onChange={(e) => setCustomPlate1(e.target.value.toUpperCase())}
-                        placeholder="EMERALD1"
-                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
+                        placeholder="GOLDEN1"
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-amber-400 focus:outline-none placeholder:text-slate-500"
                       />
                     </div>
                     <div>
@@ -436,8 +468,140 @@ export default function PackageOrderModal({
                         maxLength={8}
                         value={customPlate2}
                         onChange={(e) => setCustomPlate2(e.target.value.toUpperCase())}
+                        placeholder="GOLDEN2"
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-amber-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Phone #:</label>
+                      <input
+                        type="text"
+                        value={customPhone}
+                        onChange={(e) => setCustomPhone(e.target.value)}
+                        placeholder="555-0777"
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-amber-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* PLATINUM PERK: 3 Plates + 1 Phone */}
+              {packageInfo.id === "platinum" && (
+                <div className="space-y-1.5 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-purple-500/30">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-purple-300 flex items-center justify-between">
+                    <span>Platinum Customizations:</span>
+                    <span className="text-[9px] text-purple-300/80 font-mono">3 Plates + 1 Phone</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #1:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate1}
+                        onChange={(e) => setCustomPlate1(e.target.value.toUpperCase())}
+                        placeholder="PLAT1"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-purple-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #2:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate2}
+                        onChange={(e) => setCustomPlate2(e.target.value.toUpperCase())}
+                        placeholder="PLAT2"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-purple-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #3:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate3}
+                        onChange={(e) => setCustomPlate3(e.target.value.toUpperCase())}
+                        placeholder="PLAT3"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-purple-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Phone #:</label>
+                      <input
+                        type="text"
+                        value={customPhone}
+                        onChange={(e) => setCustomPhone(e.target.value)}
+                        placeholder="555-8888"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-purple-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* EMERALD PERK: 5 Plates + 1 Phone */}
+              {packageInfo.id === "emerald" && (
+                <div className="space-y-1.5 p-3 rounded-xl bg-slate-900/40 backdrop-blur-md border border-emerald-500/30">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400 flex items-center justify-between">
+                    <span>Emerald Customizations:</span>
+                    <span className="text-[9px] text-emerald-400/80 font-mono">5 Plates + 1 Phone</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #1:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate1}
+                        onChange={(e) => setCustomPlate1(e.target.value.toUpperCase())}
+                        placeholder="EMERALD1"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #2:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate2}
+                        onChange={(e) => setCustomPlate2(e.target.value.toUpperCase())}
+                        placeholder="EMERALD2"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #3:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate3}
+                        onChange={(e) => setCustomPlate3(e.target.value.toUpperCase())}
+                        placeholder="EMERALD3"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #4:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate4}
+                        onChange={(e) => setCustomPlate4(e.target.value.toUpperCase())}
+                        placeholder="EMERALD4"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-300 block mb-0.5 font-semibold">Plate #5:</label>
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={customPlate5}
+                        onChange={(e) => setCustomPlate5(e.target.value.toUpperCase())}
                         placeholder="BOSS"
-                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs uppercase font-mono tracking-widest focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
                       />
                     </div>
                     <div>
@@ -447,7 +611,7 @@ export default function PackageOrderModal({
                         value={customPhone}
                         onChange={(e) => setCustomPhone(e.target.value)}
                         placeholder="555-9999"
-                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
+                        className="w-full px-2 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-white text-xs font-mono focus:border-emerald-400 focus:outline-none placeholder:text-slate-500"
                       />
                     </div>
                   </div>
@@ -463,7 +627,7 @@ export default function PackageOrderModal({
                   rows={2}
                   value={vehiclePref}
                   onChange={(e) => setVehiclePref(e.target.value)}
-                  placeholder="Preferred vehicle category or any instructions for server staff..."
+                  placeholder="Preferred vehicle category, model, or instructions for server staff..."
                   className="w-full px-3.5 py-2 rounded-xl bg-slate-950/70 backdrop-blur-sm border border-slate-800/90 text-white text-xs focus:border-cyan-400/80 focus:ring-1 focus:ring-cyan-400/30 focus:outline-none resize-none transition-all placeholder:text-slate-500"
                 />
               </div>

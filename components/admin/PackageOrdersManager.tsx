@@ -159,7 +159,10 @@ export default function PackageOrdersManager() {
 
   const getTierColor = (tier: string) => {
     if (tier === "emerald") return "text-emerald-400 bg-emerald-950/40 border-emerald-500/40";
+    if (tier === "platinum") return "text-purple-400 bg-purple-950/40 border-purple-500/40";
     if (tier === "gold") return "text-amber-400 bg-amber-950/40 border-amber-500/40";
+    if (tier === "silver") return "text-sky-300 bg-sky-950/40 border-sky-500/40";
+    if (tier === "bronze") return "text-orange-400 bg-orange-950/40 border-orange-500/40";
     return "text-slate-300 bg-slate-800/60 border-slate-600/40";
   };
 

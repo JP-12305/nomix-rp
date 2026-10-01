@@ -4,9 +4,9 @@ import { getAdminSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { 
   grantDiscordSupporterRole, 
-  sendDiscordDeliveryWebhook, 
   DiscordRoleResult 
 } from "@/lib/discord/roles";
+import { sendDiscordDonationApprovedNotification } from "@/lib/discord/discord-notify";
 
 export const dynamic = "force-dynamic";
 
@@ -162,9 +162,9 @@ export async function PATCH(request: NextRequest) {
       updatedOrder = mockUpdated;
     }
 
-    // 4. Send Discord Delivery Broadcast Webhook if marked delivered
+    // 4. Send Discord Delivery & Donation Approved Broadcast (tagging the user)
     if (targetStatus === "delivered" && existingOrder.status !== "delivered") {
-      await sendDiscordDeliveryWebhook(updatedOrder, staff_name);
+      await sendDiscordDonationApprovedNotification(updatedOrder, staff_name);
     }
 
     return NextResponse.json({ 

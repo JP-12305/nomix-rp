@@ -1,12 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-// Auto-correct if copy-pasted without trailing hyphen
-if (supabaseAnonKey && supabaseAnonKey.endsWith("rP8hBoH")) {
-  supabaseAnonKey = supabaseAnonKey + "-";
-}
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 export const isSupabaseConfigured = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || supabaseUrl;

@@ -68,6 +68,20 @@ async function testConnection() {
       }
     });
     console.log(`✅ Applications table verified and ready for submissions! (Status: ${appsRes.status})`);
+
+    // Test package_orders table
+    const ordersRes = await fetch(`${supabaseUrl}/rest/v1/package_orders?select=count`, {
+      headers: {
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`,
+        "Prefer": "count=exact"
+      }
+    });
+    if (ordersRes.ok) {
+      console.log(`✅ package_orders table verified in Supabase! (Status: ${ordersRes.status})`);
+    } else {
+      console.log(`⚠️ package_orders table not yet found in Supabase (Status: ${ordersRes.status}). Run the SQL script in Supabase SQL Editor.`);
+    }
   } catch (err) {
     console.error("❌ Connection failed:", err);
   }
