@@ -2,6 +2,21 @@ import { z } from "zod";
 
 export const applicationSchema = z.object({
   // Step 1: Personal Info
+  irl_name: z
+    .string()
+    .min(2, "IRL (Real Life) Name is required (minimum 2 characters).")
+    .max(100, "IRL Name is too long."),
+  ic_name: z
+    .string()
+    .min(2, "In-Game (IC) Name is required (minimum 2 characters).")
+    .max(100, "IC Name is too long."),
+  irl_sex: z.enum(["Male", "Female", "Other"], {
+    errorMap: () => ({ message: "Please select your IRL sex (Male, Female, or Other)." }),
+  }),
+  native_language: z
+    .string()
+    .min(2, "Native language is required (minimum 2 characters).")
+    .max(60, "Language name is too long."),
   age: z.coerce
     .number({ invalid_type_error: "Please enter a valid age." })
     .min(18, "You must be at least 18 years old to join NOMIX Roleplay.")
@@ -105,7 +120,7 @@ export const applicationSchema = z.object({
 export type ApplicationFormData = z.infer<typeof applicationSchema>;
 
 export const stepFields: Record<number, (keyof ApplicationFormData)[]> = {
-  1: ["age", "country", "timezone", "fivem_id"],
+  1: ["irl_name", "ic_name", "irl_sex", "native_language", "age", "country", "timezone", "fivem_id"],
   2: [
     "played_before", 
     "previous_servers", 

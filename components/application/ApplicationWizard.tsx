@@ -24,7 +24,8 @@ import {
   Save,
   Send,
   Loader2,
-  Video
+  Video,
+  Check
 } from "lucide-react";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { CustomCheckbox } from "@/components/ui/CustomCheckbox";
@@ -56,7 +57,11 @@ export default function ApplicationWizard() {
     resolver: zodResolver(applicationSchema),
     mode: "onTouched",
     defaultValues: {
-      age: 21,
+      irl_name: "",
+      ic_name: "",
+      irl_sex: "" as unknown as "Male",
+      native_language: "",
+      age: "" as unknown as number,
       country: "",
       timezone: "",
       fivem_id: "",
@@ -68,7 +73,7 @@ export default function ApplicationWizard() {
       creator_other_platform: "",
       creator_channel_url: "",
       char_name: "",
-      char_age: 25,
+      char_age: "" as unknown as number,
       char_gender: "Male",
       char_goals: "",
       scenario_police_stop: "",
@@ -89,8 +94,14 @@ export default function ApplicationWizard() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        // Clean up legacy draft if irl_name was mistakenly stored as 21 or numeric
+        if (parsed.irl_name === 21 || parsed.irl_name === "21") {
+          delete parsed.irl_name;
+        }
         Object.entries(parsed).forEach(([k, v]) => {
-          setValue(k as keyof ApplicationFormData, v as any);
+          if (v !== undefined && v !== null && v !== "") {
+            setValue(k as keyof ApplicationFormData, v as any);
+          }
         });
       } catch (e) {
         console.error(e);
@@ -277,7 +288,7 @@ export default function ApplicationWizard() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {/* Prepopulated Discord ID */}
-              <div className="space-y-2">
+              <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
                   Discord Identity (Auto-Linked)
                 </label>
@@ -287,6 +298,103 @@ export default function ApplicationWizard() {
                 </div>
               </div>
 
+              {/* IRL Name */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
+                  IRL Name <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  autoComplete="off"
+                  {...register("irl_name")}
+                  placeholder="e.g. Alex Mercer (Real Life Name)"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
+                />
+                {errors.irl_name && (
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.irl_name.message}
+                  </p>
+                )}
+              </div>
+
+              {/* IC Name */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
+                  IC Name <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  autoComplete="off"
+                  {...register("ic_name")}
+                  placeholder="e.g. Marcus Vance (In-Game Name)"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
+                />
+                {errors.ic_name && (
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.ic_name.message}
+                  </p>
+                )}
+              </div>
+
+              {/* IRL Sex Checkbox Selection */}
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
+                  IRL Sex <span className="text-red-400">*</span>
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {(["Male", "Female", "Other"] as const).map((option) => {
+                    const isSelected = watch("irl_sex") === option;
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setValue("irl_sex", option, { shouldValidate: true })}
+                        className={`flex items-center justify-center sm:justify-start gap-2.5 px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-200 cursor-pointer ${
+                          isSelected
+                            ? "bg-[#0B1528] border-cyan-400/80 text-white shadow-[0_0_15px_rgba(0,240,255,0.15)] ring-1 ring-cyan-400/40"
+                            : "bg-surface-card border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white hover:bg-slate-900/60"
+                        }`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
+                            isSelected
+                              ? "border-cyan-400 bg-gradient-to-b from-cyan-400 to-cyan-500 shadow-[0_0_8px_rgba(0,240,255,0.6)]"
+                              : "border-slate-700 bg-slate-950"
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-slate-950 stroke-[3]" />}
+                        </div>
+                        <span className="truncate">{option}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {errors.irl_sex && (
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.irl_sex.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Native Language */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
+                  Native Language <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  autoComplete="off"
+                  {...register("native_language")}
+                  placeholder="e.g. English, Spanish, Hindi, German (Native Language)"
+                  className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
+                />
+                {errors.native_language && (
+                  <p className="text-xs sm:text-sm text-red-400 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-4 h-4" /> {errors.native_language.message}
+                  </p>
+                )}
+              </div>
+
               {/* Real Age */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-slate-200 uppercase tracking-wider block">
@@ -294,8 +402,9 @@ export default function ApplicationWizard() {
                 </label>
                 <input
                   type="number"
+                  autoComplete="off"
                   {...register("age")}
-                  placeholder="18"
+                  placeholder="e.g. 21 (Must be 18+)"
                   className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                 />
                 {errors.age && (
@@ -312,6 +421,7 @@ export default function ApplicationWizard() {
                 </label>
                 <input
                   type="text"
+                  autoComplete="off"
                   {...register("country")}
                   placeholder="e.g. United States, United Kingdom, Canada, India"
                   className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
@@ -330,6 +440,7 @@ export default function ApplicationWizard() {
                 </label>
                 <input
                   type="text"
+                  autoComplete="off"
                   {...register("timezone")}
                   placeholder="e.g. EST (UTC-5), PST (UTC-8), GMT, IST (UTC+5:30)"
                   className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
@@ -348,6 +459,7 @@ export default function ApplicationWizard() {
                 </label>
                 <input
                   type="text"
+                  autoComplete="off"
                   {...register("fivem_id")}
                   placeholder="e.g. Your FiveM Name"
                   className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
@@ -517,6 +629,7 @@ export default function ApplicationWizard() {
                   </label>
                   <input
                     type="text"
+                    autoComplete="off"
                     {...register("char_name")}
                     placeholder="e.g. Marcus Vance"
                     className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
@@ -534,8 +647,9 @@ export default function ApplicationWizard() {
                   </label>
                   <input
                     type="number"
+                    autoComplete="off"
                     {...register("char_age")}
-                    placeholder="28"
+                    placeholder="e.g. 25"
                     className="w-full bg-surface-card border border-slate-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-cyan-500/60"
                   />
                   {errors.char_age && (

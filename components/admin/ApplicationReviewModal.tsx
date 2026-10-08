@@ -434,6 +434,22 @@ export default function ApplicationReviewModal({
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-0">
                   <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
+                    <span className="text-slate-500 text-[10px] block">IRL Name</span>
+                    <strong className="text-white break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.irl_name || "N/A"}</strong>
+                  </div>
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
+                    <span className="text-slate-500 text-[10px] block">IC Name</span>
+                    <strong className="text-white break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.ic_name || app.character_name || "N/A"}</strong>
+                  </div>
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
+                    <span className="text-slate-500 text-[10px] block">IRL Sex</span>
+                    <strong className="text-cyan-300 break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.irl_sex || "N/A"}</strong>
+                  </div>
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
+                    <span className="text-slate-500 text-[10px] block">Native Language</span>
+                    <strong className="text-white break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.native_language || "N/A"}</strong>
+                  </div>
+                  <div className="p-3 rounded-lg bg-surface-card border border-slate-800 min-w-0 overflow-hidden">
                     <span className="text-slate-500 text-[10px] block">Real Age</span>
                     <strong className="text-white break-words [overflow-wrap:anywhere] [word-break:break-word] block">{answersMap.age || app.character_age}</strong>
                   </div>

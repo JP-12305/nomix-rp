@@ -106,9 +106,22 @@ export async function POST(request: NextRequest) {
         finalUserId = createdProfile?.id || null;
       }
 
-      // Generate sequential application number
-      const { count } = await supabase.from("applications").select("*", { count: "exact", head: true });
-      const appNumber = `NMX-${String((count || 0) + 1045).padStart(5, "0")}`;
+      // Generate guaranteed unique sequential application number
+      const { data: latestApp } = await supabase
+        .from("applications")
+        .select("application_number")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      let nextNum = 1046;
+      if (latestApp?.application_number) {
+        const match = latestApp.application_number.match(/\d+/);
+        if (match) {
+          nextNum = parseInt(match[0], 10) + 1;
+        }
+      }
+      const appNumber = `NMX-${String(nextNum).padStart(5, "0")}`;
 
       const { data: insertedApp, error: appError } = await supabase
         .from("applications")
@@ -149,7 +162,7 @@ export async function POST(request: NextRequest) {
 
       // Post notification embed to Discord staff channel (non-blocking)
       try {
-        await sendDiscordApplicationEmbed(insertedApp);
+        await sendDiscordApplicationEmbed(insertedApp, data);
       } catch (embedErr) {
         console.error("Discord notification error during submit (non-fatal):", embedErr);
       }
@@ -176,6 +189,12 @@ export async function POST(request: NextRequest) {
           Object.entries(data).map(([k, v]) => [k, String(v)])
         ),
       });
+
+      try {
+        await sendDiscordApplicationEmbed(newApp, data);
+      } catch (embedErr) {
+        console.error("Discord notification error during submit (mock mode):", embedErr);
+      }
 
       return NextResponse.json({ success: true, application: newApp });
     }
