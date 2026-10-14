@@ -4,8 +4,8 @@ export const PREMIUM_PACKAGES: PackageTierInfo[] = [
   {
     id: "bronze",
     name: "BRONZE",
-    price: "$5",
-    monthly_price: 5,
+    price: "$3",
+    monthly_price: 3,
     rank_badge: "ENTRY MEMBER",
     badge_color: "bg-amber-950/40 text-amber-500 border-amber-600/40",
     accent_color: "bronze",
@@ -21,8 +21,8 @@ export const PREMIUM_PACKAGES: PackageTierInfo[] = [
   {
     id: "silver",
     name: "SILVER",
-    price: "$10",
-    monthly_price: 10,
+    price: "$6",
+    monthly_price: 6,
     rank_badge: "STANDARD MEMBER",
     badge_color: "bg-sky-950/40 text-sky-300 border-sky-500/40",
     accent_color: "silver",
@@ -39,8 +39,8 @@ export const PREMIUM_PACKAGES: PackageTierInfo[] = [
   {
     id: "gold",
     name: "GOLD",
-    price: "$20",
-    monthly_price: 20,
+    price: "$12",
+    monthly_price: 12,
     rank_badge: "PREMIUM MEMBER",
     badge_color: "bg-amber-500/20 text-amber-300 border-amber-400/50 shadow-[0_0_15px_rgba(245,158,11,0.25)]",
     accent_color: "gold",
