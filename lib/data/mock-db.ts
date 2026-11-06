@@ -1324,11 +1324,24 @@ Serious violations (e.g., hate speech, cheating, severe RDM/exploiting) may resu
     return newOrder;
   }
 
-  public updatePackageOrderStatus(orderId: string, status: PackageOrder["status"], staffNotes?: string): PackageOrder | null {
+  public updatePackageOrderStatus(
+    orderId: string, 
+    status: PackageOrder["status"], 
+    staffNotes?: string,
+    deliveredBy?: string,
+    discordRoleAssigned?: boolean
+  ): PackageOrder | null {
     const order = this.packageOrders.find((o) => o.id === orderId);
     if (!order) return null;
     order.status = status;
     if (staffNotes !== undefined) order.staff_notes = staffNotes;
+    if (status === "delivered" || status === "active") {
+      order.delivered_at = new Date().toISOString();
+      if (deliveredBy) order.delivered_by = deliveredBy;
+    }
+    if (discordRoleAssigned !== undefined) {
+      order.discord_role_assigned = discordRoleAssigned;
+    }
     order.updated_at = new Date().toISOString();
     return order;
   }

@@ -186,6 +186,9 @@ export interface PackageOrder {
   notes?: string;
   status: PackageOrderStatus;
   staff_notes?: string;
+  discord_role_assigned?: boolean;
+  delivered_by?: string | null;
+  delivered_at?: string | null;
   created_at: string;
   updated_at?: string;
 }

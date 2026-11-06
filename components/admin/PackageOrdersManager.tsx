@@ -81,8 +81,9 @@ export default function PackageOrdersManager() {
         }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.success) {
         setOrders((prev) =>
           prev.map((o) => (o.id === orderId ? data.order : o))
         );
@@ -95,19 +96,42 @@ export default function PackageOrdersManager() {
             setRoleFeedback({
               orderId,
               success: true,
-              message: `Bot assigned @${data.discord_role.roleName} to <@${selectedOrder?.discord_id}>!`,
+              message: `Order marked as ${newStatus.toUpperCase()}! Bot assigned @${data.discord_role.roleName} to member.`,
             });
           } else if (!data.discord_role.skipped) {
             setRoleFeedback({
               orderId,
               success: false,
-              message: data.discord_role.error || "Failed to grant Discord role.",
+              message: `Order updated, but Discord bot warning: ${data.discord_role.error || data.discord_role.details}`,
+            });
+          } else {
+            setRoleFeedback({
+              orderId,
+              success: true,
+              message: `Order marked as ${newStatus.toUpperCase()}! (Discord role skipped: ${data.discord_role.details || "not configured"})`,
             });
           }
+        } else {
+          setRoleFeedback({
+            orderId,
+            success: true,
+            message: `Order successfully updated to ${newStatus.toUpperCase()}!`,
+          });
         }
+      } else {
+        setRoleFeedback({
+          orderId,
+          success: false,
+          message: data.error || `Failed to update status (HTTP ${res.status})`,
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setRoleFeedback({
+        orderId,
+        success: false,
+        message: err.message || "Network error while updating order.",
+      });
     } finally {
       setUpdatingId(null);
     }
@@ -127,8 +151,9 @@ export default function PackageOrdersManager() {
         }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.success) {
         setOrders((prev) =>
           prev.map((o) => (o.id === orderId ? data.order : o))
         );
@@ -149,9 +174,20 @@ export default function PackageOrdersManager() {
             message: data.discord_role?.error || data.discord_role?.details || "Discord role assignment could not be completed.",
           });
         }
+      } else {
+        setRoleFeedback({
+          orderId,
+          success: false,
+          message: data.error || `Failed to sync role (HTTP ${res.status})`,
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setRoleFeedback({
+        orderId,
+        success: false,
+        message: err.message || "Network error while syncing role.",
+      });
     } finally {
       setUpdatingId(null);
     }
@@ -391,6 +427,31 @@ export default function PackageOrdersManager() {
                       <AlertCircle className="w-4 h-4 flex-shrink-0 text-amber-400" />
                     )}
                     <span>{roleFeedback.message}</span>
+                  </div>
+                )}
+
+                {/* Delivery Information (if already delivered or assigned) */}
+                {(selectedOrder.delivered_by || selectedOrder.delivered_at || selectedOrder.discord_role_assigned !== undefined) && (
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5 text-xs font-mono">
+                    <span className="text-cyan-400 block text-[10px] uppercase font-bold tracking-wider">Fulfillment Status</span>
+                    {selectedOrder.delivered_by && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Delivered By:</span>
+                        <span className="text-emerald-400 font-bold">{selectedOrder.delivered_by}</span>
+                      </div>
+                    )}
+                    {selectedOrder.delivered_at && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Delivered At:</span>
+                        <span className="text-slate-200">{formatDate(selectedOrder.delivered_at)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Discord Supporter Role:</span>
+                      <span className={selectedOrder.discord_role_assigned ? "text-emerald-400 font-bold" : "text-amber-400"}>
+                        {selectedOrder.discord_role_assigned ? "✓ Assigned" : "⚠ Not Synced"}
+                      </span>
+                    </div>
                   </div>
                 )}
 

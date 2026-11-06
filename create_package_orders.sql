@@ -20,19 +20,28 @@ CREATE TABLE IF NOT EXISTS public.package_orders (
     notes TEXT,
     staff_notes TEXT,
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'delivered', 'rejected')),
+    discord_role_assigned BOOLEAN DEFAULT false,
+    delivered_by TEXT,
+    delivered_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 2. Create indexes for instant query performance
+-- 2. Alter table statements for existing tables to guarantee all columns exist
+ALTER TABLE public.package_orders ADD COLUMN IF NOT EXISTS staff_notes TEXT;
+ALTER TABLE public.package_orders ADD COLUMN IF NOT EXISTS discord_role_assigned BOOLEAN DEFAULT false;
+ALTER TABLE public.package_orders ADD COLUMN IF NOT EXISTS delivered_by TEXT;
+ALTER TABLE public.package_orders ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMPTZ;
+
+-- 3. Create indexes for instant query performance
 CREATE INDEX IF NOT EXISTS idx_package_orders_status ON public.package_orders(status);
 CREATE INDEX IF NOT EXISTS idx_package_orders_discord_id ON public.package_orders(discord_id);
 CREATE INDEX IF NOT EXISTS idx_package_orders_created_at ON public.package_orders(created_at DESC);
 
--- 3. Enable Row Level Security (RLS)
+-- 4. Enable Row Level Security (RLS)
 ALTER TABLE public.package_orders ENABLE ROW LEVEL SECURITY;
 
--- 4. RLS Security Policies
+-- 5. RLS Security Policies
 CREATE POLICY "Users and Staff can view package orders"
     ON public.package_orders FOR SELECT
     USING (

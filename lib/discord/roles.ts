@@ -13,7 +13,7 @@ export interface DiscordRoleResult {
  * Maps package tier to corresponding Discord Role ID from environment variables.
  */
 export function getTierRoleId(tier: string): string | null {
-  const normalizedTier = tier.toLowerCase().trim();
+  const normalizedTier = (tier || "").toLowerCase().trim();
   
   if (normalizedTier === "bronze") {
     return process.env.DISCORD_BRONZE_ROLE_ID || process.env.DISCORD_SUPPORTER_ROLE_ID || null;
@@ -35,7 +35,7 @@ export function getTierRoleId(tier: string): string | null {
 }
 
 export function getTierDisplayName(tier: string): string {
-  const normalizedTier = tier.toLowerCase().trim();
+  const normalizedTier = (tier || "").toLowerCase().trim();
   if (normalizedTier === "emerald") return "Emerald Supporter";
   if (normalizedTier === "platinum") return "Platinum Supporter";
   if (normalizedTier === "gold") return "Gold Supporter";

@@ -110,10 +110,18 @@ export async function PATCH(request: NextRequest) {
       ((targetStatus === "delivered" || targetStatus === "active") && existingOrder.status !== "delivered" && existingOrder.status !== "active");
 
     if (shouldGrantRole && existingOrder.discord_id) {
-      roleResult = await grantDiscordSupporterRole(
-        existingOrder.discord_id,
-        existingOrder.package_tier
-      );
+      try {
+        roleResult = await grantDiscordSupporterRole(
+          existingOrder.discord_id,
+          existingOrder.package_tier
+        );
+      } catch (roleErr: any) {
+        console.error("[ROLE GRANT ERROR]", roleErr);
+        roleResult = {
+          success: false,
+          error: roleErr?.message || "Failed to contact Discord role service",
+        };
+      }
     }
 
     // Build enhanced staff notes with audit log
@@ -126,10 +134,13 @@ export async function PATCH(request: NextRequest) {
           : `[${timestamp} Auto-Bot: Granted @${roleResult.roleName}]`;
       } else if (!roleResult.skipped) {
         finalNotes = finalNotes 
-          ? `${finalNotes}\n[${timestamp} Auto-Bot Warning: ${roleResult.error}]`
-          : `[${timestamp} Auto-Bot Warning: ${roleResult.error}]`;
+          ? `${finalNotes}\n[${timestamp} Auto-Bot Warning: ${roleResult.error || roleResult.details}]`
+          : `[${timestamp} Auto-Bot Warning: ${roleResult.error || roleResult.details}]`;
       }
     }
+
+    const isDelivering = targetStatus === "delivered" || targetStatus === "active";
+    const nowIso = new Date().toISOString();
 
     // 3. Update Database (Supabase + mockDb fallback)
     let updatedOrder: any = null;
@@ -137,34 +148,124 @@ export async function PATCH(request: NextRequest) {
     if (isSupabaseConfigured()) {
       try {
         const supabase = getAdminSupabase();
-        const { data, error } = await supabase
+
+        // Build base update object with production columns
+        const updatePayload: Record<string, any> = {
+          status: targetStatus,
+          updated_at: nowIso,
+        };
+
+        if (isDelivering) {
+          updatePayload.delivered_at = nowIso;
+          updatePayload.delivered_by = staff_name || "Server Staff";
+          if (roleResult?.success !== undefined) {
+            updatePayload.discord_role_assigned = roleResult.success;
+          }
+        } else if (action === "sync_role" && roleResult?.success !== undefined) {
+          updatePayload.discord_role_assigned = roleResult.success;
+        }
+
+        // Add staff_notes if provided
+        if (finalNotes) {
+          updatePayload.staff_notes = finalNotes;
+        }
+
+        // Attempt 1: Full update with all fields (including staff_notes if schema has it)
+        let { data, error } = await supabase
           .from("package_orders")
-          .update({
-            status: targetStatus,
-            staff_notes: finalNotes || null,
-            updated_at: new Date().toISOString(),
-          })
+          .update(updatePayload)
           .eq("id", order_id)
           .select()
           .single();
 
+        // If error occurred (e.g. column 'staff_notes' doesn't exist in production schema)
+        if (error) {
+          console.warn("[SUPABASE] Full update failed, attempting column fallback:", error.message);
+
+          // Attempt 2: If staff_notes was in payload, try without staff_notes
+          if (updatePayload.staff_notes !== undefined) {
+            delete updatePayload.staff_notes;
+            const retry1 = await supabase
+              .from("package_orders")
+              .update(updatePayload)
+              .eq("id", order_id)
+              .select()
+              .single();
+
+            if (!retry1.error && retry1.data) {
+              data = retry1.data;
+              error = null;
+            } else {
+              error = retry1.error;
+            }
+          }
+
+          // Attempt 3: Safe minimal update (only status and updated_at)
+          if (error) {
+            console.warn("[SUPABASE] Column fallback failed, falling back to minimal status update:", error?.message);
+            const minimalRetry = await supabase
+              .from("package_orders")
+              .update({
+                status: targetStatus,
+                updated_at: nowIso,
+              })
+              .eq("id", order_id)
+              .select()
+              .single();
+
+            if (!minimalRetry.error && minimalRetry.data) {
+              data = minimalRetry.data;
+              error = null;
+            } else {
+              error = minimalRetry.error;
+            }
+          }
+        }
+
         if (!error && data) {
           updatedOrder = data;
+        } else if (error) {
+          console.error("[SUPABASE FINAL ERROR] Could not update order:", error);
         }
       } catch (err: any) {
-        console.warn("[SUPABASE] Update package order failed, updating mockDb:", err.message);
+        console.warn("[SUPABASE EXCEPTION] Update package order failed:", err.message);
       }
     }
 
     // Always update mockDb
-    const mockUpdated = mockDb.updatePackageOrderStatus(order_id, targetStatus, finalNotes);
+    mockDb.updatePackageOrderStatus(
+      order_id, 
+      targetStatus, 
+      finalNotes, 
+      isDelivering ? (staff_name || "Server Staff") : undefined,
+      roleResult?.success
+    );
+
+    // Guaranteed fallback: merge existing order with updated values
     if (!updatedOrder) {
-      updatedOrder = mockUpdated;
+      updatedOrder = {
+        ...existingOrder,
+        status: targetStatus,
+        staff_notes: finalNotes || existingOrder.staff_notes || null,
+        delivered_by: isDelivering ? (staff_name || "Server Staff") : existingOrder.delivered_by,
+        delivered_at: isDelivering ? nowIso : existingOrder.delivered_at,
+        discord_role_assigned: roleResult ? roleResult.success : existingOrder.discord_role_assigned,
+        updated_at: nowIso,
+      };
+    } else {
+      // If table lacked staff_notes column in Supabase, preserve it in returned object
+      if (finalNotes && !updatedOrder.staff_notes) {
+        updatedOrder.staff_notes = finalNotes;
+      }
     }
 
     // 4. Send Discord Delivery & Donation Approved Broadcast (tagging the user)
     if (targetStatus === "delivered" && existingOrder.status !== "delivered") {
-      await sendDiscordDonationApprovedNotification(updatedOrder, staff_name);
+      try {
+        await sendDiscordDonationApprovedNotification(updatedOrder, staff_name);
+      } catch (notifyErr: any) {
+        console.error("[DISCORD NOTIFY ERROR] Broadcast failed:", notifyErr?.message || notifyErr);
+      }
     }
 
     return NextResponse.json({ 
